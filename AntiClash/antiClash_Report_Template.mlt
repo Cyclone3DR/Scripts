@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RshReport type="template-part" version="1">
+    <Meta>
+        <Value name="comment" type="string"></Value>
+        <Value name="name" type="string">Clash2</Value>
+    </Meta>
+    <Template path="C:/Users/benoit.passot/Documents/Cyclone 3DR Reporting Templates/Clash-AntiClash.mlt">
+        <Columns>
+            <Column width="1">
+                <Text>
+                    <Str>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'MS Shell Dlg 2'; font-size:12px; font-weight:400; font-style:normal;"&gt;
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style="font-family:'Arial'; font-size:18pt; color:#000000; background-color:#ffffff;"&gt;{{0}}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</Str>
+                    <Var full-path="/RshGenericGroup38ECA32CE9BB0000/rate" root-type="RshGenericGroup"/>
+                </Text>
+            </Column>
+        </Columns>
+        <Columns>
+            <Column width="0.33333333333333331">
+                <Text>
+                    <Str>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;"&gt;
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</Str>
+                </Text>
+            </Column>
+            <Column width="0.33333333333333337">
+                <Text>
+                    <Str>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;"&gt;
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</Str>
+                </Text>
+            </Column>
+            <Column width="0.33333333333333337">
+                <Text>
+                    <Str>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;"&gt;
+&lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-weight:600;"&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</Str>
+                </Text>
+            </Column>
+        </Columns>
+        <Columns>
+            <Column width="0.33333333333333331">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_a1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+            <Column width="0.33333333333333331">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_c1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+            <Column width="0.33333333333333331">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_e1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+        </Columns>
+        <Columns>
+            <Column width="0.33333333333333337">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_b1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+            <Column width="0.33333333333333331">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_d1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+            <Column width="0.33333333333333337">
+                <Scene full-path="/RshGenericGroup38ECA32CE9BB0000/face_f1" root-type="RshGenericGroup">
+                    <RatioHW>1.5</RatioHW>
+                    <BackgroundColor r="255" g="255" b="255"/>
+                    <GridVisible>true</GridVisible>
+                    <HistogramPos>1</HistogramPos>
+                    <Mode>2D</Mode>
+                    <Scene2D>
+                        <CoordSys>15</CoordSys>
+                        <TextHeightInPx>8</TextHeightInPx>
+                        <Dpi>300</Dpi>
+                        <ZoomMode>0</ZoomMode>
+                        <LabelSize>0</LabelSize>
+                    </Scene2D>
+                    <Scene3D>
+                        <LabelDir x="0" y="0" z="1"/>
+                        <LabelColor r="0" g="0" b="0"/>
+                        <IsoTextDist>0</IsoTextDist>
+                        <IsoTextColor r="0" g="0" b="0"/>
+                    </Scene3D>
+                </Scene>
+            </Column>
+        </Columns>
+    </Template>
+</RshReport>
