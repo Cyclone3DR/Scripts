@@ -8,9 +8,9 @@ To use it, open the script editor and load labels.js. Define the theoretical len
 
 # Download Files
 
-You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
+You can download individual files using these links (for text file, right click on the link and choose "Save as..."):
 
 - [labels.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Labels/labels.js)
 - [labels_sample.3dr] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Labels/labels_sample.3dr)
 
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+Or all scripts on this site can be downloaded in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
