@@ -22,15 +22,21 @@ function main()
 	var result = SSurveyingFormat.ImportProject(directLineName);
 	if (result.ErrorCode != 0)
 		throw new Error("Impossible to load the *.dxf file.");
-	if (result.SetMultiTbl.length != 1)
+	if (result.ShapeTbl.length > 1)
 		throw new Error("Too many lines in the dxf file");
+    else if (result.ShapeTbl.length == 0)
+		throw new Error("No lines in the dxf file");
     
-	linePath = result.SetMultiTbl[0];
-	
-	var tblPath = linePath.Explode();	
-	if (tblPath.length != 1)
+	shapePath = result.ShapeTbl[0];
+    var discretizeResult = SCADUtil.Discretize(shapePath);
+    if(discretizeResult.ErrorCode != 0)
+        throw new Error("Impossible to discretize.");
+    if("MultiTbl" in discretizeResult == false)
+       throw new Error("No multiline has been discretized.");
+    if (discretizeResult.MultiTbl.length != 1)
 		throw new Error("The line path is composed of multiple lines.");
-	linePath = tblPath[0];
+
+	linePath = discretizeResult.MultiTbl[0];
 	linePath.AddToDoc();
 
 	//--------------------------------------------------------------
