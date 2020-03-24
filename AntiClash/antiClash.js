@@ -28,7 +28,7 @@ var reportingTools =
 		var visibilityTbl = visibilityTools.storeVisibility(treeview);
 		visibilityTools.hide(treeview);
 
-		//csreate an empty report
+		//create an empty report
 		var myReport = SReport.New();
 
 		var paperFormatAsEnum = (typeof paperFormat === "string") ? SReport[paperFormat] : paperFormat;

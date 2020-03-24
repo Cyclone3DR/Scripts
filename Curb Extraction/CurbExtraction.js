@@ -4,7 +4,7 @@
 // 3. The first selected polyline is used to extract the top of the curb.
 //   a. If it contains only 2 points, the first point is used to start the curb extraction and the second point is used to show the extraction direction
 //   b. If it contains more than 3 points, the point used to start the curb extraction is the last point of the polyline prolongated according to the last segment of the polyline. In this case, the points extracted will be added to the input polyline
-// 4. The second polyline is optional and correspond to the bottom of the curb: the points extracted at the bottom of the curb wil be added to this polyline
+// 4. The second polyline is optional and corresponds to the bottom of the curb: the points extracted at the bottom of the curb wil be added to this polyline
 // 5. THIS MEANS THAT THE 2 POLYLINES HAVE TO BE ORIENTED IN THE SAME WAY
 // 
 // Parameter explanations:

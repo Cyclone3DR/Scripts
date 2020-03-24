@@ -20,6 +20,7 @@ To use it, open the script editor and load CurbExtraction.js.
 - ** Curb angle to vertical (in °): ** the vertical part of the curb might not always be perpendicular to the curb itself. This angle allows to adjust according to the real angle
 - ** Min Curb Height: ** this is a threshold used to stop the curb extraction. Actually, when the height difference between the curn and the street is almost null, there is no way to extract a curb on the point cloud
 - ** Max Curb Length: ** this is also a parameter used to stop the curb extraction at some point. This allows to define that we are not looking for curbs which length are greater than this value
+- ** Input Units Conversion: ** unit factor conversion to meter. This allows the algorithm works in other units than meter (the default). If the document is in millimeter, this value should be 1000.
 
 ![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Curb%20Extraction/Screenshot.png "screenshot")
 ![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Curb%20Extraction/Screenshot2.png "screenshot2")
