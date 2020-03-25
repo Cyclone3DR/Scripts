@@ -23,7 +23,6 @@ To use it, open the script editor and load CurbExtraction.js.
 - ** Input Units Conversion: ** unit factor conversion to meter. This allows the algorithm works in other units than meter (the default). If the document is in millimeter, this value should be 1000.
 
 ![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Curb%20Extraction/Screenshot.png "screenshot")
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Curb%20Extraction/Screenshot2.png "screenshot2")
 
 # Download Files
 
