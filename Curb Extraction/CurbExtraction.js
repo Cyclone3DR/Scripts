@@ -1,3 +1,6 @@
+/// <reference path="C:\Program Files\Leica Geosystems\Cyclone 3DR\Script\JsDoc\Reshaper.d.ts"/>
+
+
 // ------------------------ HOW TO USE IT --------------------------------------------
 // 1. The algorithm uses the displayed cloud (or Cloudworx cloud) to extract the curb! => Make sure only 1 cloud (or CWxCloud) is displayed before launching the script
 // 2. At least 1 polyline should be selected. But 2 polylines can be selected.
@@ -100,11 +103,20 @@ function main(allCWCloud, theCloud, theMeshes, theLine, outMultis)
 
 		newLine.ApplyTransformation(resBF.MatrixTbl[1])
 		theMeshes.TopMesh.ApplyTransformation(resBF.MatrixTbl[1])
+		theMeshes.TopLine.ApplyTransformation(resBF.MatrixTbl[1])
 		
+		if(Param._DEBUG)
+		{
+			var copyMesh = SPoly.New(theMeshes.TopMesh)
+			copyMesh.AddToDoc()
+			var copyLine = SLine.New(theMeshes.TopLine)
+			copyLine.AddToDoc()
+		}
+
 		var pointToInsert = newLine.GetCenter()
 		outMultis.MultiOnTop.InsertLast(pointToInsert)
 		
-		var LowPoint = extractLowCurbPoint(pointToInsert, theLocalCloud, newLine)
+		var LowPoint = extractLowCurbPoint(pointToInsert, theLocalCloud, newLine, theMeshes.TopLine)
 		outMultis.outMultiDown.InsertLast(LowPoint)
 		
 		Repaint()
@@ -117,6 +129,7 @@ function main(allCWCloud, theCloud, theMeshes, theLine, outMultis)
 		theLine = SLine.New(newLine);
 		theLine.Translate(vect)
 		theMeshes.TopMesh.Translate(vect)
+		theMeshes.TopLine.Translate(vect)
 		
 		DZ = Math.abs(pointToInsert.GetZ() - LowPoint.GetZ())
 		// DZ = Math.abs(DeltaZ(theCloud, theLine))
@@ -151,8 +164,11 @@ function createTheo(theLine, curbOnRight)
 	var theMulti = SMultiline.New()
 	theMulti.InsertLast(SPoint.New(0,side * YCoord,0))
 	theMulti.InsertLast(SPoint.New(0,0,0))
-	var CurbOff = Math.sin(Param.CurbAngle*Math.PI/180)*Param.CurbHeight*side*-1
-	theMulti.InsertLast(SPoint.New(0,CurbOff,-Param.CurbHeight))
+	var CurbOff1 = Math.sin(Param.CurbAngle*Math.PI/180)*Param.CurbHeight*side*-1
+	var CurbOff2 = -Math.cos(Param.CurbAngle*Math.PI/180)*Param.CurbHeight;
+	theMulti.InsertLast(SPoint.New(0,CurbOff1,CurbOff2))
+	// theMulti.AddToDoc();
+	// StopWithMessage("")
 	
 	var FirstZ = theLine.GetFirstPoint()
 	FirstZ.Translate(SVector.New(0,0,-0.1))
@@ -165,10 +181,19 @@ function createTheo(theLine, curbOnRight)
 	otherMulti.Translate(vect)
 	
 	var TopMesh = SPoly.JoinContour([theMulti, otherMulti], []).Poly
+	var TopLine = SLine.New(SPoint.New(0,0,0), SVector.New(0,CurbOff1,CurbOff2), Param.CurbHeight)
+	TopLine.ApplyTransformation(matrix)
+	vect = vect.Mult(0.5)
+	TopLine.Translate(vect)
 	if(Param._DEBUG)
+	{
 		TopMesh.AddToDoc()
+		TopLine.AddToDoc()
+	}
+	//StopWithMessage("")
 	return {
-			"TopMesh": TopMesh
+		"TopMesh": TopMesh,
+		"TopLine": TopLine
 			}
 }
 
@@ -303,7 +328,7 @@ function StopWithMessage(message)
 	throw new Error (message)
 }
 
-function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine)
+function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine, theVector)
 {
 	var FirstZ = theLine.GetFirstPoint()
 	FirstZ.Translate(SVector.New(0,0,-1))
@@ -336,13 +361,7 @@ function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine)
 	}
 	var streetPlane = ResBestPlane.Plane
 
-	var projDir = SVector.New(0, -LeftRight*Math.sin(Param.CurbAngle*Math.PI/180), Math.cos(Param.CurbAngle*Math.PI/180))
-	projDir.ApplyTransformation(InvMat)
-	var tmpLine = SLine.New(theLine.GetCenter(),projDir,0.1)
-	if(Param._DEBUG)
-		tmpLine.AddToDoc()
-
-	var LowCurbPoint = streetPlane.ProjDir(pointToInsert, projDir).Point
+	var LowCurbPoint = streetPlane.ProjDir(theVector.GetCenter(), theVector.GetNormal()).Point
 	
 	if(Param._DEBUG)
 	{
