@@ -1,4 +1,4 @@
-/// <reference path="C:\Program Files\3DReshaper_18.1_x64\docScript\Reshaper.d.ts"/>
+/// <reference path="C:\Program Files\Leica Geosystems\Cyclone 3DR\Script\JsDoc\Reshaper.d.ts"/>
 	
 function Extract(
 			_iCloud // [in] The cloud to treat
@@ -54,11 +54,12 @@ function Extract(
 	
 	if (_DEBUG == true)
 	{
-		var sphere = SSphere.New(RightPt, 0.1);
-		sphere.AddToDoc();
-		var sphere = SSphere.New(LeftPt, 0.1);
-		sphere.AddToDoc();
+		RightPt.SetName("RightPt");
+		RightPt.AddToDoc();
+		LeftPt.SetName("LeftPt");
+		LeftPt.AddToDoc();
 	}
+
 	//--------------------------------------------------------------
 	// compute the left track
 	var track = {

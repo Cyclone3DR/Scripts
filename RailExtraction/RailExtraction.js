@@ -1,3 +1,4 @@
+/// <reference path="C:\Program Files\Leica Geosystems\Cyclone 3DR\Script\JsDoc\Reshaper.d.ts"/>
 
 var curPath = CurrentScriptPath() + '\\'; 
 
@@ -72,11 +73,13 @@ function main()
 	//--------------------------------------------------------------
 	// multilines with the final result
 	var LeftLine = SMultiline.New();
+	LeftLine.SetName("Left Line");
 	LeftLine.SetColors(1, 0, 0);
 	LeftLine.AddToDoc();
 	LeftLine.InsertLast(result.LeftPt);
 	
 	var RightLine = SMultiline.New();
+	RightLine.SetName("Right Line");
 	RightLine.SetColors(1, 0, 0);
 	RightLine.AddToDoc();
 	RightLine.InsertLast(result.RightPt);

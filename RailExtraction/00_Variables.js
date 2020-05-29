@@ -1,4 +1,4 @@
-/// <reference path="C:\Program Files\3DReshaper_18.1_x64\docScript\Reshaper.d.ts"/>
+/// <reference path="C:\Program Files\Leica Geosystems\Cyclone 3DR\Script\JsDoc\Reshaper.d.ts"/>
 
 // stack
 var C_STACK_WIDTH = 0.065; // 6.5cm
@@ -7,6 +7,11 @@ var C_STACK_SPACING = 1.435; // 1.435m // space between two stacks
 
 // error allowed
 var C_MAXIMAL_DEVIATION_ERROR = 0.0015; // 1.5cm
+
+var C_STACK_TRACK_RATIOPOSITION = 0.333;
+// 0.5: TRACK is positionned in the middle of the rails
+// 0.3: TRACK is positionned on the left
+// 0.7: TRACK is positionned on the right
 
 
 

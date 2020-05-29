@@ -1,4 +1,4 @@
-/// <reference path="C:\Program Files\3DReshaper_18.1_x64\docScript\Reshaper.d.ts"/>
+/// <reference path="C:\Program Files\Leica Geosystems\Cyclone 3DR\Script\JsDoc\Reshaper.d.ts"/>
 	
 //--------------------------------------------------------------
 // define variables	
@@ -16,14 +16,18 @@ function GetTrack(
 	//--------------------------------------------------------------
 	// Extract part of the cloud
 	var sphere = SSphere.New(_iExtractPt, C_SPHERE_RADIUS);
+	if (_iDebug == true)
+	{
+		sphere.SetName("Sphere_iExtractPt");
+		sphere.AddToDoc();
+	}
 
-	var result = _iInitialCloud.SeparateFeature(sphere, /*Tolerance*/0);
+	var result = _iInitialCloud.SeparateFeature(sphere, /*Tolerance*/0, SCloud.FILL_IN_ONLY);
 
 	if (result.ErrorCode != 0)
 		throw new Error( "Impossible to separate the cloud with the sphere." ); 
 	
 	// the cloud outside the sphere is cleared
-	result.OutCloud.Clear(); 
 	var cloudSphere = result.InCloud; // the cloud inside the sphere
 	//       _
 	//    /     \
@@ -35,7 +39,7 @@ function GetTrack(
 	// compute a best plane corresponding to the ground
 	if (_iDebug == true)
 	{
-		print(cloudSphere.GetNumber());
+		print("Points in sphere: " + cloudSphere.GetNumber());
 	}
 	result = cloudSphere.BestPlane(cloudSphere.GetNumber()*GROUND_PER_CENT);
 
@@ -45,7 +49,11 @@ function GetTrack(
 	var plane = result.Plane;
 	if (_iDebug == true)
 	{
-		plane.AddToDoc();
+		var planeLocal = SPlane.New(plane);
+		planeLocal.SetName("PlaneLocal");
+		planeLocal.AddToDoc();
+		cloudSphere.SetName("CloudSphere");
+		cloudSphere.AddToDoc();
 	}
 	
 	//--------------------------------------------------------------
@@ -58,17 +66,28 @@ function GetTrack(
 	var TRANSLATION = C_SPHERE_RADIUS*0.5;
 	planeNormal = planeNormal.Mult(TRANSLATION);
 	plane.Translate(planeNormal); // translate the plane at (R/2) beside the ground
+	if (_iDebug == true)
+	{
+		plane.SetName("plane")
+		plane.AddToDoc();
+	}
 	
 	//--------------------------------------------------------------
 	// separate the cloud with the plane with a tolerance of (R/2)+C_STACK_HEIGHT_TO_DELETE
 	// => this will remove all the point under the ground, and the ground included
-	result = cloudSphere.SeparateFeature(plane, /*Tolerance*/TRANSLATION + C_STACK_HEIGHT_TO_DELETE);
-	cloudSphere.Clear();
-			
-	// the cloud corresponding to the ground is cleared
-	result.InCloud.Clear();
-	var cloudTrack = result.OutCloud;
+	var TolToSeparate = TRANSLATION + C_STACK_HEIGHT_TO_DELETE
+	if (_iDebug == true)
+		print("Tolerance to Separate" + TolToSeparate)
+	result = cloudSphere.SeparateFeature(plane, /*Tolerance*/TolToSeparate, SCloud.FILL_OUT_ONLY);
+	if (_iDebug != true)
+		cloudSphere.Clear();
 	
+	var cloudTrack = result.OutCloud;
+	if (_iDebug == true)
+	{
+		cloudTrack.SetName("cloudTrack")
+		cloudTrack.AddToDoc();
+	}
 
 	//--------------------------------------------------------------
 	// compute a best line corresponding to the direction of the track
@@ -84,6 +103,7 @@ function GetTrack(
 	var line = result.Line;
 	if (_iDebug == true)
 	{
+		line.SetName("lineIni")
 		line.AddToDoc();
 	}
 	
@@ -106,19 +126,16 @@ function GetTrack(
 		
 		//--------------------------------------------------------------
 		// Separate the cloud with this cylinder to work only on the stack part
-		var result = _iInitialCloud.SeparateFeature(cylinder, /*Tolerance*/0);
-			
-		// the cloud outside the cylinder is cleared to save RAM
-		result.OutCloud.Clear();
-		var cloudTrack = result.InCloud;
+		var result = _iInitialCloud.SeparateFeature(cylinder, /*Tolerance*/0, SCloud.FILL_IN_ONLY);
+		var cloudTrackIter = result.InCloud;
 		
 		//--------------------------------------------------------------
 		// check if the number of point is usable
 		if (_iDebug == true)
 		{
-			print(cloudTrack.GetNumber());
+			print(cloudTrackIter.GetNumber());
 		}
-		if (cloudTrack.GetNumber() < 4)
+		if (cloudTrackIter.GetNumber() < 4)
 		{
 			print("End of the line.");
 			return {
@@ -128,29 +145,31 @@ function GetTrack(
 
 		//--------------------------------------------------------------
 		// compute a best line with this cloud to find the new direction
-		result = cloudTrack.BestLine(
-				0.2*cloudTrack.GetNumber() // [in]	NbPointElim	The number of points to eliminate. 
+		result = cloudTrackIter.BestLine(
+				0.2*cloudTrackIter.GetNumber() // [in]	NbPointElim	The number of points to eliminate. 
 				// The worst points are eliminated. This number should not be greater than the total number of points -3
 				);
 		
 		if (result.ErrorCode != 0)
 			throw new Error( "Impossible to do a best line." ); 
 			
-		var line = result.Line;
-		var nbPts = cloudTrack.GetNumber();
+		var lineLocal = result.Line;
+		var nbPts = cloudTrackIter.GetNumber();
 		if (_iDebug == true)
 		{
-			line.AddToDoc();
+			lineLocal.SetName("LineIter" + it)
+			lineLocal.AddToDoc();
+			cloudTrackIter.SetName("cloudTrackIter");
 			if (it == NB_ITER-1) // only display the last cloud
-				cloudTrack.AddToDoc();
+				cloudTrackIter.AddToDoc();
 		}
 		else
 		{
-			cloudTrack.Clear();
+			cloudTrackIter.Clear();
 		}
 		
-		firstPt = line.GetFirstPoint();
-		lastPt = line.GetLastPoint();
+		firstPt = lineLocal.GetFirstPoint();
+		lastPt = lineLocal.GetLastPoint();
 	}
 	
 	return {
@@ -176,19 +195,28 @@ function InitializeTrackWithLine(
 	var pathDirection = SVector.New(initialPt, nextPt);
 	var translateDirection = SVector.Cross( pathDirection, SVector.New(0, 0, -1) );
 	translateDirection.SetNormed();
-	translateDirection = translateDirection.Mult(C_STACK_SPACING*0.33);
+	translateDirection = translateDirection.Mult(C_STACK_SPACING*C_STACK_TRACK_RATIOPOSITION);
+	if(_DEBUG==true)
+	{
+		var initLine = SLine.New(initialPt, nextPt);
+		initLine.SetName("initLine");
+		initLine.AddToDoc();
+		var tDirLine = SLine.New(initialPt, translateDirection, translateDirection.GetLength());
+		tDirLine.SetName("tDirLine");
+		tDirLine.AddToDoc();
+	}
 	initialPt.Translate(translateDirection);
 	var result = _iInitialCloud.ProjDir(initialPt, SVector.New(0, 0, -1), 0.15/*Aperture*/, true/*signed direction*/);
 	
 	if (result.ErrorCode != 0)
 		throw new Error("Impossible to project initial point on the cloud");
-		
+	
 	if (_DEBUG)
 	{
-		var sphere = SSphere.New(initialPt, 0.1);
-		sphere.AddToDoc();
-		var sphere = SSphere.New(result.Point, 0.1);
-		sphere.AddToDoc();
+		initialPt.SetName("InitialPoint1stTrack");
+		initialPt.AddToDoc();
+		result.Point.SetName("projectedPoint1stTrack");
+		result.Point.AddToDoc();
 	}
 	
 	var firstTrack = GetTrack(
@@ -200,10 +228,9 @@ function InitializeTrackWithLine(
 			
 	if (firstTrack.ErrorCode != 0)
 		throw new Error( "Impossible to initialize the first track." ); 
-			
+	
 	translateDirection.Opposite();
-	initialPt.Translate(translateDirection);
-	initialPt.Translate(translateDirection);
+	translateDirection = translateDirection.Mult(1/C_STACK_TRACK_RATIOPOSITION);
 	initialPt.Translate(translateDirection);
 	var result = _iInitialCloud.ProjDir(initialPt, SVector.New(0, 0, -1), 0.15/*Aperture*/, true/*signed direction*/);
 
@@ -212,10 +239,10 @@ function InitializeTrackWithLine(
 		
 	if (_DEBUG)
 	{
-		var sphere = SSphere.New(initialPt, 0.1);
-		sphere.AddToDoc();
-		var sphere = SSphere.New(result.Point, 0.1);
-		sphere.AddToDoc();
+		initialPt.SetName("InitialPoint2ndTrack");
+		initialPt.AddToDoc();
+		result.Point.SetName("projectedPoint2ndTrack");
+		result.Point.AddToDoc();
 	}
 	
 	var secondTrack = GetTrack(
