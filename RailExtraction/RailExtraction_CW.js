@@ -20,7 +20,7 @@ function main()
 	
 	// creating the clipping plane along the path
 	var clipPlane = SClippingPlane.New(linePath);
-	var CLIP_STEP = 20;
+	var CLIP_STEP = 200;
 	clipPlane.AddToDoc();
 	clipPlane.SetDepth(CLIP_STEP)
 	clipPlane.SetStep(cloudIndex * CLIP_STEP);
@@ -93,16 +93,16 @@ function main()
 		cloudIndex++;
 		nextCloud = false;
 		
-		if (ExtractionIsOk == true && (cloudIndex*CLIP_STEP) < lineLength)
+		if (ExtractionIsOk == true && (cloudIndex*CLIP_STEP*0.95) < lineLength)
 		{
 			cloudToTreat.Clear();
 			cloudToTreat.RemoveFromDoc();
 			TrackData.push(lastTrack);
-			clipPlane.Move(CLIP_STEP);
+			clipPlane.Move(CLIP_STEP*0.95);
 			clipPlane.ClipAll();
 
 			var resToCloud = theSCwCloud.ToCloud(60000000);
-			if(resToCloud.ErrorCode==0)
+			if(resToCloud.ErrorCode==0 || resToCloud.ErrorCode==2 || resToCloud.ErrorCode==3)
 			{
 				cloudToTreat = resToCloud.Cloud;
 				cloudToTreat.AddToDoc();
