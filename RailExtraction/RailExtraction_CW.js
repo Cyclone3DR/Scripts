@@ -11,7 +11,7 @@ Include( curPath + "02_NextExtraction.js" );
 function main()
 {
 
-	var cloudIndex = 1;
+	var cloudIndex = 0;
 
 	var linePath = SMultiline.All(0)[0]; // path followed by the scanner
 	var theSCwCloud = SCwCloud.All(0)[0]; // the CWCloud to process
@@ -23,7 +23,7 @@ function main()
 	var CLIP_STEP = 200;
 	clipPlane.AddToDoc();
 	clipPlane.SetDepth(CLIP_STEP)
-	clipPlane.SetStep(cloudIndex * CLIP_STEP);
+	clipPlane.SetStep(CLIP_STEP);
 	clipPlane.ClipAll();
 	clipPlane.SetVisibility(false);
 	
@@ -65,6 +65,7 @@ function main()
 	var nextCloud = true;
 	do
 	{		
+		cloudIndex++;
 		print("=============================");
 		print("Extract on cloud number: " + cloudIndex);
 		
@@ -90,15 +91,18 @@ function main()
 		}
 		//--------------------------------------------------------------
 		// Check if next cloud can be opened
-		cloudIndex++;
 		nextCloud = false;
+		print("ExtractionIsOk: " + ExtractionIsOk)
+		var currentValue = cloudIndex*CLIP_STEP;
+		print("currentValue: " + currentValue);
+		print("lineLength: " + lineLength);
 		
-		if (ExtractionIsOk == true && (cloudIndex*CLIP_STEP*0.95) < lineLength)
+		if (ExtractionIsOk == true && (currentValue < lineLength))
 		{
 			cloudToTreat.Clear();
 			cloudToTreat.RemoveFromDoc();
 			TrackData.push(lastTrack);
-			clipPlane.Move(CLIP_STEP*0.95);
+			clipPlane.Move(CLIP_STEP);
 			clipPlane.ClipAll();
 
 			var resToCloud = theSCwCloud.ToCloud(60000000);
@@ -108,8 +112,11 @@ function main()
 				cloudToTreat.AddToDoc();
 				print("Number of points in the converted cloud: " + cloudToTreat.GetNumber())
 				nextCloud = cloudToTreat.GetNumber()>1000;
+				print("NextCloud number: " + cloudToTreat.GetNumber())
 				clipPlane.UnclipAll();
 			}
+			else
+				print("error in converting to cloud")
 		}
 	}
 	while (nextCloud == true)
