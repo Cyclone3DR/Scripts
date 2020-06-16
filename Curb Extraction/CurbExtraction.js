@@ -222,8 +222,8 @@ function DeltaZ(theCloud, theLine)
 	
 	theLocalCloud.ApplyTransformation(matrix)
 	
-	var theSphereP = SSphere.New(SPoint.New(Param.Step/2, Param.CurbWidth, 0), Param.CurbWidth/2)
-	var cloudYP = theLocalCloud.SeparateFeature(theSphereP,0,SCloud.FILL_IN_ONLY).InCloud
+	var theCylP = SCylinder.New(SPoint.New(Param.Step/2, Param.CurbWidth, -Param.CurbHeight*2), SVector.New(0,0,1), Param.CurbWidth/2,Param.CurbHeight*4)
+	var cloudYP = theLocalCloud.SeparateFeature(theCylP,0,SCloud.FILL_IN_ONLY).InCloud
 	if(cloudYP.GetNumber()<20)
 	{
 		if(Param._DEBUG)
@@ -232,14 +232,14 @@ function DeltaZ(theCloud, theLine)
 			InvMat.InitInverse(matrix)
 			cloudYP.ApplyTransformation(InvMat)
 			cloudYP.AddToDoc()
-			var tmpSphere = SSphere.New(theSphereP);
+			var tmpSphere = SCylinder.New(theCylP);
 			tmpSphere.ApplyTransformation(InvMat)
 			tmpSphere.AddToDoc();
 		}
 		StopWithMessage(["Only " + cloudYP.GetNumber() + " points in the cloud on the left the line"])
 	}
-	var theSphereM = SSphere.New(SPoint.New(Param.Step/2, -Param.CurbWidth, 0), Param.CurbWidth/2)
-	var cloudYM = theLocalCloud.SeparateFeature(theSphereM ,0,SCloud.FILL_IN_ONLY).InCloud
+	var theCylM = SCylinder.New(SPoint.New(Param.Step/2, -Param.CurbWidth, -Param.CurbHeight*2), SVector.New(0,0,1), Param.CurbWidth/2,Param.CurbHeight*4)
+	var cloudYM = theLocalCloud.SeparateFeature(theCylM ,0,SCloud.FILL_IN_ONLY).InCloud
 	if(cloudYM.GetNumber()<20)
 	{
 		if(Param._DEBUG)
@@ -248,7 +248,7 @@ function DeltaZ(theCloud, theLine)
 			InvMat.InitInverse(matrix)
 			cloudYM.ApplyTransformation(InvMat)
 			cloudYM.AddToDoc()
-			var tmpSphere = SSphere.New(theSphereM);
+			var tmpSphere = SCylinder.New(theCylM);
 			tmpSphere.ApplyTransformation(InvMat)
 			tmpSphere.AddToDoc();
 		}
@@ -397,9 +397,8 @@ function getParam()
 	var InputCurbAngle = 20;
 	var InputMinCurbHeight = 0.01;
 	var InputMaxCurbLength = 200;
-	var InputUnitsConv = 1;
-	
-	// Looks for an existing file with previous param
+	var InputunitsConv = 1;
+	// looks for an existing file with previous param
 	var filename = TempPath() + "\\LastCurbExtractionParameters.js";
 	var thefile = SFile.New(filename)
 	if(thefile.Exists())
@@ -424,7 +423,7 @@ function getParam()
 	theDialog.AddLine("Curb Angle to vertical (in °): ", true, {}, InputCurbAngle);
 	theDialog.AddLine("Min Curb Height (in m): ", true, {}, InputMinCurbHeight);
 	theDialog.AddLine("Max Curb Length (in m): ", true, {}, InputMaxCurbLength);
-	theDialog.AddLine("Document unit to meter convertion (1000 if document in mm): ", true, {}, InputUnitsConv);
+	theDialog.AddLine("Document unit to meter convertion (1000 if document in mm): ", true, {}, InputunitsConv);
 	var result = theDialog.Execute();
 	if (result.ErrorCode != 0)// result == 0 means the user click on the "OK" button
 		StopWithMessage( "Operation canceled" );
@@ -462,8 +461,7 @@ function getParam()
 			}
 }
 
-function useCWCloud(myCWCloud, numberOfPointToExtract, centerPoint, height, width)
-{
+function useCWCloud(myCWCloud, numberOfPointToExtract,centerPoint,height,width){
 	tempClippingBox=SClippingBox.New();
 	tempClippingBox.SetHeight(height);
 	tempClippingBox.SetLength(width);
@@ -472,6 +470,7 @@ function useCWCloud(myCWCloud, numberOfPointToExtract, centerPoint, height, widt
 	tempClippingBox.ActivateInAllScenes();
 	tempClippingBox.SetCenter(centerPoint);
 	res=myCWCloud.ToCloud(numberOfPointToExtract);
+	//tempClippingBox.DeactivateInAllScenes();
 	tempClippingBox.RemoveFromDoc();
 	return res.Cloud;
 }
