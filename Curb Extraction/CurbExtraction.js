@@ -407,7 +407,13 @@ function getParam()
 		thefile.Open(SFile.ReadOnly);
 		var alllines = thefile.ReadAll();
 		thefile.Close()
-		eval(alllines);
+		try {
+			eval(alllines);
+		}
+		catch (e)
+		{
+			print("Values used during the previous run of the script coule not be re-used")
+		}
 	}
 
 	//Enter the sampling step
@@ -424,13 +430,21 @@ function getParam()
 		StopWithMessage( "Operation canceled" );
 
 	// Save parameters
-	var line = "InputStep = " + result.InputTbl[0] + ";\n"
-	line += "InputCurbWidth = " + result.InputTbl[1] + ";\n"
-	line += "InputCurbHeight = " + result.InputTbl[2] + ";\n"
-	line += "InputCurbAngle = " + result.InputTbl[3] + ";\n"
-	line += "InputMinCurbHeight = " + result.InputTbl[4] + ";\n"
-	line += "InputMaxCurbLength = " + result.InputTbl[5] + ";\n"
-	line += "InputUnitsConv = " + result.InputTbl[6] + ";\n"
+	var line = "\n";
+	if(!isNaN(Number(result.InputTbl[0]))) // only store if valid number
+		line += "InputStep = " + result.InputTbl[0] + ";\n"
+	if(!isNaN(Number(result.InputTbl[1]))) // only store if valid number
+		line += "InputCurbWidth = " + result.InputTbl[1] + ";\n"
+	if(!isNaN(Number(result.InputTbl[2]))) // only store if valid number
+		line += "InputCurbHeight = " + result.InputTbl[2] + ";\n"
+	if(!isNaN(Number(result.InputTbl[3]))) // only store if valid number
+		line += "InputCurbAngle = " + result.InputTbl[3] + ";\n"
+	if(!isNaN(Number(result.InputTbl[4]))) // only store if valid number
+		line += "InputMinCurbHeight = " + result.InputTbl[4] + ";\n"
+	if(!isNaN(Number(result.InputTbl[5]))) // only store if valid number
+		line += "InputMaxCurbLength = " + result.InputTbl[5] + ";\n"
+	if(!isNaN(Number(result.InputTbl[6]))) // only store if valid number
+		line += "InputUnitsConv = " + result.InputTbl[6] + ";\n"
 	thefile.Open(SFile.WriteOnly);
 	thefile.Write(line);
 	thefile.Close();
