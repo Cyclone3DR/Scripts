@@ -385,6 +385,20 @@ function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine, theVector)
 */
 
 /**
+ * @param {int, float} the number to check 
+ * @param {string} the name of the value
+ * @returns {string} the line
+ */
+function CheckValueToInsert(NumberToCheck, ValueName)
+{
+	var line; 
+	if(!isNaN(Number(NumberToCheck))) // only store if valid number
+	    line += ValueName + NumberToCheck + ";\n"
+
+    return line;
+}
+
+/**
 * launches a doalog box allowing to enter the parameters of the curb
 * @returns {CurbParam} All input parameters from user
 */
@@ -428,22 +442,14 @@ function getParam()
 	if (result.ErrorCode != 0)// result == 0 means the user click on the "OK" button
 		StopWithMessage( "Operation canceled" );
 
-	// Save parameters
-	var line = "\n";
-	if(!isNaN(Number(result.InputTbl[0]))) // only store if valid number
-		line += "InputStep = " + result.InputTbl[0] + ";\n"
-	if(!isNaN(Number(result.InputTbl[1]))) // only store if valid number
-		line += "InputCurbWidth = " + result.InputTbl[1] + ";\n"
-	if(!isNaN(Number(result.InputTbl[2]))) // only store if valid number
-		line += "InputCurbHeight = " + result.InputTbl[2] + ";\n"
-	if(!isNaN(Number(result.InputTbl[3]))) // only store if valid number
-		line += "InputCurbAngle = " + result.InputTbl[3] + ";\n"
-	if(!isNaN(Number(result.InputTbl[4]))) // only store if valid number
-		line += "InputMinCurbHeight = " + result.InputTbl[4] + ";\n"
-	if(!isNaN(Number(result.InputTbl[5]))) // only store if valid number
-		line += "InputMaxCurbLength = " + result.InputTbl[5] + ";\n"
-	if(!isNaN(Number(result.InputTbl[6]))) // only store if valid number
-		line += "InputUnitsConv = " + result.InputTbl[6] + ";\n"
+	// save parameters
+    var line = CheckValueToInsert(result.InputTbl[0],"InputStep =");
+    line += CheckValueToInsert(result.InputTbl[1],"InputCurbWidth =");
+    line += CheckValueToInsert(result.InputTbl[2],"InputCurbHeight =");
+    line += CheckValueToInsert(result.InputTbl[3],"InputCurbAngle =");
+    line += CheckValueToInsert(result.InputTbl[4],"InputMinCurbHeight =");
+    line += CheckValueToInsert(result.InputTbl[5],"InputMaxCurbLength =");
+    line += CheckValueToInsert(result.InputTbl[6],"InputUnitsConv =");
 	thefile.Open(SFile.WriteOnly);
 	thefile.Write(line);
 	thefile.Close();
