@@ -7,17 +7,20 @@
 // 3. The first selected polyline is used to extract the top of the curb.
 //   a. If it contains only 2 points, the first point is used to start the curb extraction and the second point is used to show the extraction direction
 //   b. If it contains more than 3 points, the point used to start the curb extraction is the last point of the polyline prolongated according to the last segment of the polyline. In this case, the points extracted will be added to the input polyline
-// 4. The second polyline is optional and corresponds to the bottom of the curb: the points extracted at the bottom of the curb wil be added to this polyline
+// 4. The second polyline is optional and correspond to the bottom of the curb: the points extracted at the bottom of the curb will be added to this polyline
 // 5. THIS MEANS THAT THE 2 POLYLINES HAVE TO BE ORIENTED IN THE SAME WAY
 // 
 // Parameter explanations:
-// 1. Sampling step: the algorithm extracts the curbs at individual points. This parameter defines the interval between the individual points which will be extarcted. The more straight, the higher this value can be. The more curved, a lower value will be required
+// 1. Sampling step: the algorithm extracts the curbs at individual points. This parameter defines the interval between the individual points which will be extracted. The more straight, the higher this value can be. The more curved, a lower value will be required
 // 2. Curb width: this parameter defines the width of the curb to extract. The longer it is the better, as long as the data is clean
 // 3. Curb height: this parameter defines the approximate height of the curb. It has a limited impact on the results
 // 4. Curb angle to vertical (in °): the vertical part of the curb might not always be perpendicular to the curb itself. This angle allows to adjust according to the real angle
-// 5. Min Curb Height: this is a threshold used to stop the curb extraction. Actually, when the height difference between the curn and the street is almost null, there is no way to extract a curb on the point cloud
+// 5. Min Curb Height: this is a threshold used to stop the curb extraction. Actually, when the height difference between the curb and the street is almost null, there is no way to extract a curb on the point cloud
 // 6. Max Curb Length: this is also a parameter used to stop the curb extraction at some point. This allows to define that we are not looking for curbs which length are greater than this value
-// 7. Input Units Conversion: unit factor conversion to meter. This allows the algorithm works in other units than meter (the default). If the document is in millimeter, this value should be 1000.
+//
+// Tips
+// If you need to clear the settings you can delete the file LastExtractionParameters.js in your temp folder 
+
 /**
  *  @type {CurbParam} Param
  */
@@ -236,7 +239,7 @@ function DeltaZ(theCloud, theLine)
 			tmpSphere.ApplyTransformation(InvMat)
 			tmpSphere.AddToDoc();
 		}
-		StopWithMessage(["Only " + cloudYP.GetNumber() + " points in the cloud on the left the line"])
+		StopWithMessage(["Only " + cloudYP.GetNumber() + " points in the cloud on the left of the line"])
 	}
 	var theCylM = SCylinder.New(SPoint.New(Param.Step/2, -Param.CurbWidth, -Param.CurbHeight*2), SVector.New(0,0,1), Param.CurbWidth/2,Param.CurbHeight*4)
 	var cloudYM = theLocalCloud.SeparateFeature(theCylM ,0,SCloud.FILL_IN_ONLY).InCloud
@@ -252,7 +255,7 @@ function DeltaZ(theCloud, theLine)
 			tmpSphere.ApplyTransformation(InvMat)
 			tmpSphere.AddToDoc();
 		}
-		StopWithMessage(["Only " + cloudYM.GetNumber() + " points in the cloud on the right the line"])
+		StopWithMessage(["Only " + cloudYM.GetNumber() + " points in the cloud on the right of the line"])
 	}
 	
 	var planeP = cloudYP.BestPlane(0, SCloud.PLANE_FORCE_NORMAL, SPoint.New(), SVector.New(0,0,1),SCloud.FILL_NONE).Plane
@@ -376,7 +379,7 @@ function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine, theVector)
 * @typedef {Object} CurbParam
 * @property {number} Step the step for curb extraction
 * @property {number} CurbWidth the curb width
-* @property {number} CurbHeight the burb height
+* @property {number} CurbHeight the curb height
 * @property {number} CurbAngle the curb angle
 * @property {number} MinCurbHeight a threshold defining when the extraction should stop according to the height of the curb: if the curb is too small, no need to continue the extraction
 * @property {number} MaxCurbLength a threshold defining when the extraction should stop according to the length of the curb to extract
@@ -385,27 +388,27 @@ function extractLowCurbPoint(pointToInsert, theLocalCloud, theLine, theVector)
 */
 
 /**
- * @param {int, float} the number to check 
- * @param {string} the name of the value
- * @returns {string} the line
+ * @param {Number[]} Number Tab to check
+ * @returns {bool} true il values are correct, else false
  */
-function CheckValueToInsert(NumberToCheck, ValueName)
+function CheckValueToInsert(NumberTabToCheck)
 {
-	var line; 
-	if(!isNaN(Number(NumberToCheck))) // only store if valid number
-	    line += ValueName + NumberToCheck + ";\n"
-
-    return line;
+	for(var iValue=0;iValue<NumberTabToCheck.length;iValue++){
+		if (isNaN(Number(NumberTabToCheck[iValue]))) // if the value is not a valid number
+			return false;
+	}
+	return true;
 }
 
 /**
-* launches a doalog box allowing to enter the parameters of the curb
+* launches a dialog box allowing to enter the parameters of the curb
 * @returns {CurbParam} All input parameters from user
 */
 function getParam()
 {
 	// Default values if no other values found
-	var InputStep = 1;
+	var DefaultValue = 1;
+	var InputStep = DefaultValue;
 	var InputCurbWidth = 0.5;
 	var InputCurbHeight = 0.1;
 	var InputCurbAngle = 20;
@@ -425,7 +428,8 @@ function getParam()
 		}
 		catch (e)
 		{
-			print("Values used during the previous run of the script coule not be re-used")
+			print("Values used during the previous run of the script could not be re-used.");
+			InputStep = DefaultValue;
 		}
 	}
 
@@ -441,19 +445,30 @@ function getParam()
 	var result = theDialog.Execute();
 	if (result.ErrorCode != 0)// result == 0 means the user click on the "OK" button
 		StopWithMessage( "Operation canceled" );
+	var ret = CheckValueToInsert(result.InputTbl) ;
+	while(ret ==false) // only store if valid number
+    {    
+        print( "Please enter valid curb extraction parameter" );
+        result = theDialog.Execute();
+        if (result.ErrorCode != 0)// result == 0 means the user click on the "OK" button
+            StopWithMessage( "Operation canceled" );
+
+            ret = CheckValueToInsert(result.InputTbl);
+    }
 
 	// save parameters
-    var line = CheckValueToInsert(result.InputTbl[0],"InputStep =");
-    line += CheckValueToInsert(result.InputTbl[1],"InputCurbWidth =");
-    line += CheckValueToInsert(result.InputTbl[2],"InputCurbHeight =");
-    line += CheckValueToInsert(result.InputTbl[3],"InputCurbAngle =");
-    line += CheckValueToInsert(result.InputTbl[4],"InputMinCurbHeight =");
-    line += CheckValueToInsert(result.InputTbl[5],"InputMaxCurbLength =");
-    line += CheckValueToInsert(result.InputTbl[6],"InputUnitsConv =");
+	var line = "InputStep = " + result.InputTbl[0] + ";\n"
+	line += "InputCurbWidth = " + result.InputTbl[1] + ";\n"
+	line += "InputCurbHeight = " + result.InputTbl[2] + ";\n"
+	line += "InputCurbAngle = " + result.InputTbl[3] + ";\n"
+	line += "InputMinCurbHeight = " + result.InputTbl[4] + ";\n"
+	line += "InputMaxCurbLength = " + result.InputTbl[5] + ";\n"
+	line += "InputunitsConv = " + result.InputTbl[6] + ";\n"
 	thefile.Open(SFile.WriteOnly);
 	thefile.Write(line);
 	thefile.Close();
 
+	
 	var unitsConv = result.InputTbl[6];
 	return {
 			"Step": result.InputTbl[0]*unitsConv
