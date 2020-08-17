@@ -1,5 +1,12 @@
 var debug = false;
 
+/**
+ * Function to compute the angular step in degrees according to the settings dialog box
+ * @param {number} nbSections The number of sections
+ * @param {number} minAngle The minimum angle
+ * @param {number} maxAngle The maximum angle
+ * @returns {number} The angular step
+ */
 function ComputeAngularSteps(nbSections, minAngle, maxAngle)
 {
     if (nbSections > 1)
@@ -10,6 +17,14 @@ function ComputeAngularSteps(nbSections, minAngle, maxAngle)
     return step;
 }
 
+/**
+ * Function to rotate the tank mesh and the rod (Euler Y>X>Z)
+ * @param {SPoly} mesh The tank mesh
+ * @param {SMultiline} rod The multiline standing for the rod
+ * @param {number} angleX The angle around X' in degrees
+ * @param {number} angleY The angle around Y in degrees
+ * @returns {SPoly, SMultiline} The rotated mesh and rod
+ */
 function RotateBoat(mesh, rod, angleX, angleY)
 {
     var rotMesh = SPoly.New(mesh);
@@ -35,6 +50,13 @@ function RotateBoat(mesh, rod, angleX, angleY)
     return {rotMesh:rotMesh, rotRod:rotRod }
 }
 
+/**
+ * Function to initialize a rod
+ * @param {number} step_1stHeight The 1rst height
+ * @param {number} step_ The step between each level
+ * @param {number} step_NbSections The number of levels
+ * @returns {SMultiline} The rod
+ */
 function ComputeRod(step_1stHeight, step_, step_NbSections)
 {
     var rod = SMultiline.New();
@@ -47,6 +69,11 @@ function ComputeRod(step_1stHeight, step_, step_NbSections)
     return rod;
 }
 
+/**
+ * Function to convert the rod in an array of elevations
+ * @param {SMultiline} rod The rod
+ * @returns {number[]} The elevations table
+ */
 function ConvertRod(rod)
 {
     var elevationList = new Array();
