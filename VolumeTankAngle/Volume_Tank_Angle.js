@@ -1,30 +1,33 @@
-var debug=false;
+var debug = false;
 
-function ComputeAngularSteps(nbSections,minAngle, maxAngle){
-    if (nbSections>1)
-        var step = (maxAngle-minAngle)/(nbSections-1);
+function ComputeAngularSteps(nbSections, minAngle, maxAngle)
+{
+    if (nbSections > 1)
+        var step = (maxAngle - minAngle) / (nbSections - 1);
     else
-        var step=361;
+        var step = 361;
 
     return step;
 }
 
-function RotateBoat(mesh,rod,angleX,angleY){
-    var rotMesh=SPoly.New(mesh);
-    var rotRod=SMultiline.New(rod);
-    var matrix=SMatrix.New();
+function RotateBoat(mesh, rod, angleX, angleY)
+{
+    var rotMesh = SPoly.New(mesh);
+    var rotRod = SMultiline.New(rod);
+    var matrix = SMatrix.New();
 
     //Y>X>Z + no translation (rotations around origin)
-    matrix.InitRot(angleY,angleX,0,SMatrix.DEGREE,SMatrix.OrderYXZ,SPoint.New(0,0,0));
+    matrix.InitRot(angleY, angleX, 0, SMatrix.DEGREE, SMatrix.OrderYXZ, SPoint.New(0,0,0));
 
     rotMesh.ApplyTransformation(matrix);
     rotRod.ApplyTransformation(matrix);
 
-    if(debug){
-        rotRod.SetName("angY="+angleY+" angX="+angleX);
+    if(debug)
+    {
+        rotRod.SetName("angY = " + angleY + " angX = " + angleX);
         rotRod.AddToDoc();
         rotRod.SetVisibility(false);
-        rotMesh.SetName("angY="+angleY+" angX="+angleX);
+        rotMesh.SetName("angY = " + angleY + " angX = " + angleX);
         rotMesh.AddToDoc();
         rotMesh.SetVisibility(false);
     }
@@ -32,30 +35,35 @@ function RotateBoat(mesh,rod,angleX,angleY){
     return {rotMesh:rotMesh, rotRod:rotRod }
 }
 
-function ComputeRod(step_1stHeight, step_,step_NbSections){
-    var rod=SMultiline.New();
+function ComputeRod(step_1stHeight, step_, step_NbSections)
+{
+    var rod = SMultiline.New();
 
-    for(var height=step_1stHeight; height<= step_*(step_NbSections); height=height+step_)
+    for(var height = step_1stHeight ; height <= step_*(step_NbSections) ; height = height + step_)
     {
-        rod.InsertLast(SPoint.New(0,0,height),0.00001);
+        rod.InsertLast(SPoint.New(0, 0, height), 0.00001);
     }
 
     return rod;
 }
 
-function ConvertRod(rod){
-    var elevationList=new Array();
+function ConvertRod(rod)
+{
+    var elevationList = new Array();
 
-    for(var indexRod=0; indexRod<rod.GetNumber();indexRod++){
+    for(var indexRod = 0; indexRod < rod.GetNumber(); indexRod++)
+    {
         elevationList.push(rod.GetPoint(indexRod).GetZ());
     }
 
-    if(debug)print(elevationList);
+    if(debug)
+        print(elevationList);
 
     return elevationList;
 }
 
-function main(){
+function main()
+{
     // Select the mesh
     var myMesh = SPoly.FromSel()[0];
 
@@ -64,7 +72,7 @@ function main(){
         var myDialog = SDialog.New('Settings');
 
         // add a line to enter the path of the report
-        myDialog.AddLine( 'Enter the path where to create the report', true,Array(),TempPath()+'report_volume.csv');
+        myDialog.AddLine( 'Enter the path where to create the report', true, Array(), TempPath() + 'report_volume.csv');
 
         // add a title to the column
         myDialog.AddLine('Rotate around Y axis (degrees)', false, {'css':'font-weight: bold'});
@@ -111,33 +119,33 @@ function main(){
         var myCSV = "AngleY (deg); AngleX (deg); Height (m); Volume Below (m3); Volume Above (m3)\n";
         
         //compute the cubature
-        var stepY=ComputeAngularSteps(rotateY_NbSections,rotateY_1stAngle,rotateY_MaxAngle);
-        var stepX=ComputeAngularSteps(rotateX_NbSections,rotateX_1stAngle,rotateX_MaxAngle);
+        var stepY = ComputeAngularSteps(rotateY_NbSections, rotateY_1stAngle, rotateY_MaxAngle);
+        var stepX = ComputeAngularSteps(rotateX_NbSections, rotateX_1stAngle, rotateX_MaxAngle);
 
-        var ii=1;
-        var zenith=SVector.New(0,0,1);
+        var ii = 1;
+        var zenith = SVector.New(0,0,1);
 
-        for(var angleY=rotateY_1stAngle; angleY<=rotateY_MaxAngle; angleY=angleY+stepY)
+        for(var angleY = rotateY_1stAngle; angleY <= rotateY_MaxAngle; angleY = angleY + stepY)
         {
-            for (var angleX=rotateX_1stAngle; angleX<=rotateX_MaxAngle; angleX=angleX+stepX)
+            for (var angleX = rotateX_1stAngle; angleX <= rotateX_MaxAngle; angleX = angleX + stepX)
             {		
                 //progress bar
-                print(((ii++)+"/"+(rotateX_NbSections*rotateY_NbSections)));	
+                print(((ii++) + "/" + (rotateX_NbSections  *rotateY_NbSections)));	
 
-                var myRod=ComputeRod(step_1stHeight, step_,step_NbSections);
-                var rotResult=RotateBoat(myMesh,myRod,angleX,angleY);
-                var currElevationList=ConvertRod(rotResult.rotRod);
-                var iiResult = rotResult.rotMesh.VolumeFromElevation(currElevationList,zenith);
+                var myRod = ComputeRod(step_1stHeight, step_, step_NbSections);
+                var rotResult = RotateBoat(myMesh, myRod, angleX, angleY);
+                var currElevationList = ConvertRod(rotResult.rotRod);
+                var iiResult = rotResult.rotMesh.VolumeFromElevation(currElevationList, zenith);
                 
-                if(iiResult.ErrorCode==1)
+                if(iiResult.ErrorCode == 1)
                     throw new Error( "Error during computation" );
                 else
                 {
-                    for(var j=0;j<iiResult.ValueTbl.length;j++){
-                        myCSV += angleY + ";" + angleX + ";" + myRod.GetPoint(j).GetZ()+ ";" + iiResult.ValueTbl[j].VolumeUnder + ";"+ iiResult.ValueTbl[j].VolumeOver+";" + "\n" ;
+                    for(var j=0 ; j<iiResult.ValueTbl.length ; j++)
+                    {
+                        myCSV += angleY + ";" + angleX + ";" + myRod.GetPoint(j).GetZ()+ ";" + iiResult.ValueTbl[j].VolumeUnder + ";" + iiResult.ValueTbl[j].VolumeOver + ";" + "\n" ;
                     }
                 }
-
             }
         }
             
