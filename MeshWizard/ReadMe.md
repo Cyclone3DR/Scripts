@@ -6,7 +6,7 @@ By default all values are in MM, however you can adjust them using the scaleFact
 
 To use this script, simply select the clouds and launch it. 
 
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshingWizard/ScreenShot1.png "screenshot1")
+![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/ScreenShot1.png "screenshot1")
 
 # Download Files
 
