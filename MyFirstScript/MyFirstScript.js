@@ -37,7 +37,7 @@ function openMyproject(iName)
 
     if (isOpen == 1)
     {
-        ErrorMessage("An error occured. Impossible to open the 3DR file."); // print an error message if no success
+        ErrorMessage("An error occurred. Impossible to open the 3DR file."); // print an error message if no success
     }
     else
     {
@@ -50,14 +50,14 @@ function openMyproject(iName)
  * @returns {SCloud} 
  */
 
-function selectCloud() 
+function clickCloud() 
 {
     print("\nSelect a point cloud."); // Instruction
     var selectedCloud = SCloud.FromClick(); // Click to select a point cloud in the scene
 
     if (selectedCloud.ErrorCode != 0) 
     {
-        ErrorMessage("An error occured. No cloud has been selected."); // print an error message if no success
+        ErrorMessage("An error occurred. No cloud has been selected."); // print an error message if no success
     }
     else 
     {
@@ -74,7 +74,7 @@ function selectCloud()
 
 function createsimpleMesh(iCloud)
 {
-    // Definition of the 3D MESH basic parameters: defined by the function
+    // Definition of the 3D MESH basic parameters: used by the function
     var newMesh = SPoly.New(); // creation of new object 
     var deviationError = 0; // deviation error. 0 means that deviation error is not used
     var miniaverageDist = 0.05; // average distance between points in current distance unit
@@ -93,7 +93,7 @@ function createsimpleMesh(iCloud)
     }
     else
     {
-        ErrorMessage("An error occured. No mesh was created.");
+        ErrorMessage("An error occurred. No mesh was created.");
     }
 
 }
@@ -192,7 +192,7 @@ function extractsectionsalongZ(iMesh)
 
     if (sectionResult.ErrorCode == 1)
     {
-        ErrorMessage("An error occured during the extraction of planar sections.");
+        ErrorMessage("An error occurred during the extraction of planar sections.");
     }
     else
     {
@@ -222,7 +222,7 @@ function basicInspection(iMesh,iCloud)
     
     if (iInspection.ErrorCode == 1)
     {
-        ErrorMessage("An error occured during the inspection.");
+        ErrorMessage("An error occurred during the inspection.");
     }
     else
     {
@@ -231,7 +231,7 @@ function basicInspection(iMesh,iCloud)
         inspectedMesh.SetName("Inspected "+ iMesh.GetName());
         iMesh.SetVisibility(false); // to hide the original mesh
         print("\nInspection succeeded.");
-        return mesh;
+        return inspectedMesh;
     }
 }
 
@@ -273,7 +273,7 @@ function bestPlane(iCloud)
     }
     else
     {
-        ErrorMessage("An error occured. No best plane was extracted.");
+        ErrorMessage("An error occurred. No best plane was extracted.");
     }
 }
 
@@ -313,12 +313,12 @@ function colorandexportinObj(iMesh,iPath)
 var myfileName = GetOpenFileName("Select the file to open","3DR files (*.3dr)","C://"); // Define the path and the name of your file
 if(myfileName.length==0)
 {
-    ErrorMessage("Operation cancelled");
+    ErrorMessage("Operation canceled");
 }
 openMyproject(myfileName);
 
 // Step 2: click a cloud in the scene to launch the workflow
-var myCloud = selectCloud();
+var myCloud = clickCloud();
 
 // Step 3: create a basic mesh from the selected point cloud
 var myMesh = createsimpleMesh(myCloud);
@@ -339,7 +339,7 @@ var myPlane = bestPlane(myCloud);
 var exportPath = GetOpenFolder("Select folder to save the mesh to OBJ", "C:/"); // define the path of the folder to store the saved OBJ file
 if(exportPath.length==0)
 {
-    ErrorMessage("Operation cancelled");
+    ErrorMessage("Operation canceled");
 }
-colorandexportinObj(myInspection,exportPath); // the inspected mesh is choosen to texture the mesh with the inspection results and to export it in OBJ
+colorandexportinObj(myInspection,exportPath); // the inspected mesh is chosen to texture the mesh with the inspection results and to export it in OBJ
 
