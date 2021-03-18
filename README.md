@@ -1,7 +1,7 @@
 # Scripts for Cyclone 3DR
 
 Additional scripts are directly available in Cyclone 3DR as Favorite scripts under the Script group of the ribbon.
-This page contains other sample scripts for Cyclone 3DR software, https://leica-geosystems.com/products/laser-scanners/software/leica-cyclone/leica-cyclone-3dr
+This page contains other sample scripts: https://leica-geosystems.com/products/laser-scanners/software/leica-cyclone/leica-cyclone-3dr
 
 # Download Scripts
 
