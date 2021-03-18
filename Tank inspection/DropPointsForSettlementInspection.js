@@ -1,8 +1,7 @@
-//This script will create points at a radius in an angular increment on a mesh 
-//This script is useful for creating inspection points on a tank floor to inspect settlement
-//The origin of the tanks coordinate system is assumed to be on the bottom of the tank in the cetner of the tank
-//NOTE that if the Cyclone3DR file you are using this on has a Local Coordinate system active 
-// the transformation from that will not be applied and the projection will fail.
+// This script will create points at a given radius around a mesh 
+// This script is useful for creating inspection points on a tank floor to inspect settlement
+// The origin of the tanks coordinate system is assumed to be on the bottom of the tank in the center of the tank
+// Note: If a Local Coordinate system is active, the transformation will not be applied and the projection will fail.
 
 //Revision History
 //	4/1/2016 - changed scripto work with 2016 version

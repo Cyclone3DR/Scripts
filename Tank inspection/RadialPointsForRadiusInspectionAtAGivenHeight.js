@@ -1,10 +1,9 @@
-//This script will project points onto the wall of a tank at angular increments so that radial distance measurements can be taken.
-////This scrip is useful for creating radial measurements at a given height on a tank
-//The origin of the tanks coordinate system is assumed to be on the bottom of the tank in the cetner of the tank
-//NOTE that if the Cyclone3DR file you are using this on has a Local Coordinate system active 
-  // the transformation from that will not be applied and the projection will fail.
-//NOTE if the projection fails for given point (there is no mesh where teh point is projecting to) then the
-  //then the scrip will place a point on the opposite wall of the tank and you'll end up with two points.  
+// This script will project points onto the wall of a tank at angular increments so that radial distance measurements can be taken.
+// This scrip is useful for creating radial measurements at a given height on a tank
+// The origin of the tanks coordinate system is assumed to be on the bottom of the tank in the center of the tank
+// Note: If a Local Coordinate system is active, the transformation will not be applied and the projection will fail.
+// Note: if the projection fails for given point (there is no mesh where the point is projected) then the
+// then the scrip will place a point on the opposite wall of the tank and you'll end up with two points. 
 
 //Revision History
 // 	4/1/2016 - updated to work with 2016 version

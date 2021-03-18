@@ -15,6 +15,6 @@ You can download individual file using these links (for text file, right click o
 - [MeshWizard-slow.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/MeshWizard-slow.js)
 - [MeshWizard-normal.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/MeshWizard-normal.js)
 - [MeshWizard-fast.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/MeshWizard-fast.js)
-- [MeshWizard-General.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/MeshWizard-General.js)
+- [MeshWizard-General.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MeshWizard/MeshWizard_General.js)
 
 Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
