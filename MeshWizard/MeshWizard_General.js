@@ -54,7 +54,7 @@ function generateMeshWizard(inputs, meshingStrategy, scaleFactor)
 	}
 	if(meshingStrategy == 2)
 	{	//normal
-		mesh_pointSpacing = 2 * scaleFactor;
+		mesh_pointSpacing = 1.5 * scaleFactor;
 		refine_deviationError = 0.012 * scaleFactor;
 	}
 	if(meshingStrategy == 3)
