@@ -1,0 +1,95 @@
+﻿---
+# General
+ColumnLimit: 120
+
+# Brace wrapping options
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterControlStatement: true
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: true
+    AfterStruct: true
+    AfterUnion: true
+    AfterObjCDeclaration: true
+    AfterExternBlock: true
+    AfterCaseLabel: true
+    BeforeCatch: true
+    BeforeElse: false
+    BeforeElse : true
+    BeforeCatch : true
+    IndentBraces: false
+    SplitEmptyFunction: false
+    SplitEmptyRecord : false
+    BeforeLambdaBody : true
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+AccessModifierOffset: -4
+IndentCaseLabels: true
+NamespaceIndentation: None
+IndentPPDirectives: AfterHash
+
+# Spacing
+Cpp11BracedListStyle: false
+DerivePointerAlignment: false
+PointerAlignment: Left
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: Never
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesInContainerLiterals: false
+
+# Alignment
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
+AlignOperands: false
+AlignTrailingComments: false
+
+# Single line statement
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+
+# Breaking rules
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeInheritanceComma: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+
+# Penalties: This decide what order things should be done if a line is too long
+PenaltyBreakAssignment: 50
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 0
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 200
+PenaltyExcessCharacter: 10
+PenaltyReturnTypeOnItsOwnLine: 200
+
+# Misc
+FixNamespaceComments: true
+BinPackArguments: false
+BinPackParameters: false
+CompactNamespaces: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+KeepEmptyLinesAtTheStartOfBlocks: false
+MaxEmptyLinesToKeep: 1
+ReflowComments: false
+SortUsingDeclarations: true
