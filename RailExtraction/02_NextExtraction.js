@@ -13,19 +13,19 @@ function Extract(
 	var initialPt = _iPathLine.GetPoint(_iTrackData.Index);
 	var nextPt = _iPathLine.GetPoint(_iTrackData.Index+3);
 	var pathDirection = SVector.New(initialPt, nextPt);
-	pathDirection.SetNormed();
+	pathDirection.Normalize();
 	//--------------------------------------------------------------
 	// compute normal with the previous point
 	var ToRight = SVector.New(_iTrackData.LeftPt, _iTrackData.RightPt);
-	ToRight.SetNormed();
+	ToRight.Normalize();
 	var Normal = SVector.Cross( pathDirection, ToRight ); // from top to bot
-	Normal.SetNormed();
+	Normal.Normalize();
 	
 	{
 		//--------------------------------------------------------------
 		// compute translation to the right
 		var ToRight = SVector.Cross( Normal, pathDirection );
-		ToRight.SetNormed();
+		ToRight.Normalize();
 		ToRight.SetZ(0);
 		ToRight = ToRight.Mult(_iTrackData.RightWidth);
 		
@@ -33,7 +33,7 @@ function Extract(
 		// compute translation to the left
 		var ToLeft = SVector.New(ToRight);
 		ToLeft.Opposite();
-		ToLeft.SetNormed();
+		ToLeft.Normalize();
 		ToLeft.SetZ(0);
 		ToLeft = ToLeft.Mult(_iTrackData.LeftWidth);
 		
@@ -88,9 +88,9 @@ function Extract(
 	//--------------------------------------------------------------
 	// compute scalar product between the two new direction found
 	var firstDirection = SVector.New(_iTrackData.LeftPt, resultLeft.Point);
-	firstDirection.SetNormed();
+	firstDirection.Normalize();
 	var secDirection = SVector.New(_iTrackData.RightPt, resultRight.Point);
-	secDirection.SetNormed();
+	secDirection.Normalize();
 	
 	// scalar product
 	var scalarProduct = SVector.Dot(firstDirection, secDirection);
@@ -258,10 +258,10 @@ function NextTrack(
 		//--------------------------------------------------------------
 		// compute the new direction
 		var ptDirection = SVector.New(firstPt, lastPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		
 		var direction = _iTrackData.Direction;
-		direction.SetNormed();
+		direction.Normalize();
 		
 		//--------------------------------------------------------------
 		// Test if the new direction is valid 
@@ -326,7 +326,7 @@ function NextTrack(
 	{	
 		// last point
 		var ptDirection = SVector.New(firstPt, lastPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		ptDirection = ptDirection.Mult(TRANSLATION);
 		lastPt.Translate(ptDirection);
 		
@@ -341,7 +341,7 @@ function NextTrack(
 	{
 		// first point
 		var ptDirection = SVector.New(lastPt, firstPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		ptDirection = ptDirection.Mult(TRANSLATION);
 		firstPt.Translate(ptDirection);
 		
@@ -418,9 +418,9 @@ function ExtractClip(_iCloud, _iLine)
 	// check normal of the plane
 	// the normal of the plane must have nearly the same direction than the current line
 	var planeNormal = plane.GetNormal();
-	planeNormal.SetNormed();
+	planeNormal.Normalize();
 	var lineDirection = _iLine.GetNormal();
-	lineDirection.SetNormed();
+	lineDirection.Normalize();
 	
 	// scalar product
 	var scalarProduct = SVector.Dot(planeNormal, lineDirection);
@@ -549,10 +549,10 @@ function NextCatenary(
 		//--------------------------------------------------------------
 		// compute the new direction
 		var ptDirection = SVector.New(firstPt, lastPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		
 		var direction = _iTrackData.Direction;
-		direction.SetNormed();
+		direction.Normalize();
 		
 		//--------------------------------------------------------------
 		// Test if the new direction is valid 
@@ -597,7 +597,7 @@ function NextCatenary(
 	{	
 		// last point
 		var ptDirection = SVector.New(firstPt, lastPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		ptDirection = ptDirection.Mult(TRANSLATION);
 		lastPt.Translate(ptDirection);
 		
@@ -612,7 +612,7 @@ function NextCatenary(
 	{
 		// first point
 		var ptDirection = SVector.New(lastPt, firstPt);
-		ptDirection.SetNormed();
+		ptDirection.Normalize();
 		ptDirection = ptDirection.Mult(TRANSLATION);
 		firstPt.Translate(ptDirection);
 		

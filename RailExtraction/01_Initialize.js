@@ -60,7 +60,7 @@ function GetTrack(
 	// translate negatively the plane corresponding to the ground 
 	// to be sure to remove all the point under the ground
 	var planeNormal = plane.GetNormal();
-	planeNormal.SetNormed();
+	planeNormal.Normalize();
 	if ( SVector.Dot(planeNormal, SVector.New(0, 0, 1)) > 0) // if the plane normal is up
 		planeNormal.Opposite();
 	var TRANSLATION = C_SPHERE_RADIUS*0.5;
@@ -194,7 +194,7 @@ function InitializeTrackWithLine(
 	var nextPt = _iPathLine.GetPoint(_iPathIndex+3);
 	var pathDirection = SVector.New(initialPt, nextPt);
 	var translateDirection = SVector.Cross( pathDirection, SVector.New(0, 0, -1) );
-	translateDirection.SetNormed();
+	translateDirection.Normalize();
 	translateDirection = translateDirection.Mult(C_STACK_SPACING*C_STACK_TRACK_RATIOPOSITION);
 	if(_DEBUG==true)
 	{
