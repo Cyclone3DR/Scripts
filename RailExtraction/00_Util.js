@@ -63,7 +63,7 @@ function LoadCloud(_iFileName)
 	if(rshLoadCloud.CloudTbl.length != 1) 
 		throw new Error('There isn\'t only one cloud in the file: ' + _iFileName);
 	
-	rshLoadCloud.CloudTbl[0].SetRepresentationType(SCloud.SMOOTH);
+	rshLoadCloud.CloudTbl[0].SetCloudRepresentation(SCloud.CLOUD_SMOOTH);
 	rshLoadCloud.CloudTbl[0].SetColors(0, 0, 1);
 	rshLoadCloud.CloudTbl[0].AddToDoc();
 	return rshLoadCloud.CloudTbl[0];
