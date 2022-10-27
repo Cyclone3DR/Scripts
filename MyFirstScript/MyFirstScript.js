@@ -3,23 +3,22 @@
 // The goal of the script is to learn how to get started on scripting with Cyclone 3DR.
 // To get started, it is recommended to go through the script step by step.
 
-    // Step 1: Open a file
-    // Step 2: Select a point cloud
-    // Step 3: Create a mesh
-    // Step 4: Create a dialog box with user inputs to customize the mesh
-    // Step 5: Extract planar sections along the vertical direction
-    // Step 6: Launch an inspection
-    // Step 7: Extract a geometry and a label
-    // Step 8: Texture and export a mesh in OBJ format
+// Step 1: Open a file
+// Step 2: Select a point cloud
+// Step 3: Create a mesh
+// Step 4: Create a dialog box with user inputs to customize the mesh
+// Step 5: Extract planar sections along the vertical direction
+// Step 6: Launch an inspection
+// Step 7: Extract a geometry and a label
+// Step 8: Texture and export a mesh in OBJ format
 
 /**
  * Helper function to show an error message and throw an error that will stop the script
  * @param {string} iMessage the message to display
  */
-function ErrorMessage(iMessage)
-{
+function ErrorMessage(iMessage) {
     var myDlg = SDialog.New("Error Message");
-	myDlg.AddLine(iMessage, false, Array(), 1);
+    myDlg.AddLine(iMessage, false, {}, 1);
     myDlg.Execute();
 
     throw new Error(iMessage);
@@ -31,17 +30,14 @@ function ErrorMessage(iMessage)
  * @param {String} iName path and name of the 3DR file
  */
 
-function openMyproject(iName)
-{
+function openMyproject(iName) {
     var isOpen = OpenDoc(iName, true, true).ErrorCode; // 3DR document is cleared and the defined 3DR project is opened 
 
-    if (isOpen == 1)
-    {
+    if (isOpen == 1) {
         ErrorMessage("An error occurred. Impossible to open the 3DR file."); // print an error message if no success
     }
-    else
-    {
-        print("Your project "+ iName +" has been opened."); // throw a message to inform the opening of the file
+    else {
+        print("Your project " + iName + " has been opened."); // throw a message to inform the opening of the file
     }
 }
 
@@ -50,17 +46,14 @@ function openMyproject(iName)
  * @returns {SCloud} 
  */
 
-function clickCloud() 
-{
+function clickCloud() {
     print("\nSelect a point cloud."); // Instruction
     var selectedCloud = SCloud.FromClick(); // Click to select a point cloud in the scene
 
-    if (selectedCloud.ErrorCode != 0) 
-    {
+    if (selectedCloud.ErrorCode != 0) {
         ErrorMessage("An error occurred. No cloud has been selected."); // print an error message if no success
     }
-    else 
-    {
+    else {
         print("Point Cloud " + selectedCloud.Cloud.GetName() + " has been selected for meshing."); // print the name of the cloud
     }
     return selectedCloud.Cloud;
@@ -72,27 +65,24 @@ function clickCloud()
  * @returns {SPoly} the mesh created from the input point cloud
  */
 
-function createsimpleMesh(iCloud)
-{
+function createsimpleMesh(iCloud) {
     // Definition of the 3D MESH basic parameters: used by the function
     var newMesh = SPoly.New(); // creation of new object 
     var deviationError = 0; // deviation error. 0 means that deviation error is not used
     var miniaverageDist = 0.05; // average distance between points in current distance unit
     var meshHoles = SPoly.ALL_CLOSED; // all the detected holes are closed in this case
-    var sizeHoles = miniaverageDist*3; // size of the holes in current distance unit
+    var sizeHoles = miniaverageDist * 3; // size of the holes in current distance unit
 
-    var iResult = SPoly.Direct3DMesh(iCloud,deviationError,miniaverageDist,meshHoles,sizeHoles); // basic 3D MESH function
-    
-    if (iResult.ErrorCode ==0)
-    {
+    var iResult = SPoly.Direct3DMesh(iCloud, deviationError, miniaverageDist, meshHoles, sizeHoles); // basic 3D MESH function
+
+    if (iResult.ErrorCode == 0) {
         newMesh = iResult.Poly;
         iCloud.SetVisibility(false); // input cloud is hidden   
         newMesh.AddToDoc(); // necessary step to add the mesh from the script into the project (displayed by default)
         print("\nThe mesh is created.");
         return newMesh; // the mesh is returned as the output 
     }
-    else
-    {
+    else {
         ErrorMessage("An error occurred. No mesh was created.");
     }
 
@@ -104,18 +94,16 @@ function createsimpleMesh(iCloud)
  * @returns {Number} step for the vertical planar sections
  */
 
-function customizeMesh(iMesh)
-{
+function customizeMesh(iMesh) {
     var myDialog = SDialog.New("Customize your mesh");
-    myDialog.AddLine("Parameters of the mesh\n", false, { 'align':'center','size' : 14 });
-    myDialog.AddLine("Name", true, { 'align':'left' },"MyNewMesh");
-    myDialog.AddLine("Color (R=Red or G=Green or B=Blue)", true, { 'align':'left' },"R");
-    myDialog.AddLine("Opacity (% from 0 to 100)", true, { 'align':'left' },"100");
+    myDialog.AddLine("Parameters of the mesh\n", false, { 'align': 'center', 'size': 14 });
+    myDialog.AddLine("Name", true, { 'align': 'left' }, "MyNewMesh");
+    myDialog.AddLine("Color (R=Red or G=Green or B=Blue)", true, { 'align': 'left' }, "R");
+    myDialog.AddLine("Opacity (% from 0 to 100)", true, { 'align': 'left' }, "100");
 
     var dialogResult = myDialog.Execute();
 
-    if ( dialogResult.ErrorCode == 0 ) 
-    {
+    if (dialogResult.ErrorCode == 0) {
         var values = dialogResult.InputTbl;
         var iName = values[0].toString(); // new name of the mesh 
         var iColor = values[1].toString(); // color of the mesh Red, Green or Blue
@@ -127,29 +115,24 @@ function customizeMesh(iMesh)
         {
             ErrorMessage("Wrong input for opacity.");
         }
-        else
-        {
-            iMesh.SetTransparency(iOpacity*255/100);
+        else {
+            iMesh.SetTransparency(iOpacity * 255 / 100);
             print("\nThe mesh " + iName + " opacity is " + iOpacity + "%.");
         }
 
-        if (iColor == 'R')
-        {
+        if (iColor == 'R') {
             print("The mesh " + iName + " is colored in RED.");
-            iMesh.SetColors(1,0,0);
+            iMesh.SetColors(1, 0, 0);
         }
-        else if (iColor == 'G')
-        {
+        else if (iColor == 'G') {
             print("The mesh " + iName + " is colored in GREEN.");
-            iMesh.SetColors(0,1,0);
+            iMesh.SetColors(0, 1, 0);
         }
-        else if (iColor == 'B')
-        {
+        else if (iColor == 'B') {
             print("The mesh " + iName + " is colored in BLUE.");
-            iMesh.SetColors(0,0,1);
+            iMesh.SetColors(0, 0, 1);
         }
-        else
-        {
+        else {
             print("\nWrong input for the color. The color of the mesh " + iName + " is unchanged.");
         }
     }
@@ -161,18 +144,16 @@ function customizeMesh(iMesh)
  * @returns {SMultiline[]} the set of multiline created
  */
 
-function extractsectionsalongZ(iMesh)
-{
+function extractsectionsalongZ(iMesh) {
     var iStep = 1; // default value of step of the section extraction
 
     var myDialog = SDialog.New("Extract planar sections along Z");
-    myDialog.AddLine("Distance between planar sections\n", false, { 'align':'center','size' : 10 });
-    myDialog.AddLine("Length of the step", true, { 'align':'left' },iStep.toString());
+    myDialog.AddLine("Distance between planar sections\n", false, { 'align': 'center', 'size': 10 });
+    myDialog.AddLine("Length of the step", true, { 'align': 'left' }, iStep.toString());
 
     var dialogResult = myDialog.Execute();
 
-    if (dialogResult.ErrorCode == 0 ) 
-    {
+    if (dialogResult.ErrorCode == 0) {
         var values = dialogResult.InputTbl;
         var tempStepdistance = parseFloat(values[0]); // get distance for step
 
@@ -180,27 +161,23 @@ function extractsectionsalongZ(iMesh)
         {
             print("Wrong input for step length. Default step will be 1 in current distance unit.");
         }
-        else
-        {
+        else {
             iStep = tempStepdistance;
         }
     }
 
     var iPoint = iMesh.GetBoundingBox().LowPoint; // get lowest point of the mesh
-    var iVector = SVector.New(0,0,1); // vertical direction is defined
-    var sectionResult = iMesh.SectionPlane(iVector,iPoint,-1,iStep); // function for planar section
+    var iVector = SVector.New(0, 0, 1); // vertical direction is defined
+    var sectionResult = iMesh.SectionPlane(iVector, iPoint, -1, iStep); // function for planar section
 
-    if (sectionResult.ErrorCode == 1)
-    {
+    if (sectionResult.ErrorCode == 1) {
         ErrorMessage("An error occurred during the extraction of planar sections.");
     }
-    else
-    {
+    else {
         var i = 0;
-        for (i = 0 ; i < sectionResult.MultiTbl.length ; i++)
-        {
+        for (i = 0; i < sectionResult.MultiTbl.length; i++) {
             var temp = sectionResult.MultiTbl[i];
-            temp.SetName("Section "+ i);
+            temp.SetName("Section " + i);
             temp.AddToDoc();
         }
         print("\nPlanar sections are extracted.");
@@ -215,20 +192,17 @@ function extractsectionsalongZ(iMesh)
  * @returns {SPoly} the mesh with inspection
  */
 
-function basicInspection(iMesh,iCloud)
-{
+function basicInspection(iMesh, iCloud) {
     var maxDist = 1; // max distance of the inspection
-    var iInspection = iMesh.Compare(iCloud,maxDist,1,true,0,90,true); // Mesh with inspection
-    
-    if (iInspection.ErrorCode == 1)
-    {
+    var iInspection = iMesh.Compare(iCloud, maxDist, 1, true, 0, 90, true); // Mesh with inspection
+
+    if (iInspection.ErrorCode == 1) {
         ErrorMessage("An error occurred during the inspection.");
     }
-    else
-    {
-		var inspectedMesh = iInspection.Poly;
+    else {
+        var inspectedMesh = iInspection.Poly;
         inspectedMesh.AddToDoc();
-        inspectedMesh.SetName("Inspected "+ iMesh.GetName());
+        inspectedMesh.SetName("Inspected " + iMesh.GetName());
         iMesh.SetVisibility(false); // to hide the original mesh
         print("\nInspection succeeded.");
         return inspectedMesh;
@@ -242,37 +216,34 @@ function basicInspection(iMesh,iCloud)
  * @returns {SPlane} the best plane
  */
 
-function bestPlane(iCloud)
-{
+function bestPlane(iCloud) {
     // Define the parameters of the Best Plane Extraction
-    var eliminatePoints = iCloud.GetNumber()*0.1; // 10% of the points are not considered to extract the best plane
+    var eliminatePoints = iCloud.GetNumber() * 0.1; // 10% of the points are not considered to extract the best plane
     var force = SCloud.PLANE_FORCE_NOTHING; // no forced constraint
-    var result = iCloud.BestPlane(eliminatePoints,force); // computation of a basic best plane
+    var result = iCloud.BestPlane(eliminatePoints, force); // computation of a basic best plane
 
-    if (result.ErrorCode == 0)
-    {
+    if (result.ErrorCode == 0) {
         // Plane is added in the document
         var myPlane = result.Plane;
-        myPlane.SetName(iCloud.GetName()+" Best Plane");
+        myPlane.SetName(iCloud.GetName() + " Best Plane");
         myPlane.AddToDoc();
         print("\nExtraction of Best Plane of " + iCloud.GetName() + " succeeded.");
-        
+
         // 2nd step of the function to create a label with the surface and normal direction of the plane
         var planeSurface = myPlane.GetSurface(); // surface of the best plane
         var planeNormal = myPlane.GetNormal(); // normal of the best plane
         var planePoint = myPlane.GetCenter(); // center of the best plane
-        
-        var iLabel = SLabel.New(4,1); // creation of a label
+
+        var iLabel = SLabel.New(4, 1); // creation of a label
         iLabel.SetColType([SLabel.Measure]); // column that contains measures
-        iLabel.SetLineType([SLabel.Surface, SLabel.NormalX,SLabel.NormalY,SLabel.NormalZ,]); // lines are surface and directions of the normal vector
-        iLabel.SetCol(0,[planeSurface,planeNormal.GetX(),planeNormal.GetY(),planeNormal.GetZ()]);
+        iLabel.SetLineType([SLabel.Surface, SLabel.NormalX, SLabel.NormalY, SLabel.NormalZ,]); // lines are surface and directions of the normal vector
+        iLabel.SetCol(0, [planeSurface, planeNormal.GetX(), planeNormal.GetY(), planeNormal.GetZ()]);
         iLabel.AttachToPoint(planePoint); // label is attached to the center of the best plane
         iLabel.AddToDoc();
 
         return myPlane;
     }
-    else
-    {
+    else {
         ErrorMessage("An error occurred. No best plane was extracted.");
     }
 }
@@ -283,26 +254,22 @@ function bestPlane(iCloud)
  * @param {String} iPath path to save the OBJ file
  */
 
-function colorandexportinObj(iMesh,iPath)
-{
+function colorandexportinObj(iMesh, iPath) {
     // texture the mesh from its current representation colors
-    var iConvertResult = SImage.ConvertColorToTexture(iMesh,32,true);
-    if (iConvertResult.ErrorCode != 0)
-    {
+    var iConvertResult = STexturingUtil.ConvertColorToTexture(iMesh, 32, true);
+    if (iConvertResult.ErrorCode != 0) {
         ErrorMessage("Converting color to textured mesh failed.");
     }
 
     // export to OBJ
-    var filePath = iPath + "//" + iMesh.GetName()+".obj";
+    var filePath = iPath + "//" + iMesh.GetName() + ".obj";
     var iMatrix = SMatrix.FromActiveCS();
-    var iResult = iMesh.Save(filePath,false,iMatrix);
+    var iResult = iMesh.Save(filePath, false, iMatrix);
 
-    if (iResult.ErrorCode == 0)
-    {
+    if (iResult.ErrorCode == 0) {
         print("\nThe export of the object " + iMesh.GetName() + " succeeded.");
     }
-    else
-    {
+    else {
         ErrorMessage("The export of the object " + iMesh.GetName() + " failed.");
     }
 }
@@ -310,9 +277,8 @@ function colorandexportinObj(iMesh,iPath)
 // EXECUTION OF THE FULL SCRIPT
 
 // Step 1: open an existing 3DR file
-var myfileName = GetOpenFileName("Select the file to open","3DR files (*.3dr)","C://"); // Define the path and the name of your file
-if(myfileName.length==0)
-{
+var myfileName = GetOpenFileName("Select the file to open", "3DR files (*.3dr)", "C://"); // Define the path and the name of your file
+if (myfileName.length == 0) {
     ErrorMessage("Operation canceled");
 }
 openMyproject(myfileName);
@@ -324,22 +290,21 @@ var myCloud = clickCloud();
 var myMesh = createsimpleMesh(myCloud);
 
 // Step 4: customize the mesh from user parameters
-customizeMesh(myMesh); 
+customizeMesh(myMesh);
 
 // Step 5: extract planar sections along Z - step is defined by user
-var mySections = extractsectionsalongZ(myMesh); 
+var mySections = extractsectionsalongZ(myMesh);
 
 // Step 6: compare the selected point cloud to the created mesh 
-var myInspection = basicInspection(myMesh,myCloud); 
+var myInspection = basicInspection(myMesh, myCloud);
 
 // Step 7 create a best plane and a label from selected point cloud
-var myPlane = bestPlane(myCloud); 
+var myPlane = bestPlane(myCloud);
 
 // Step 8:
 var exportPath = GetOpenFolder("Select folder to save the mesh to OBJ", "C:/"); // define the path of the folder to store the saved OBJ file
-if(exportPath.length==0)
-{
+if (exportPath.length == 0) {
     ErrorMessage("Operation canceled");
 }
-colorandexportinObj(myInspection,exportPath); // the inspected mesh is chosen to texture the mesh with the inspection results and to export it in OBJ
+colorandexportinObj(myInspection, exportPath); // the inspected mesh is chosen to texture the mesh with the inspection results and to export it in OBJ
 

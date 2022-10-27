@@ -12,21 +12,21 @@
 var theDialog = SDialog.New('Settlement Points');
 theDialog.AddLine("Enter the radius and number of points", false);
 theDialog.AddLine("Radius", true);
-theDialog.AddLine("Number of points", true);   
-        
-    
-var result = theDialog.Execute();
-if (result.ErrorCode == 0) { // result == 0 means the user click on the "OK" button
+theDialog.AddLine("Number of points", true);
+
+
+var resultExec = theDialog.Execute();
+if (resultExec.ErrorCode == 0) { // resultExec.ErrorCode == 0 means the user click on the "OK" button
     // Retrieve output values
-    var values = result.InputTbl; // InputTbl contains all the content of the input box
+    var values = resultExec.InputTbl; // InputTbl contains all the content of the input box
     var radius = parseFloat(values[0]);  //use parseFloat() to return a floating point number from the string
     //if there is no value entered for the radius, wait while we ask the user to click a point to define it
     if (isNaN(radius)) {
         var clickedPoint = GetRadiusByClick();
         //printP(clickedPoint);
-        zeroPoint = SPoint.New(0, 0, 0);
+        var zeroPoint = SPoint.New(0, 0, 0);
         radius = Calculate3DDistance(zeroPoint, clickedPoint);//figure out the radius clicked.
-        radius = radius.toFixed(3); //we don't need 12 decimal places here
+        radius = parseFloat(radius.toFixed(3)); //we don't need 12 decimal places here
     }
     var numberOfPoints = parseFloat(values[1]);
 }
@@ -39,7 +39,7 @@ if (testForMesh.length != 1) {
 }
 var theMesh = testForMesh[0]; //mesh is there, grab it
 
-var initialPoint = SPoint.New(radius, 0, 0 ); //set up first point to project
+var initialPoint = SPoint.New(radius, 0, 0); //set up first point to project
 var angleBetweenRadials = 360 / numberOfPoints;
 
 
@@ -51,8 +51,8 @@ var projectionDirection = SVector.New(0, 0, 1) //ponits projected onto mesh in Z
 //make a folder to put the points in
 var folderName = 'Geometric Group' + '/' + 'Drop points for settlement inspection';
 
-for (i = 0; i < numberOfPoints; i++) {  //project each point to the mesh
-  
+for (var i = 0; i < numberOfPoints; i++) {  //project each point to the mesh
+
     var result = theMesh.ProjDir(initialPoint, projectionDirection, false);  //project point to the mesh in Z direction
     switch (result.ErrorCode) {
         case 0:
@@ -61,7 +61,7 @@ for (i = 0; i < numberOfPoints; i++) {  //project each point to the mesh
             var count = i + 1;
             thePoint.SetName('Radial ' + count);
             thePoint.MoveToGroup(folderName, false);
-            
+
             // write the point out
             outputString += thePoint.GetName() + ',' + thePoint.GetX().toString() + ',' + thePoint.GetY().toString() + ',' + thePoint.GetZ().toString() + '\n';
 
@@ -72,12 +72,12 @@ for (i = 0; i < numberOfPoints; i++) {  //project each point to the mesh
         case 2:
             throw new Error('an error occured');
             break;
-        }
-   
+    }
+
     //calculate the next point
     RotatePointAroundZ(initialPoint, angleBetweenRadials);
 
-    
+
 }
 
 WriteDataToFile(outputString);
@@ -86,23 +86,23 @@ WriteDataToFile(outputString);
 function RotatePointAroundZ(pointToRotate, rotationAmountInDegrees) {
 
     var rotationAxisPoint = SPoint.New(0, 0, 0);//this function rorates around the origin
-    var rotationAxisVector = SVector.New(0, 0,-1);//this funciton rotates around Z clockwise
+    var rotationAxisVector = SVector.New(0, 0, -1);//this funciton rotates around Z clockwise
     var theMatrix = SMatrix.New(rotationAxisPoint, rotationAxisVector, rotationAmountInDegrees, SMatrix.DEGREE);
 
     return pointToRotate.ApplyTransformation(theMatrix);
 
 }
- 
-  
+
+
 function WriteDataToFile(stringToWrite) {
 
     // get the file path from user
-    var fileName = GetSaveFileName( "Save file", "Text files (*.csv)");
+    var fileName = GetSaveFileName("Save file", "Text files (*.csv)");
 
     // open the file
     var file = SFile.New(fileName);
     //var openMode = QIODevice.OpenMode(QIODevice.WriteOnly, QIODevice.Text, QIODevice.Truncate);
-    if (!file.Open( SFile.WriteOnly ))
+    if (!file.Open(SFile.WriteOnly))
         throw new Error('Failed to write file:' + fileName); // test if we can open the file
 
     // write data inside the file

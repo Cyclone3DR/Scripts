@@ -16,8 +16,8 @@ var C_STACK_TRACK_RATIOPOSITION = 0.333;
 
 
 // dimension of the extracted objects
-var C_SPHERE_RADIUS = C_STACK_SPACING*0.33; // ~50cm
-			// if the sphere radius is important -> the ground will be better extracted (best plane)
-			// if the sphere radius is small -> less noise (0.5 seems to be a good choise)
+var C_SPHERE_RADIUS = C_STACK_SPACING * 0.33; // ~50cm
+// if the sphere radius is important -> the ground will be better extracted (best plane)
+// if the sphere radius is small -> less noise (0.5 seems to be a good choise)
 
-var C_STACK_HEIGHT_TO_DELETE = C_STACK_HEIGHT*0.33; // ~5cm
+var C_STACK_HEIGHT_TO_DELETE = C_STACK_HEIGHT * 0.33; // ~5cm

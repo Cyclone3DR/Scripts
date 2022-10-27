@@ -14,10 +14,10 @@ var theDialog = SDialog.New('Radials');
 theDialog.AddLine("Enter the height for the radials", false);
 theDialog.AddLine("Z Height", true);
 theDialog.AddLine("Number of radials", true);
-var result = theDialog.Execute();
-if (result.ErrorCode == 0){ // result == 0 means the user click on the "OK" button
+var resultExec = theDialog.Execute();
+if (resultExec.ErrorCode == 0){ // resultExec == 0 means the user click on the "OK" button
     // Retrieve output values
-    var values = result.InputTbl; // InputTbl contains all the content of the input box
+    var values = resultExec.InputTbl; // InputTbl contains all the content of the input box
     var radialHeight = parseFloat(values[0]);  //use parseFloat() to return a floating point number from the string
     //if there is no data entered for the radial height, wait while we ask the user to click a point
     if (isNaN(radialHeight)) {
@@ -25,7 +25,7 @@ if (result.ErrorCode == 0){ // result == 0 means the user click on the "OK" butt
         //printP(clickedPoint);
        
         radialHeight = clickedPoint.GetZ();
-        radialHeight = radialHeight.toFixed(3);  //we don't need 12 decimals for this.
+        radialHeight = parseFloat(radialHeight.toFixed(3));  //we don't need 12 decimals for this.
         print(radialHeight);
     }
     var numberOfRadials = parseFloat(values[1]);
@@ -59,7 +59,7 @@ var angleBetweenRadials = 360 / numberOfRadials;
 var outputString = 'Z ' + radialHeight + ' Radials ' + 'at ' + angleBetweenRadials + ' degree increments \n';
 outputString += originPoint.GetName() + ',' + originPoint.GetX().toString() + ',' + originPoint.GetY().toString() + ',' + originPoint.GetZ().toString() + '\n';
 
-for (i = 0; i < numberOfRadials; i++) {  //project a point at each angle 
+for (var i = 0; i < numberOfRadials; i++) {  //project a point at each angle 
     var result = theMesh.ProjDir(originPoint, initialDirection, true); 
     switch (result.ErrorCode) 
     {

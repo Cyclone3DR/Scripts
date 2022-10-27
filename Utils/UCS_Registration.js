@@ -4,14 +4,14 @@
 //3-Run the script
 
 //Inputs selection
-var inputs=SComp.FromSel();
+var inputs = SComp.FromSel();
 
 //Compute the matrix
-var matCurrentUCS=SMatrix.FromActiveCS();
-var matMovement=SMatrix.New();
+var matCurrentUCS = SMatrix.FromActiveCS();
+var matMovement = SMatrix.New();
 matMovement.InitInverse(matCurrentUCS);
 
 //Move the inputs
-for(var i=0;i<inputs.length;i++){
+for (var i = 0; i < inputs.length; i++) {
     inputs[i].ApplyTransformation(matMovement);
 }

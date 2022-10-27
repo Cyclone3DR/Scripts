@@ -37,7 +37,7 @@ function main()
 
 	//--------------------------------------------------------------
 	// Compute the track direction with the first point of the trajectory
-	result = InitializeTrackWithLine(cloudToTreat, linePath, 0);
+	var result = InitializeTrackWithLine(cloudToTreat, linePath, 0);
 
 	var TrackData = new Array();
 	TrackData.push(result);
@@ -137,8 +137,3 @@ function main()
 }
 
 main(); // call of the main function
-
-
-
-
-

@@ -14,7 +14,7 @@ Include(CurrentScriptPath() + "/MeshWizard_General.js");
 
 //select all the point clouds and run the script
 var inputs = SCloud.FromSel();
-if(inputs.length == 0) throw new Error("No Input");
+if (inputs.length == 0) throw new Error("No Input");
 
 //compute the scale if unit is not MM
 //adjust parameter depending of the unit in the document (by default, parameter are define for MM)
@@ -26,14 +26,12 @@ var output = generateMeshWizard(inputs, 1, scaleFactor);
 //treeview management
 var outputName = inputs[0].GetName();
 var nbPointsOfMainInput = inputs[0].GetNumber();
-for(var iinputs = 0; iinputs < inputs.length; iinputs++)
-{
-	inputs[iinputs].SetVisibility(false);
-	if(inputs[iinputs].GetNumber() > nbPointsOfMainInput)
-	{
-		outputName = inputs[iinputs].GetName();
-		nbPointsOfMainInput = inputs[iinputs].GetNumber();
-	}
+for (var iinputs = 0; iinputs < inputs.length; iinputs++) {
+    inputs[iinputs].SetVisibility(false);
+    if (inputs[iinputs].GetNumber() > nbPointsOfMainInput) {
+        outputName = inputs[iinputs].GetName();
+        nbPointsOfMainInput = inputs[iinputs].GetNumber();
+    }
 }
 
 //add the result
