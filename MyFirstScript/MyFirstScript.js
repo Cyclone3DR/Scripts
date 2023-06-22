@@ -116,7 +116,7 @@ function customizeMesh(iMesh) {
             ErrorMessage("Wrong input for opacity.");
         }
         else {
-            iMesh.SetTransparency(iOpacity * 255 / 100);
+            iMesh.SetTransparency(Math.round(iOpacity * 255 / 100));
             print("\nThe mesh " + iName + " opacity is " + iOpacity + "%.");
         }
 
@@ -220,7 +220,7 @@ function bestPlane(iCloud) {
     // Define the parameters of the Best Plane Extraction
     var eliminatePoints = iCloud.GetNumber() * 0.1; // 10% of the points are not considered to extract the best plane
     var force = SCloud.PLANE_FORCE_NOTHING; // no forced constraint
-    var result = iCloud.BestPlane(eliminatePoints, force); // computation of a basic best plane
+    var result = iCloud.BestPlane(Math.round(eliminatePoints), force); // computation of a basic best plane
 
     if (result.ErrorCode == 0) {
         // Plane is added in the document

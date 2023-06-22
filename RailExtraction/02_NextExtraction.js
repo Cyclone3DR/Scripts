@@ -199,7 +199,7 @@ function NextTrack(
         // Create a plane with the previous normal
 
         var result = cloudTrack.BestPlane(
-            cloudTrack.GetNumber() * 0.5 // [in]	NbPointElim	The number of points to eliminate. 
+            Math.round(cloudTrack.GetNumber() * 0.5) // [in]	NbPointElim	The number of points to eliminate. 
             // The worst points are eliminated. This number should not be greater than the total number of points -3
             , SCloud.PLANE_FORCE_NORMAL // [in] Force	Bit mask to know which parameter(s) are forced and do not need to be computed.
             // PLANE_FORCE_POINT (Force & PLANE_FORCE_POINT) Average point is forced (a plane passing by this point should be found)
@@ -226,7 +226,7 @@ function NextTrack(
         //--------------------------------------------------------------
         // compute a best line with this cloud to find the new direction
         result = cloudTrack.BestLine(
-            0.2 * cloudTrack.GetNumber() // [in]	NbPointElim	The number of points to eliminate. 
+            Math.round(0.2 * cloudTrack.GetNumber()) // [in]	NbPointElim	The number of points to eliminate. 
             // The worst points are eliminated. This number should not be greater than the total number of points -3
             //				, SCloud.LINE_FORCE_POINT // [in]	Force	Bit mask to know which parameter(s) are forced and do not need to be computed.
             //				//LINE_FORCE_POINT (Force & LINE_FORCE_POINT) Average point is forced (a line passing by this point should be found)
@@ -283,7 +283,7 @@ function NextTrack(
     //--------------------------------------------------------------
     // find the planar top part of the track
     var result = cloudTrack.BestPlane(
-        cloudTrack.GetNumber() * 0.5 // [in]	NbPointElim	The number of points to eliminate. 
+        Math.round(cloudTrack.GetNumber() * 0.5) // [in]	NbPointElim	The number of points to eliminate. 
         // The worst points are eliminated. This number should not be greater than the total number of points -3
         , SCloud.PLANE_FORCE_NORMAL // [in] Force	Bit mask to know which parameter(s) are forced and do not need to be computed.
         // PLANE_FORCE_POINT (Force & PLANE_FORCE_POINT) Average point is forced (a plane passing by this point should be found)

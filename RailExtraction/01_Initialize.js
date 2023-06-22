@@ -38,7 +38,7 @@ function GetTrack(
     if (_iDebug == true) {
         print("Points in sphere: " + cloudSphere.GetNumber());
     }
-    result = cloudSphere.BestPlane(cloudSphere.GetNumber() * GROUND_PER_CENT);
+    result = cloudSphere.BestPlane(Math.round(cloudSphere.GetNumber() * GROUND_PER_CENT));
 
     if (result.ErrorCode != 0)
         throw new Error("Impossible to do a best plane.");
@@ -85,7 +85,7 @@ function GetTrack(
 
     //--------------------------------------------------------------
     // compute a best line corresponding to the direction of the track
-    result = cloudTrack.BestLine(cloudTrack.GetNumber() * LINE_PER_CENT, SCloud.LINE_FORCE_DIRECTION, SPoint.New(), _iPathDirection);
+    result = cloudTrack.BestLine(Math.round(cloudTrack.GetNumber() * LINE_PER_CENT), SCloud.LINE_FORCE_DIRECTION, SPoint.New(), _iPathDirection);
 
     if (result.ErrorCode != 0) {
         return {
@@ -135,7 +135,7 @@ function GetTrack(
         //--------------------------------------------------------------
         // compute a best line with this cloud to find the new direction
         result = cloudTrackIter.BestLine(
-            0.2 * cloudTrackIter.GetNumber() // [in]	NbPointElim	The number of points to eliminate. 
+            Math.round(0.2 * cloudTrackIter.GetNumber()) // [in]	NbPointElim	The number of points to eliminate. 
             // The worst points are eliminated. This number should not be greater than the total number of points -3
         );
 
