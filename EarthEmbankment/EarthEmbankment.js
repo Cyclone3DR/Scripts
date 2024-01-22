@@ -41,24 +41,42 @@ var iPoly=iPolySelection.Poly;
 
 //A4-settings dialog
 var dlg=SDialog.New("Earth embankment settings");
-dlg.AddLine("Set the slope:",false,{ 'align': 'left' });
-dlg.AddLine("Slope(%)",true,{ 'align': 'left' },-100);
-dlg.AddLine("Set the input polyline resampling step:",false,{ 'align': 'left' });
-dlg.AddLine("iMulti resampling",true,{ 'align': 'left' },0.1);
-dlg.AddLine("Set how to resample cones in convex angle (0 to ignore):",false,{ 'align': 'left' });
-dlg.AddLine("cone resampling (degrees)",true,{ 'align': 'left' },10);
-var params=dlg.Execute();
+dlg.AddFloat({
+    id: "slopeAroundMainDirection",
+    name: "Slope(%)",
+    tooltip: "Set the slope in %",
+    value: -100, 
+    saveValue: true, 
+    readOnly: false });
+dlg.AddLength({ 
+    id: "iMultiResampling", 
+    name: "iMulti resampling",
+    tooltip: "Set the input polyline resampling step", 
+    value: 0.1, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 0});
+dlg.AddAngle({ 
+    id: "coneResampling", 
+    name: "Cone resampling", 
+    tooltip: "Set how to resample cones in convex angle (0 to ignore)", 
+    value: 10, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 0, 
+    max: 180});
+var params=dlg.Run();
 if(!params.ErrorCode)
 {
-    var slopeAroundMainDirection=parseFloat(params.InputTbl[0]);
+    var slopeAroundMainDirection=params.slopeAroundMainDirection;
     var slopeAroundMainDirectionDeg=180*Math.atan(slopeAroundMainDirection/100)/Math.PI;
-    iMulti=ResampleMulti(iMulti,parseFloat(params.InputTbl[1]));
+    iMulti=ResampleMulti(iMulti,params.iMultiResampling);
     if(debug)
     {
         iMulti.SetName("Resampled multi");
         iMulti.AddToDoc();
     }
-    var coneResampling=parseFloat(params.InputTbl[2]);
+    var coneResampling=params.coneResampling;
 }
 else
 {
@@ -80,6 +98,7 @@ var earthEmbankment={
     'oBeamTbl': new Array(), // the beams lying on the earth embankment
     'oJunction' : SPoly.New() // the eart embankment mesh
 }
+
 
 //B-Prepare
 earthEmbankment.oMulti.SetName(earthEmbankment.iMultiName+"_"+earthEmbankment.iPolyName+"_"+earthEmbankment.iSlope+ "%");
