@@ -20,9 +20,8 @@ function ErrorMessage(_iMessage // [in] the error message
 ) {
     var _iThrowError = (typeof _iThrowError !== 'undefined') ? _iThrowError : true;
 
-    var myDlg = SDialog.New("Error Message");
-    myDlg.AddLine(_iMessage, false, {}, 1);
-    myDlg.Execute();
+    SDialog.Message(_iMessage,SDialog.EMessageSeverity.Error,"Error Message");
+
     if (_iThrowError)
         throw new Error(_iMessage);
 }
@@ -37,15 +36,15 @@ function mainTreeMeshing() {
 
     //Enter the input data
     var theDialog = SDialog.New('Tree meshing parameters');
-    theDialog.AddLine("Slice step: ", true, {}, 1);
-    theDialog.AddLine("Slice depth: ", true, {}, 0.5);
+    theDialog.AddLength({id: "Slice_step",name: "Slice step",value: 1,saveValue: true,readOnly: false});
+    theDialog.AddLength({id: "Slice_depth",name: "Slice depth",value: 0.5,saveValue: true,readOnly: false});
+    var result = theDialog.Run();
 
-    var result = theDialog.Execute();
     if (result.ErrorCode != 0)// result == 0 means the user click on the "OK" button
         ErrorMessage("Operation canceled");
 
-    var Param_Slice_Step = parseFloat(result.InputTbl[0]);
-    var Param_Slice_Depth = parseFloat(result.InputTbl[1]);
+    var Param_Slice_Step = result.Slice_step;
+    var Param_Slice_Depth = result.Slice_depth;
 
     // looking for the different heights at which we will create the mesh
     var ZVect = SVector.New(0, 0, 1);
@@ -112,4 +111,4 @@ function mainTreeMeshing() {
 
 }
 
-mainTreeMeshing()
+mainTreeMeshing();
