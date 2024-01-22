@@ -134,8 +134,8 @@ function GetTrack(
 
         //--------------------------------------------------------------
         // compute a best line with this cloud to find the new direction
-        result = cloudTrackIter.BestLine(
-            Math.round(0.2 * cloudTrackIter.GetNumber()) // [in]	NbPointElim	The number of points to eliminate. 
+        result = cloudTrackIter.BestLine(Math.round(
+            0.2 * cloudTrackIter.GetNumber()) // [in]	NbPointElim	The number of points to eliminate. 
             // The worst points are eliminated. This number should not be greater than the total number of points -3
         );
 
