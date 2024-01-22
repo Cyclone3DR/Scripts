@@ -3,9 +3,7 @@
 function ErrorMessage(_iMessage, _iThrowError = true) {
     var _iThrowError = (typeof _iThrowError !== 'undefined') ? _iThrowError : true;
 
-    var myDlg = SDialog.New("Error Message");
-    myDlg.AddLine(_iMessage, false, {}, 1);
-    myDlg.Execute();
+    SDialog.Message(_iMessage,SDialog.EMessageSeverity.Error,"Error Message");
     if (_iThrowError)
         throw new Error(_iMessage);
 }
@@ -54,7 +52,7 @@ function SaveContentData(file2Save, content) {
 function main() {
     var selSections = SMultiline.FromSel();
     if (selSections.length != 1)
-        throw new Error("Select 1 polyline")
+        ErrorMessage("Select 1 polyline");
 
     var selSection = selSections[0];
     var OutArray = new Array
