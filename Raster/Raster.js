@@ -22,31 +22,95 @@
 // 9. Display animation: display the moving cell (enable this only for small rasters)
 
 //A1-Parameters (dialog)
-var theDialog = SDialog.New('Parameters');
+var theDialog = SDialog.New('Raster');
 
-theDialog.AddLine("No Data default value", true, {}, -9999);
-theDialog.AddLine("Cell Size", true, {}, 0.5);
-theDialog.AddLine("Nb Cols", true, {}, 100);
-theDialog.AddLine("Nb Rows", true, {}, 100);
-theDialog.AddLine("Use Cell Center", true, {}, 1);
-theDialog.AddLine("Options (0=middle,1=lowest,2=highest)", true, {}, 0);
-theDialog.AddLine("Output format (0=ESRI, 1=CSV)", true, {}, 0);
-theDialog.AddLine("Number of digits", true, {}, 3);
-theDialog.AddLine("Display animation", true, {}, 0);
+theDialog.AddTextField({
+   id: 'nullDATA',
+   name: 'No Data default value',
+   tooltip : "The default value written in the raster when the cell is empty",
+   value : '-9999',
+   saveValue : true,
+   readOnly: false,
+   canBeEmpty : false})
+theDialog.AddFloat({
+    id: "step",
+    name: "Cell Size",
+    tooltip: "The width and length of the cell (in document unit)",
+    value: 0.5, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 0});
+theDialog.AddInt({
+    id: "resolutionX",
+    name: "Nb Cols",
+    tooltip: "The number of columns",
+    value: 100, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 1});
+theDialog.AddInt({
+    id: "resolutionY",
+    name: "Nb Rows",
+    tooltip: "The number of rows",
+    value: 100, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 1});
+theDialog.AddBoolean({
+    id: "useCellCenter",
+    name: "Use Cell Center",
+    tooltip: "False: the given origin will correspond to the bottom left of the pixel and the cell. \nTrue: the given origin will correspond to the center of the pixel and the cell. \nIn case of using a grid cloud, choose the option where the point will be in the cells center (not in corner)",
+    value: true,
+    saveValue: true, 
+    readOnly: false });
+theDialog.AddChoices({
+    id: "options",
+    name: "Elevation to extract",
+    choices: ["middle of bounding box","lowest","highest"],
+    tooltip: "The elevation that will be extracted",
+    value: 0, 
+    saveValue: true, 
+    readOnly: false,
+    style: SDialog.ChoiceRepresentationMode.RadioButtons});
+theDialog.AddChoices({
+    id: "format",
+    name: "ESRI or CSV",
+    choices: ["ESRI","CSV"],
+    tooltip: "The result formating (ESRI format stores a header part) ",
+    value: 0, 
+    saveValue: true, 
+    readOnly: false,
+    style: SDialog.ChoiceRepresentationMode.RadioButtons});
+theDialog.AddInt({
+    id: "nbOfDigits",
+    name: "Number of digits",
+    tooltip: "The number of digits stored for each elevation",
+    value: 3, 
+    saveValue: true, 
+    readOnly: false, 
+    min: 0, 
+    max: 6});
+theDialog.AddBoolean({
+    id: "displayAnimation",
+    name: "Display animation",
+    tooltip: "True to display the moving cell (enable this only for small rasters)",
+    value: false,
+    saveValue: true, 
+    readOnly: false });
 
-var parameters = theDialog.Execute();
+var parameters = theDialog.Run();
 
 if(!parameters.ErrorCode)
 {
-	var nullDATA=parseFloat(parameters.InputTbl[0]);
-	var step=parseFloat(parameters.InputTbl[1]);
-	var resolutionX=parseInt(parameters.InputTbl[2]);
-	var resolutionY=parseInt(parameters.InputTbl[3]);
-	var useCellCenter=parseInt(parameters.InputTbl[4]);
-	var options=parseInt(parameters.InputTbl[5]);
-	var format=parseInt(parameters.InputTbl[6]);
-	var nbOfDigits=parseInt(parameters.InputTbl[7]);
-	var displayAnimation=parseInt(parameters.InputTbl[8]);
+	var nullDATA=parameters.nullDATA;
+	var step=parameters.step;
+	var resolutionX=parameters.resolutionX;
+	var resolutionY=parameters.resolutionY;
+	var useCellCenter=parameters.useCellCenter;
+	var options=parameters.options;
+	var format=parameters.format;
+	var nbOfDigits=parameters.nbOfDigits;
+	var displayAnimation=parameters.displayAnimation;
 }
 else
 {
