@@ -14,7 +14,11 @@ Include(CurrentScriptPath() + "/MeshWizard_General.js");
 
 //select all the point clouds and run the script
 var inputs = SCloud.FromSel();
-if (inputs.length == 0) throw new Error("No Input");
+if (inputs.length == 0) 
+{
+    SDialog.Message("No Input",SDialog.EMessageSeverity.Error,"Error");
+    throw new Error("No Input");
+}
 
 //compute the scale if unit is not MM
 //adjust parameter depending of the unit in the document (by default, parameter are define for MM)
