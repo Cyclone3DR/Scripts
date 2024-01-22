@@ -17,10 +17,7 @@
  * @param {string} iMessage the message to display
  */
 function ErrorMessage(iMessage) {
-    var myDlg = SDialog.New("Error Message");
-    myDlg.AddLine(iMessage, false, {}, 1);
-    myDlg.Execute();
-
+    SDialog.Message(iMessage,SDialog.EMessageSeverity.Error,"Error");
     throw new Error(iMessage);
 }
 
@@ -91,50 +88,26 @@ function createsimpleMesh(iCloud) {
 /**
  * Function 4 to create a dialog box and enter user parameter to adjust the rendering of the mesh (name, color and transparency)
  * @param {SPoly} iMesh mesh that will be changed
- * @returns {Number} step for the vertical planar sections
  */
 
 function customizeMesh(iMesh) {
     var myDialog = SDialog.New("Customize your mesh");
-    myDialog.AddLine("Parameters of the mesh\n", false, { 'align': 'center', 'size': 14 });
-    myDialog.AddLine("Name", true, { 'align': 'left' }, "MyNewMesh");
-    myDialog.AddLine("Color (R=Red or G=Green or B=Blue)", true, { 'align': 'left' }, "R");
-    myDialog.AddLine("Opacity (% from 0 to 100)", true, { 'align': 'left' }, "100");
+    myDialog.AddText("Parameters of the mesh: ",SDialog.EMessageSeverity.Instruction);
+    myDialog.AddTextField({id: "name",name: "Mesh name",
+    tooltip: "Set the name of the created mesh",value: "MyNewMesh",saveValue: true, readOnly: false,canBeEmpty: false});
+    myDialog.AddChoices({id: "color",name: "Mesh color:",choices: ["Red","Green", "Blue"],tooltip: "Choose the color of the created mesh",value: 0,saveValue: true,readOnly: false,style: SDialog.ChoiceRepresentationMode.RadioButtons});
+    myDialog.AddInt({id: "opacity",name: "Opacity (%)",tooltip: "Set the mesh opacity",value: 100,saveValue: true,readOnly: false,min: 0,max: 100});
 
-    var dialogResult = myDialog.Execute();
+    var dialogResult = myDialog.Run();
 
     if (dialogResult.ErrorCode == 0) {
-        var values = dialogResult.InputTbl;
-        var iName = values[0].toString(); // new name of the mesh 
-        var iColor = values[1].toString(); // color of the mesh Red, Green or Blue
-        var iOpacity = parseFloat(values[2]); // % of Opacity
+        iMesh.SetName(dialogResult.name);
 
-        iMesh.SetName(iName);
+        if(dialogResult.color==0)iMesh.SetColors(1, 0, 0);
+        else if (dialogResult.color==1)iMesh.SetColors(0, 1, 0);
+        else if (dialogResult.color==2)iMesh.SetColors(0, 0, 1);
 
-        if (isNaN(iOpacity)) // check if the opacity is a number
-        {
-            ErrorMessage("Wrong input for opacity.");
-        }
-        else {
-            iMesh.SetTransparency(Math.round(iOpacity * 255 / 100));
-            print("\nThe mesh " + iName + " opacity is " + iOpacity + "%.");
-        }
-
-        if (iColor == 'R') {
-            print("The mesh " + iName + " is colored in RED.");
-            iMesh.SetColors(1, 0, 0);
-        }
-        else if (iColor == 'G') {
-            print("The mesh " + iName + " is colored in GREEN.");
-            iMesh.SetColors(0, 1, 0);
-        }
-        else if (iColor == 'B') {
-            print("The mesh " + iName + " is colored in BLUE.");
-            iMesh.SetColors(0, 0, 1);
-        }
-        else {
-            print("\nWrong input for the color. The color of the mesh " + iName + " is unchanged.");
-        }
+        iMesh.SetTransparency(Math.round(dialogResult.opacity * 255 / 100));
     }
 }
 
@@ -145,26 +118,13 @@ function customizeMesh(iMesh) {
  */
 
 function extractsectionsalongZ(iMesh) {
-    var iStep = 1; // default value of step of the section extraction
 
     var myDialog = SDialog.New("Extract planar sections along Z");
-    myDialog.AddLine("Distance between planar sections\n", false, { 'align': 'center', 'size': 10 });
-    myDialog.AddLine("Length of the step", true, { 'align': 'left' }, iStep.toString());
+    myDialog.AddLength({id: 'steplength',name: "Length of the step",value: 1,saveValue: true,  readOnly: false});
+    var dialogResult = myDialog.Run();
 
-    var dialogResult = myDialog.Execute();
-
-    if (dialogResult.ErrorCode == 0) {
-        var values = dialogResult.InputTbl;
-        var tempStepdistance = parseFloat(values[0]); // get distance for step
-
-        if (isNaN(tempStepdistance)) // check if the opacity is a number
-        {
-            print("Wrong input for step length. Default step will be 1 in current distance unit.");
-        }
-        else {
-            iStep = tempStepdistance;
-        }
-    }
+    if (dialogResult.ErrorCode == 0) 
+        var iStep = dialogResult.steplength; // get distance for step
 
     var iPoint = iMesh.GetBoundingBox().LowPoint; // get lowest point of the mesh
     var iVector = SVector.New(0, 0, 1); // vertical direction is defined
@@ -194,7 +154,7 @@ function extractsectionsalongZ(iMesh) {
 
 function basicInspection(iMesh, iCloud) {
     var maxDist = 1; // max distance of the inspection
-    var iInspection = iMesh.Compare(iCloud, maxDist, 1, true, 0, 90, true); // Mesh with inspection
+    var iInspection = iMesh.Compare(iCloud, maxDist, 1, true, null, 90, true); // Mesh with inspection
 
     if (iInspection.ErrorCode == 1) {
         ErrorMessage("An error occurred during the inspection.");
@@ -307,4 +267,3 @@ if (exportPath.length == 0) {
     ErrorMessage("Operation canceled");
 }
 colorandexportinObj(myInspection, exportPath); // the inspected mesh is chosen to texture the mesh with the inspection results and to export it in OBJ
-
