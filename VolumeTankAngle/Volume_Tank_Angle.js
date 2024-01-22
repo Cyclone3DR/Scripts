@@ -96,51 +96,46 @@ function main()
 
     // dialog box
     {
-        var myDialog = SDialog.New('Settings');
+        var myDialog = SDialog.New('Volume Tank Angle');
 
         // add a line to enter the path of the report
-        myDialog.AddLine( 'Enter the path where to create the report', true, Array(), TempPath() + 'report_volume.csv');
+        myDialog.BeginGroup('Output path');
+        myDialog.AddTextField({id: 'Path',name: 'Path',tooltip: 'Enter the path where to create the report',value: TempPath() + 'report_volume.csv',saveValue: false,readOnly: false,canBeEmpty: false});
 
-        // add a title to the column
-        myDialog.AddLine('Rotate around Y axis (degrees)', false, {'css':'font-weight: bold'});
-        // add the first parameters
-        myDialog.AddLine( 'Angle of the first section:', true, Array(), 0);
-        myDialog.AddLine( 'Maximum angle:', true, Array(), 10);
-        myDialog.AddLine( 'Number of sections:', true, Array(), 6);
+        myDialog.BeginGroup('Rotation around Y axis');
+        myDialog.AddAngle({id: 'Y_1stAngle',name: 'Angle of the first section',value: 0,saveValue: true,readOnly: false});
+        myDialog.AddAngle({id: 'Y_MaxAngle',name: 'Maximum angle',value: 10,saveValue: true,readOnly: false});
+        myDialog.AddInt({id: 'Y_NbSections',name: 'Number of sections',value: 6,saveValue: true,readOnly: false,min: 0});
 
-        // add a title to the column
-        myDialog.AddLine('Rotate around X axis (degrees)', false, {'css':'font-weight: bold'});
-        // add the first parameters
-        myDialog.AddLine( 'Angle of the first section:', true, Array(), 0);
-        myDialog.AddLine( 'Maximum angle:', true, Array(), 10);
-        myDialog.AddLine( 'Number of sections:', true, Array(), 6);
+        myDialog.BeginGroup('Rotation around X axis');
+        myDialog.AddAngle({id: 'X_1stAngle',name: 'Angle of the first section',value: 0,saveValue: true,readOnly: false});
+        myDialog.AddAngle({id: 'X_MaxAngle',name: 'Maximum angle',value: 10,saveValue: true,readOnly: false});
+        myDialog.AddInt({id: 'X_NbSections',name: 'Number of sections',value: 6,saveValue: true,readOnly: false,min: 0});
 
-        // add a title to the column
-        myDialog.AddLine('Step (m)', false, {'css':'font-weight: bold'});
-        // add the first parameters
-        myDialog.AddLine( 'Height of the first section:', true, Array(), 1);
-        myDialog.AddLine( 'Step of sections:', true, Array(), 1);
-        myDialog.AddLine( 'Number of sections:', true, Array(), 10);
+        myDialog.BeginGroup('Step');
+        myDialog.AddFloat({id: 'firstHeight',name: 'Height of the first section',value: 1,saveValue: true,readOnly: false});
+        myDialog.AddLength({id: 'step',name: 'Step of sections',value: 1,saveValue: true,readOnly: false});
+        myDialog.AddInt({id: 'NbSections',name: 'Number of sections',value: 10,saveValue: true,readOnly: false});
     }
 
     // open the dialog box
-    var parameters = myDialog.Execute();
+    var parameters = myDialog.Run();
 
     // if the user clicked on OK
     // ------------------------------
     if( parameters.ErrorCode == 0)
     {
         // get all the variables (in the same order as the lines in the dialog box)
-        var thePath = parameters.InputTbl[0];
-        var rotateY_1stAngle = parseFloat(parameters.InputTbl[1]);
-        var rotateY_MaxAngle = parseFloat(parameters.InputTbl[2]);
-        var rotateY_NbSections = parseFloat(parameters.InputTbl[3]);
-        var rotateX_1stAngle = parseFloat(parameters.InputTbl[4]);
-        var rotateX_MaxAngle = parseFloat(parameters.InputTbl[5]);
-        var rotateX_NbSections = parseFloat(parameters.InputTbl[6]);
-        var step_1stHeight = parseFloat(parameters.InputTbl[7]);
-        var step_ = parseFloat(parameters.InputTbl[8]);
-        var step_NbSections = parseFloat(parameters.InputTbl[9]);
+        var thePath = parameters.Path;
+        var rotateY_1stAngle = parameters.Y_1stAngle;
+        var rotateY_MaxAngle = parameters.Y_MaxAngle;
+        var rotateY_NbSections = parameters.Y_NbSections;
+        var rotateX_1stAngle = parameters.X_1stAngle;
+        var rotateX_MaxAngle = parameters.X_MaxAngle;
+        var rotateX_NbSections = parameters.X_NbSections;
+        var step_1stHeight = parameters.firstHeight;
+        var step_ = parameters.step;
+        var step_NbSections = parameters.NbSections;
         
         //Start the CSV
         var myCSV = "AngleY (deg); AngleX (deg); Height (m); Volume Below (m3); Volume Above (m3)\n";
@@ -165,7 +160,10 @@ function main()
                 var iiResult = rotResult.rotMesh.VolumeFromElevation(currElevationList, zenith);
                 
                 if(iiResult.ErrorCode == 1)
+                {
+                    SDialog.Message("Error during computation" ,SDialog.EMessageSeverity.Error,'Error');
                     throw new Error( "Error during computation" );
+                }
                 else
                 {
                     for(var j=0 ; j<iiResult.ValueTbl.length ; j++)
@@ -179,7 +177,10 @@ function main()
         // save the data
         var file = SFile.New(thePath);
         if ( !file.Open( SFile.WriteOnly ) )
+        {
+            SDialog.Message('Failed to write file:' + thePath,SDialog.EMessageSeverity.Error,'Error');
             throw new Error( 'Failed to write file:' + thePath ); // test if we can open the file
+        }
         
         // write the smultiline in the file
         file.Write( myCSV );
@@ -191,7 +192,10 @@ function main()
         
     }
     else
+    {
+        SDialog.Message("Operation canceled",SDialog.EMessageSeverity.Error,'Error');
         throw new Error( "Operation canceled" );
+    }    
 }
 
 main();
