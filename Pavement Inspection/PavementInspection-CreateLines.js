@@ -15,19 +15,16 @@ if ((testForOnePoly.length == 0) || (testForOnePoly.length > 1))
 
 //Enter the number of offsets required and the height at which the radials are to be created
 var theDialog = SDialog.New('Pavement Inspection');
-theDialog.AddLine("Number of offsets needed", true, {}, 8);
-theDialog.AddLine("Offset increment", true, {}, 2);
+theDialog.AddInt({id: 'nbOfOffsets',name: "Number of offsets needed",value: 8,saveValue: true,readOnly: false,min: 0});
+theDialog.AddLength({id: 'offset',name: "Offset increment",value: 2,saveValue: true,readOnly: false,});
 
-var result = theDialog.Execute();
+var result = theDialog.Run();
 
 if (result.ErrorCode == 0) { // result == 0 means the user click on the "OK" button
-    // Retrieve output values
-    var values = result.InputTbl; // InputTbl contains all the content of the input box
-
     //if there is no data entered for the radial height, wait while we ask the user to click a point
 
-    var numberOfOffsets = parseFloat(values[0]);
-    var offsetIncrement = parseFloat(values[1]);
+    var numberOfOffsets = result.nbOfOffsets;
+    var offsetIncrement = result.offset;
 
     //Offset the polyline as many times as needed on each side of the line
     createLines(testForMesh[0], testForOnePoly, numberOfOffsets, offsetIncrement);
@@ -71,8 +68,3 @@ function createLines(thePoly, thePolyline, howMany, howFar) {
         howFar += step;
     }
 }
-
-
-
-
-

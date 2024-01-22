@@ -1,4 +1,3 @@
-
 //verify user has selected lines to be evaluated
 var theLines = SMultiline.FromSel();
 if (theLines.length == 0)
@@ -7,22 +6,16 @@ if (theLines.length == 0)
 //Ask user for ruler dimension and tolerance
 
 var theDialog = SDialog.New('Pavement Inspection');
+theDialog.AddLength({id: 'rulerLength',name: "Length of rule",value: 10, saveValue: true,readOnly: false});
+theDialog.AddLength({id: 'tolerance',name: "Flatness Tolerance",value: 0.005,saveValue: true,readOnly: false});
+theDialog.AddLength({id: 'increment',name: "Increment",value: 2,saveValue: true,readOnly: false});
+var result = theDialog.Run();
 
-theDialog.AddLine("Length of rule", true, {}, 10);
-theDialog.AddLine("Flatness Tolerance", true, {}, 0.005);
-theDialog.AddLine("Increment", true, {}, 2);
-var result = theDialog.Execute();
 if (result.ErrorCode == 0) { // result == 0 means the user click on the "OK" button
     // Retrieve output values
-    var values = result.InputTbl; // InputTbl contains all the content of the input box
-    var rulerLength = parseFloat(values[0]);
-    var flatTol = parseFloat(values[1]);
-    var increment = parseFloat(values[2]);
-    isANumberAndNotZero(rulerLength);
-    isANumberAndNotZero(flatTol);
-    isANumberAndNotZero(increment);
-
-
+    var rulerLength = result.rulerLength;
+    var flatTol = result.tolerance;
+    var increment = result.increment;
 
     var currentInspectionLine = SMultiline.New();
     var lenghtOfCurrentInspectionline = 0;
@@ -68,7 +61,6 @@ if (result.ErrorCode == 0) { // result == 0 means the user click on the "OK" but
             currentAdjacentLine = theLines[i + 1];
         } else {
             currentAdjacentLine = theLines[i - 1];
-
         }
 
 
@@ -177,7 +169,7 @@ function readPointsAbovePlane(multilineToRead, startDist, endDist, planeToCompar
 
 
         if (l != 0) {
-            lengthAlongLine += distanceBetween(thisPoint, multilineToRead.GetPoint(l - 1));
+            lengthAlongLine += thisPoint.Distance(multilineToRead.GetPoint(l - 1));
         }
 
 
@@ -211,29 +203,5 @@ function evaluateDeviationsSortPoints(deviations, points, tolerance) {
     }
 
     return { 'RedCloud': redCloud, 'GreenCloud': greenCloud, 'BlueCloud': blueCloud };
-
-}
-
-
-function distanceBetween(point1, point2) {
-    var p1x = point1.GetX();
-    var p1y = point1.GetY();
-    var p1z = point1.GetZ();
-    var p2x = point2.GetX();
-    var p2y = point2.GetY();
-    var p2z = point2.GetZ();
-    var returnDist = 0;
-
-    returnDist = Math.sqrt(Math.pow(p1x - p2x, 2) + Math.pow(p1y - p2y, 2) + Math.pow(p1z - p2z, 2));
-
-    return returnDist;
-
-}
-
-function isANumberAndNotZero(number) {
-
-    if (isNaN(number) || number == 0)
-        throw new Error('Input is not a number or is zero');
-
 
 }
