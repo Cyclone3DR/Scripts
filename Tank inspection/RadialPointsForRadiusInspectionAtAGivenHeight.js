@@ -2,45 +2,36 @@
 // This scrip is useful for creating radial measurements at a given height on a tank
 // The origin of the tanks coordinate system is assumed to be on the bottom of the tank in the center of the tank
 // Note: If a Local Coordinate system is active, the transformation will not be applied and the projection will fail.
-// Note: if the projection fails for given point (there is no mesh where the point is projected) then the
+// Note: if the projection fails for given point (there is no mesh where the point is projected)
 // then the scrip will place a point on the opposite wall of the tank and you'll end up with two points. 
 
 //Revision History
 // 	4/1/2016 - updated to work with 2016 version
 //	4/25/2016 - changed script to start at X+ instead of X- and changed rotation to go clockwise instead of counterclockwise
 
-//Enter the number of radials required and the height at which the radials are to be created
-var theDialog = SDialog.New('Radials');
-theDialog.AddLine("Enter the height for the radials", false);
-theDialog.AddLine("Z Height", true);
-theDialog.AddLine("Number of radials", true);
-var resultExec = theDialog.Execute();
-if (resultExec.ErrorCode == 0){ // resultExec == 0 means the user click on the "OK" button
-    // Retrieve output values
-    var values = resultExec.InputTbl; // InputTbl contains all the content of the input box
-    var radialHeight = parseFloat(values[0]);  //use parseFloat() to return a floating point number from the string
-    //if there is no data entered for the radial height, wait while we ask the user to click a point
-    if (isNaN(radialHeight)) {
-        var clickedPoint = GetZHeightByClick();
-        //printP(clickedPoint);
-       
-        radialHeight = clickedPoint.GetZ();
-        radialHeight = parseFloat(radialHeight.toFixed(3));  //we don't need 12 decimals for this.
-        print(radialHeight);
-    }
-    var numberOfRadials = parseFloat(values[1]);
-}
-
 //be sure the victim has selected a mesh
 var testForMesh = SPoly.FromSel()
 
-if (testForMesh.length != 1){
-throw new Error('No mesh selected.  Select a mesh and run the script again');
+if (testForMesh.length != 1)
+{
+    SDialog.Message('No mesh selected.  Select a mesh and run the script again',SDialog.EMessageSeverity.Error,'Error');
+    throw new Error('No mesh selected.  Select a mesh and run the script again');
 }
 var theMesh = testForMesh[0] //mesh is there, grab it
 
 
+//Enter the number of radials required and the height at which the radials are to be created
+var theDialog = SDialog.New('Radials');
+theDialog.AddText("Enter the height for the radials",SDialog.EMessageSeverity.Instruction);
+theDialog.AddFloat({id: "Z_Height",name: "Z Height", saveValue: true,readOnly: false});
+theDialog.AddInt({id: "Number_of_radials",name: "Number of radials",saveValue: true,readOnly: false});
+var resultExec = theDialog.Run();
 
+if (resultExec.ErrorCode == 0){ // resultExec == 0 means the user click on the "OK" button
+    // Retrieve output values
+    var radialHeight = resultExec.Z_Height;
+    var numberOfRadials = resultExec.Number_of_radials;
+}
 
 var originPoint = SPoint.New(0, 0, radialHeight); //create an origin point for the radials and add it to the doc.
 originPoint.AddToDoc();
@@ -55,7 +46,7 @@ var initialDirection = SVector.New(-1, 0, 0);  //Radials always start from X+
 var angleBetweenRadials = 360 / numberOfRadials;
 
 
- //start the string that will be output as .CSV
+//start the string that will be output as .CSV
 var outputString = 'Z ' + radialHeight + ' Radials ' + 'at ' + angleBetweenRadials + ' degree increments \n';
 outputString += originPoint.GetName() + ',' + originPoint.GetX().toString() + ',' + originPoint.GetY().toString() + ',' + originPoint.GetZ().toString() + '\n';
 
@@ -75,10 +66,12 @@ for (var i = 0; i < numberOfRadials; i++) {  //project a point at each angle
 
             break;
         case 1:
-            throw new Error('no projection found');
+            SDialog.Message('No projection found',SDialog.EMessageSeverity.Error,'Error');
+            throw new Error('No projection found');
             break;
         case 2:
-            throw new Error('an error occured');
+            SDialog.Message('An error occured',SDialog.EMessageSeverity.Error,'Error');
+            throw new Error('An error occured');
             break;
     }
     
@@ -122,7 +115,10 @@ function WriteDataToFile(stringToWrite) {
     // open the file
     var file = SFile.New(fileName);
     if (!file.Open( SFile.WriteOnly ))
+    {
+        SDialog.Message('Failed to write file:' + fileName,SDialog.EMessageSeverity.Error,'Error');
         throw new Error('Failed to write file:' + fileName); // test if we can open the file
+    }
 
     // write data inside the file
     file.Write(stringToWrite);
@@ -154,5 +150,3 @@ function GetZHeightByClick() {
         }
     }
 }
-
-

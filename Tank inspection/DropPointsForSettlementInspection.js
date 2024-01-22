@@ -8,36 +8,26 @@
 //	4/25/2016 - changed script to rotate clockwise
 
 
-//Enter the number of radials required and the height at which the radials are to be created
-var theDialog = SDialog.New('Settlement Points');
-theDialog.AddLine("Enter the radius and number of points", false);
-theDialog.AddLine("Radius", true);
-theDialog.AddLine("Number of points", true);
-
-
-var resultExec = theDialog.Execute();
-if (resultExec.ErrorCode == 0) { // resultExec.ErrorCode == 0 means the user click on the "OK" button
-    // Retrieve output values
-    var values = resultExec.InputTbl; // InputTbl contains all the content of the input box
-    var radius = parseFloat(values[0]);  //use parseFloat() to return a floating point number from the string
-    //if there is no value entered for the radius, wait while we ask the user to click a point to define it
-    if (isNaN(radius)) {
-        var clickedPoint = GetRadiusByClick();
-        //printP(clickedPoint);
-        var zeroPoint = SPoint.New(0, 0, 0);
-        radius = Calculate3DDistance(zeroPoint, clickedPoint);//figure out the radius clicked.
-        radius = parseFloat(radius.toFixed(3)); //we don't need 12 decimal places here
-    }
-    var numberOfPoints = parseFloat(values[1]);
-}
-
 //be sure the victim has selected a mesh
-var testForMesh = SPoly.FromSel()
+var testForMesh = SPoly.FromSel();
 
 if (testForMesh.length != 1) {
+    SDialog.Message('No mesh selected.  Select a mesh and run the script again', SDialog.EMessageSeverity.Error,'Error');
     throw new Error('No mesh selected.  Select a mesh and run the script again');
 }
 var theMesh = testForMesh[0]; //mesh is there, grab it
+
+//Enter the number of radials required and the height at which the radials are to be created
+var theDialog = SDialog.New('Settlement Points');
+theDialog.AddText("Enter the radius and number of points",SDialog.EMessageSeverity.Instruction);
+theDialog.AddLength({id: "Radius",name: "Radius",saveValue: true,readOnly: false});
+theDialog.AddInt({id: "Number_of_points",name: "Number of points",saveValue: true,readOnly: false});
+var resultExec = theDialog.Run();
+
+if (resultExec.ErrorCode == 0) { // resultExec.ErrorCode == 0 means the user click on the "OK" button
+    var radius = resultExec.Radius;  
+    var numberOfPoints = resultExec.Number_of_points;
+}
 
 var initialPoint = SPoint.New(radius, 0, 0); //set up first point to project
 var angleBetweenRadials = 360 / numberOfPoints;
@@ -46,7 +36,7 @@ var angleBetweenRadials = 360 / numberOfPoints;
 //start the string that will be output as .CSV
 var outputString = numberOfPoints + ' points on the tank bottom at ' + radius + ' radius ' + angleBetweenRadials + ' degrees apart' + '\n';
 
-var projectionDirection = SVector.New(0, 0, 1) //ponits projected onto mesh in Z
+var projectionDirection = SVector.New(0, 0, 1) //points projected onto mesh in Z
 
 //make a folder to put the points in
 var folderName = 'Geometric Group' + '/' + 'Drop points for settlement inspection';
@@ -70,6 +60,7 @@ for (var i = 0; i < numberOfPoints; i++) {  //project each point to the mesh
             //throw new Error('no projection found');
             break;
         case 2:
+            SDialog.Message('an error occured', SDialog.EMessageSeverity.Error,'Error');
             throw new Error('an error occured');
             break;
     }
@@ -103,7 +94,10 @@ function WriteDataToFile(stringToWrite) {
     var file = SFile.New(fileName);
     //var openMode = QIODevice.OpenMode(QIODevice.WriteOnly, QIODevice.Text, QIODevice.Truncate);
     if (!file.Open(SFile.WriteOnly))
+    {
+        SDialog.Message('Failed to write file:' + fileName, SDialog.EMessageSeverity.Error,'Error');
         throw new Error('Failed to write file:' + fileName); // test if we can open the file
+    } 
 
     // write data inside the file
     file.Write(stringToWrite);
