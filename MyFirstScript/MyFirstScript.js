@@ -216,7 +216,7 @@ function bestPlane(iCloud) {
 
 function colorandexportinObj(iMesh, iPath) {
     // texture the mesh from its current representation colors
-    var iConvertResult = STexturingUtil.ConvertColorToTexture(iMesh, 32, true);
+    var iConvertResult = STexturingUtil.ConvertInspectionToTexture(iMesh, 32);
     if (iConvertResult.ErrorCode != 0) {
         ErrorMessage("Converting color to textured mesh failed.");
     }
