@@ -80,7 +80,7 @@ function create1stChapter(AllData) {
 }
 
 function updateView(AllData) {
-	SetViewDir(AXIS_X)
+	SetCameraDirection(AXIS_X)
 	ZoomAll()
 	AllData.reportChapter1.UpdateMainViewSet()
 }
@@ -121,20 +121,20 @@ function create2ndChapter(AllData) {
 	var zDir = SVector.New(0, 0, 1);
 
 	var ViewSet = SViewSet.New(true);
-	SetViewDir(Dir, zDir);
+	SetCameraDirection(Dir, zDir);
 	ZoomAll();
 	ViewSet.Update(true);
 
 	var ViewSetX = SViewSet.New(true);
-	SetViewDir(frontDir, zDir);
+	SetCameraDirection(frontDir, zDir);
 	ViewSetX.Update(true);
 
 	var ViewSetY = SViewSet.New(true);
-	SetViewDir(sideDir, zDir);
+	SetCameraDirection(sideDir, zDir);
 	ViewSetY.Update(true);
 
 	var ViewSetZ = SViewSet.New(true);
-	SetViewDir(topDir, xDir);
+	SetCameraDirection(topDir, xDir);
 	ViewSetZ.Update(true);
 
 	AllData.reportChapter2.AddViewset('MainView', ViewSet);
