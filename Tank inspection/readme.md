@@ -11,8 +11,6 @@ To use the scripts, open the script editor and load js file, import your mesh(es
 
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
-- [DropPointsForSettlementInspection.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Tank%20inspection/DropPointsForSettlementInspection.js)
-- [RadialPointsForRadiusInspectionAtAGivenHeight.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Tank%20inspection/RadialPointsForRadiusInspectionAtAGivenHeight.js)
-- [TankRadialTestFile.3dr] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Tank%20inspection/TankRadialTestFile.3dr)
-
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+- [DropPointsForSettlementInspection.js](./DropPointsForSettlementInspection.js)
+- [RadialPointsForRadiusInspectionAtAGivenHeight.js](./RadialPointsForRadiusInspectionAtAGivenHeight.js)
+- [TankRadialTestFile.3dr](./TankRadialTestFile.3dr)

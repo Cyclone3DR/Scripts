@@ -27,13 +27,11 @@ Parameter explanations:
 8. Number of digits: number of digits stored for each elevation.
 9. Display animation: display the moving cell (enable this only for small rasters)
 
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Raster/Screenshot.png "screenshot")
+![alt text](./Screenshot.png "screenshot")
 
 # Download Files
 
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
-- [Raster.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Raster/Raster.js)
-- [SampleExportASC_ESRI.3dr] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/Raster/SampleExportASC_ESRI.3dr)
-
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+- [Raster.js](./Raster.js)
+- [SampleExportASC_ESRI.3dr](./SampleExportASC_ESRI.3dr)

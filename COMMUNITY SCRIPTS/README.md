@@ -37,8 +37,8 @@ To contribute with a new script:
 1. Fork the script repository using your GitHub account.
 2. Create a new branch
 2. Create a new subfolder under `COMMUNITY SCRIPTS/`.
-3. Add your script files, a `README.md` file in the script's subfolder. Check the [Guidelines](<# Guidelines for developers>) section for details.
-5. Update the [Available scripts](<# Available scripts>) section of this page, if necessary.
+3. Add your script files, a `README.md` file in the script's subfolder. Check the [Guidelines](<#guidelines-for-developers>) section for details.
+5. Update the [Available scripts](<#available-scripts>) section of this page, if necessary.
 6. git commit local changes.
 7. git push the created branch on your custom forked repository.
 8. Create a pull request to merge your branch to the `master` branch of the Cyclone 3DR Repository.

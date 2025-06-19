@@ -13,14 +13,12 @@ To define an infinite height, simply set the value to 0.
 The following output extensions are supported: E57, LAS and LAZ.
 
 
-![Input dataset](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/SeparateCloudByBox/Screenshot1.png "Input sample")
-![Output result](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/SeparateCloudByBox/Screenshot2.png "Output points")
+![Input dataset](./Screenshot1.png "Input sample")
+![Output result](./Screenshot2.png "Output points")
 
 # Download Files
 
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
-- [SeparateCloudByBox.js](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/SeparateCloudByBox/SeparateCloudByBox.js)
-- [SeparateCloudByBoxSample.3dr](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/SeparateCloudByBox/SeparateCloudByBoxSample.3dr)
-
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+- [SeparateCloudByBox.js](./SeparateCloudByBox.js)
+- [SeparateCloudByBoxSample.3dr](./SeparateCloudByBoxSample.3dr)

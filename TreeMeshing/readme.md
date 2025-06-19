@@ -18,14 +18,12 @@ Parameter explanations:
 1. Slice step: distance between the sections that have to be created
 2. Slice depth: depth of each section for creating the convex hull
 
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/TreeMeshing/Screenshot.png "screenshot")
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/TreeMeshing/Screenshot2.png "screenshot2")
+![alt text](./Screenshot.png "screenshot")
+![alt text](./Screenshot2.png "screenshot2")
 
 # Download Files
 
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
-- [TreeMeshing.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/TreeMeshing/TreeMeshing.js)
-- [Tree.nsd] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/TreeMeshing/Tree.nsd)
-
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+- [TreeMeshing.js](./TreeMeshing.js)
+- [Tree.nsd](./Tree.nsd)

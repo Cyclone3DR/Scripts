@@ -17,16 +17,14 @@ My First Script outlines a way to make the following features automatic:
 
 To use the script, open the given .3dr file, and load js file. Then run the script like if you were running a Cyclone3DR command.
 
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/Screenshot1.png "screenshot1")
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/Screenshot2.png "screenshot2")
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/Screenshot3.png "screenshot3")
-![alt text](https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/Screenshot4.png "screenshot4")
+![alt text](./Screenshot1.png "screenshot1")
+![alt text](./Screenshot2.png "screenshot2")
+![alt text](./Screenshot3.png "screenshot3")
+![alt text](./Screenshot4.png "screenshot4")
 
 # Download Files
 
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
-- [MyFirstScript.js] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/MyFirstScript.js)
-- [MyFirstScript.3dr] (https://raw.githubusercontent.com/Cyclone3DR/Scripts/master/MyFirstScript/MyFirstScript.3dr)
-
-Or all scripts on this site can be download in a [single zip file] (https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+- [MyFirstScript.js](./MyFirstScript.js)
+- [MyFirstScript.3dr](./MyFirstScript.3dr)
