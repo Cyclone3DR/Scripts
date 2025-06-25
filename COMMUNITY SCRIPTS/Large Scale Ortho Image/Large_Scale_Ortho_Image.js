@@ -1282,8 +1282,6 @@ function MISC_CreateClipBox(myTile,myBuffer)
 function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
 {
     var tempCloud = SCloud.New();
-    var myPath = myScriptParameters_LidarMode.CustomColorPathToRSI;
-
     var myOutputCloudTbl = [];
 
 
@@ -1299,11 +1297,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 break;
             case 1:
                 //Display cloud as intensity and check if we use special color grading
-                if (myScriptParameters_LidarMode.UseCustomColor == true)
-                {
-                    inputTbl[i].SetCloudRepresentation(SCloud.CLOUD_INTENSITY);
-                    inputTbl[i].LoadColorGradient(myPath);
-                }
+                CLOUD_ApplyColorGradient(inputTbl[i]);
                 //Convert intensity as color to get rid of the intensity scale display
                 tempCloud = inputTbl[i].ConvertInspectionToColor().Cloud;
                 inputTbl[i] = SCloud.New(tempCloud);
@@ -1353,13 +1347,9 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                     case 0:
                         myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
                         break;
-                    case 1:
-                        //Display cloud as intensity and check if we use special color grading
-                        if (myScriptParameters_LidarMode.UseCustomColor == true)
-                        {
-                            myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_INTENSITY);
-                            myCloudExplodedByClass[classIdx].LoadColorGradient(myPath);
-                        }
+                    case 1:          
+                        //Set special color grading 
+                        CLOUD_ApplyColorGradient(myCloudExplodedByClass[classIdx]);              
                         //Convert intensity as color to get rid of the intensity scale display
                         tempCloud = myCloudExplodedByClass[classIdx].ConvertInspectionToColor().Cloud;
                         myCloudExplodedByClass[classIdx] = SCloud.New(tempCloud);
@@ -1392,6 +1382,21 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
         "CloudTbl": myOutputCloudTbl
     }
 }
+
+/**
+ * Apply color gradient to a point cloud
+ */
+function CLOUD_ApplyColorGradient(myCloud)
+{
+    var myPath = myScriptParameters_LidarMode.CustomColorPathToRSI;
+
+    if (myScriptParameters_LidarMode.UseCustomColor == true)
+    {
+        myCloud.SetCloudRepresentation(SCloud.CLOUD_INTENSITY);
+        var result = myCloud.LoadColorGradient(myPath);
+    } 
+}
+
 
 /**
  * Trigger export of point cloud data according to user setting
