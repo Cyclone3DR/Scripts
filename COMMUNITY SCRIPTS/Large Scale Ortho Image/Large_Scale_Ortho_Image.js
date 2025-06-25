@@ -1307,76 +1307,22 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 myOutputCloudTbl.push(inputTbl[i]);
                 break;
             case 2: 
-                //Set display setting depending on the class    
-
-                //Get user settings
-                var myClassesNamesTbl = myScriptParameters_LidarMode.ClassesNamesTbl;
-                var myDisplaySettingsTbl = myScriptParameters_LidarMode.ClassesDisplayTypeTbl;
-                var myOpacitySettingsTbl = myScriptParameters_LidarMode.ClassesOpacityTbl;
-
-                //Get class info of currently opened tile
-                var myTileClasses = CLOUD_GetClassNumber(inputTbl[i]);
-                
-                var myTileNumberOfClasses = myTileClasses.ClassNb;
-                var myTileClassesNames = myTileClasses.ClassNames;
-                var myTileDisplaySettings = [];
-                var myTileOpacitySettings = [];
-                
-
-                //Map the settings with the classes names found in that tile
-                for (var tileClassIdx=0; tileClassIdx<myTileNumberOfClasses; tileClassIdx++)
-                {
-                    for (var totalClassIdx=0; totalClassIdx<myClassesNamesTbl.length; totalClassIdx++)
-                    {
-                        if (myTileClassesNames[tileClassIdx] == myClassesNamesTbl[totalClassIdx])
-                        {
-                            myTileDisplaySettings.push(myDisplaySettingsTbl[totalClassIdx]);
-                            myTileOpacitySettings.push(myOpacitySettingsTbl[totalClassIdx]);
-                        }
-                    }
-                } 
-                
+                //Set display setting by class      
                 //Explode cloud by class
                 var myCloudExplodedByClass = inputTbl[i].ExplodeByClass().CloudTbl;
+                //Map display setting for each class    
+                var myTileSettings = CLOUD_MapClassSettings(inputTbl[i]); 
+
                 
-                //Set visibility setting for each class
-                for (var classIdx=0; classIdx<myTileNumberOfClasses; classIdx++)
-                {
-                    //set display type 
-                    switch (myTileDisplaySettings[classIdx])
-                    {
-                    case 0:
-                        myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
-                        //Add subClouds in the tbl of clouds to display
-                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);  
-                        break;
-                    case 1:          
-                        //Set special color grading 
-                        CLOUD_ApplyColorGradient(myCloudExplodedByClass[classIdx]);              
-                        //Convert intensity as color to get rid of the intensity scale display
-                        tempCloud = myCloudExplodedByClass[classIdx].ConvertInspectionToColor().Cloud;
-                        myCloudExplodedByClass[classIdx] = SCloud.New(tempCloud);
-                        myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED );
-                        //Add subClouds in the tbl of clouds to display
-                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);   
-                        break;
-                    case 2:
-                        myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_CLASSIFICATION);
-                        //Add subClouds in the tbl of clouds to display
-                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);
-                        break;
-                    case 3:         
-                        //Do not add the data to the tbl of clouds to display               
-                        break;
-                    default:
-                        break;
-                    }                    
-                    
-                    //set opacity
-                    var myOpacityText = (myTileOpacitySettings[classIdx]*255/100).toFixed(0);
-                    var myOpacity = Number(myOpacityText);                    
-                    myCloudExplodedByClass[classIdx].SetTransparency(myOpacity);
-                }                
+                //Set display type of each cloud 
+                var myCloudsToDisplay = CLOUDTBL_SetClassDisplayType(myCloudExplodedByClass,myTileSettings.TileDisplayTypeTbl).CloudsToDisplay;
+                //Set Opacity of each cloud 
+                CLOUDTBL_SetClassOpacity(myCloudExplodedByClass,myTileSettings.TileOpacityTbl);
+                //Set Color of each cloud 
+                CLOUDTBL_SetClassColor(myCloudExplodedByClass,myTileSettings.TileColorTbl);
+                
+                MISC_ForEachPush(myCloudsToDisplay,myOutputCloudTbl);
+
                 break;
             default:
                 break;
@@ -1387,6 +1333,145 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
 
     return {
         "CloudTbl": myOutputCloudTbl
+    }
+}
+
+
+function CLOUD_MapClassSettings(myCloud)
+{
+    //Get user settings
+    var myClassesNamesTbl = myScriptParameters_LidarMode.ClassesNamesTbl;
+    var myDisplaySettingsTbl = myScriptParameters_LidarMode.ClassesDisplayTypeTbl;
+    var myOpacitySettingsTbl = myScriptParameters_LidarMode.ClassesOpacityTbl;
+    var myClassColorSettingsTbl = myScriptParameters_LidarMode.ClassColorsTbl;
+
+    //Get class info of currently opened tile
+    var myTileClasses = CLOUD_GetClassNumber(myCloud);
+    
+    var myTileNumberOfClasses = myTileClasses.ClassNb;
+    var myTileClassesNames = myTileClasses.ClassNames;
+    var myTileDisplaySettings = [];
+    var myTileOpacitySettings = [];
+    var myTileColorSettings = [];
+    
+
+    //Map the settings with the classes names found in that tile
+    for (var tileClassIdx=0; tileClassIdx<myTileNumberOfClasses; tileClassIdx++)
+    {
+        for (var totalClassIdx=0; totalClassIdx<myClassesNamesTbl.length; totalClassIdx++)
+        {
+            if (myTileClassesNames[tileClassIdx] == myClassesNamesTbl[totalClassIdx])
+            {
+                myTileDisplaySettings.push(myDisplaySettingsTbl[totalClassIdx]);
+                myTileOpacitySettings.push(myOpacitySettingsTbl[totalClassIdx]);
+                myTileColorSettings.push(myClassColorSettingsTbl[totalClassIdx]);
+            }
+        }
+    } 
+    
+    return {
+        "TileDisplayTypeTbl": myTileDisplaySettings,
+        "TileOpacityTbl": myTileOpacitySettings,
+        "TileColorTbl": myTileColorSettings,
+    }
+}
+    
+
+function CLOUDTBL_SetClassDisplayType(myCloudTbl,myTileDisplaySettings)
+{
+    var myOutputCloudTbl = [];
+    var tempCloud;
+
+    //Set visibility setting for each class
+    for (var classIdx=0; classIdx<myCloudTbl.length; classIdx++)
+    {
+        //set display type 
+        switch (myTileDisplaySettings[classIdx])
+        {
+        case 0:
+            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
+            //Add subClouds in the tbl of clouds to display
+            myOutputCloudTbl.push(myCloudTbl[classIdx]);  
+            break;
+        case 1:          
+            //Set special color grading 
+            CLOUD_ApplyColorGradient(myCloudTbl[classIdx]);              
+            //Convert intensity as color to get rid of the intensity scale display
+            tempCloud = myCloudTbl[classIdx].ConvertInspectionToColor().Cloud;
+            myCloudTbl[classIdx] = SCloud.New(tempCloud);
+            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED );
+            //Add subClouds in the tbl of clouds to display
+            myOutputCloudTbl.push(myCloudTbl[classIdx]);   
+            break;
+        case 2:
+            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_FLAT);
+            //Add subClouds in the tbl of clouds to display
+            myOutputCloudTbl.push(myCloudTbl[classIdx]);
+            break;
+        case 3:         
+            //Do not add the data to the tbl of clouds to display               
+            break;
+        default:
+            break;
+        }     
+    }
+
+    return {
+        "CloudsToDisplay": myOutputCloudTbl
+    }
+}
+
+function CLOUDTBL_SetClassOpacity(myCloudTbl,myTileOpacitySettings)
+{
+    //Set visibility setting for each class
+    for (var classIdx=0; classIdx<myCloudTbl.length; classIdx++)
+    {
+        //set opacity
+        var myOpacityText = (myTileOpacitySettings[classIdx]*255/100).toFixed(0);
+        var myOpacity = Number(myOpacityText);                    
+        myCloudTbl[classIdx].SetTransparency(myOpacity);
+    }
+}
+
+function CLOUDTBL_SetClassColor(myCloudTbl,myTileColorSettings)
+{
+    //Set visibility setting for each class
+    for (var classIdx=0; classIdx<myCloudTbl.length; classIdx++)
+    {
+        //set Color
+        switch (myTileColorSettings[classIdx])
+        {
+        case 0: //'Red'
+            myCloudTbl[classIdx].SetColors(1,0,0);
+            break;
+        case 1: //'Orange'
+            myCloudTbl[classIdx].SetColors(1,0.5,0);     
+            break;
+        case 2: //'Yellow'  
+            myCloudTbl[classIdx].SetColors(1,1,0);
+            break;
+        case 3: //'Green'        
+            myCloudTbl[classIdx].SetColors(0,1,0);
+            break;
+        case 4: //'Blue'                     
+            myCloudTbl[classIdx].SetColors(0,0,1);
+            break;
+        case 5: //'Purple'     
+            myCloudTbl[classIdx].SetColors(1,0,1);
+            break;
+        case 6: //'White'                        
+            myCloudTbl[classIdx].SetColors(1,1,1);
+            break;
+        case 7: //'Grey'              
+            myCloudTbl[classIdx].SetColors(0.5,0.5,0.5);
+            break;
+        case 8: //'Black'                     
+            myCloudTbl[classIdx].SetColors(0,0,0);
+            break;
+        default:
+            myCloudTbl[classIdx].SetColors(0,0,0);
+            break;
+        }     
     }
 }
 
@@ -1568,6 +1653,13 @@ function MISC_ForEach_Clear(inputTbl)
 }
 
 
+function MISC_ForEachPush(myTbltoAdd,myTblToPushTo)
+{
+    for (var i=0;i<myTbltoAdd.length;i++)
+    {
+        myTblToPushTo.push(myTbltoAdd[i]);
+    }    
+}
 
 /**
  * Get the current document Path. 
@@ -1708,6 +1800,7 @@ function SETTINGS_LIDARMODE()
     var myClassNamesTbl = [];
     var myClassDisplayTypeTbl = [];
     var myClassOpacityTbl = [];    
+    var myClassColorsTbl = [];
     var myResult;
 
 
@@ -1778,6 +1871,7 @@ function SETTINGS_LIDARMODE()
             myClassNamesTbl = myClasses.ClassNames;
             myClassDisplayTypeTbl = SETTINGS_LidarClassDisplayType().DisplayTypeTbl;        
             myClassOpacityTbl = SETTINGS_LidarClassOpacity().OpacityTbl;
+            myClassColorsTbl =  SETTINGS_LidarClassColor().ClassColorsTbl;
         }
         else
         {
@@ -1812,7 +1906,8 @@ function SETTINGS_LIDARMODE()
         "ExportType": Number(myResult.ExportFormat),
         "ClassesNamesTbl": myClassNamesTbl,
         "ClassesDisplayTypeTbl": myClassDisplayTypeTbl,
-        "ClassesOpacityTbl": myClassOpacityTbl
+        "ClassesOpacityTbl": myClassOpacityTbl,
+        "ClassColorsTbl": myClassColorsTbl
     };
 }
 
@@ -1989,6 +2084,73 @@ function SETTINGS_LidarClassOpacity()
     
     return {
         "OpacityTbl": myOpacityTbl
+    }
+    
+}
+
+
+
+/**
+ * Generate a Popup to ask user to choose colors for each class.
+ */
+function SETTINGS_LidarClassColor()
+{
+    var myID;
+    var myText;
+    var myColorTbl = [];
+    var myTooltip = 'Choose color for each class';
+    var myChoices = ['Red','Orange','Yellow','Green','Blue','Purple','White','Grey','Black']
+
+    //Create a dialog to enter script settings
+	var myDialog = SDialog.New("Classes Settings");
+
+    myDialog.BeginGroup('Color by class');
+
+    var myClasses = LGS_GetClassNumber();
+    var myNumberOfClasses = myClasses.ClassNb;
+    var myClassesList = myClasses.ClassNames;
+    
+    if (myNumberOfClasses == 0)
+    {
+        myDialog.AddText('No class available',SDialog.Instruction);
+    }
+    else
+    {   
+        for (var i=0; i<myNumberOfClasses; i++)
+        {
+            myID = 'CLASS_'
+            myID = myID.concat(String(i));
+            myText = ''
+            myText = myText.concat(String(myClassesList[i]));
+
+            myDialog.AddChoices({
+            'id': myID,
+            'name': myText,
+            'choices': myChoices,
+            'tooltip': myTooltip,
+            'value': 0,
+            'saveValue': false,
+            'readOnly': false,
+            'style': SDialog.ChoiceRepresentationMode.ComboBox
+            });
+        }
+    }
+    
+    var myResult = myDialog.Run();
+
+    //close if user cancelled
+    if ((myResult.ErrorCode == -1) || ((myResult.ErrorCode == 1)))
+    {
+        POPUP_Message('Error',"Operation Cancelled by the user",SDialog.Error);
+        throw new Error("Operation Cancelled by the user");
+    }
+
+
+    //get data saved by user
+    myColorTbl = SETTINGS_readClassInput(myResult).Results;
+    
+    return {
+        "ClassColorsTbl": myColorTbl
     }
     
 }
