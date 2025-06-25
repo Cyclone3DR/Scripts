@@ -1000,6 +1000,35 @@ function LGS_GetClassNumber()
     }
 }
 
+function CLOUD_GetClassNumber(myCloud)
+{
+    var myNumberOfClasses;
+    var className;
+
+    //Explode by Class
+    var myExplodedClouds =  myCloud.ExplodeByClass();
+    myNumberOfClasses = myExplodedClouds.ClassTbl.length;
+
+    //get names of the classes for user convenience
+    var myClassesNames = [];
+    var myClassesID = [];
+    for (var i=0;i<myNumberOfClasses;i++)
+    {
+        className = SCloud.GetClassName(myExplodedClouds.ClassTbl[i]).Name;
+        myClassesID.push(myExplodedClouds.ClassTbl[i]);
+        myClassesNames.push(className);
+    }
+        
+
+    return {
+        "ClassNb": myNumberOfClasses,
+        "ClassID": myClassesID,
+        "ClassNames": myClassesNames
+
+    }
+}
+
+
 
 /**
  * Convert LGS data imported into the project as Trajectory
@@ -1291,7 +1320,8 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 var myOpacitySettingsTbl = myScriptParameters_LidarMode.ClassesOpacityTbl;
 
                 //Get class info of currently opened tile
-                var myTileClasses = LGS_GetClassNumber();
+                var myTileClasses = CLOUD_GetClassNumber(inputTbl[i]);
+                
                 var myTileNumberOfClasses = myTileClasses.ClassNb;
                 var myTileClassesNames = myTileClasses.ClassNames;
                 var myTileDisplaySettings = [];
