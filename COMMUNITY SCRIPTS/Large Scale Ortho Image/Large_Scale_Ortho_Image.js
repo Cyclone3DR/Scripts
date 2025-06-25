@@ -79,91 +79,6 @@ function MENU_MAINMENU()
 }
 
 
-/**
- * Open menu to select mode to run for image type.
- * The script offers automatic and a manual processing.
- * - Automatic : Split the data in tiles, then process all tiles one by one.
- * - Manual : Process only of the the selected tiles one by one.
- */
-function MENU_PHOTO()
-{
-    //Create a dialog to choose process to run
-	var myDialog = SDialog.New("Image Ortho Photo Menu");
-
-    myDialog.BeginGroup('Processing mode');
-
-    var myOptions = {
-        'option0':String('JPG ORTHO (AUTO): Generate image based Ortho (whole scene)'),
-        'option1':String('JPG ORTHO (MANUAL): Generate image based Ortho (will process selected tiles only)')
-    }
-    
-    myDialog.AddChoices({
-    'id': 'myChoices',
-    'name': 'Select processing mode :',
-    'tooltip': "Automatic process will split the data in tiles and process tile individually. Manual allow to choose which tiles to process",
-    'choices': [myOptions.option0,myOptions.option1],
-    'value': 0, //  correspond to 'option A'
-    'saveValue': false,
-    'readOnly': false,
-    'style': SDialog.RadioButtons
-    });
-
-    var myResult = myDialog.Run();
-
-    //close if user cancelled
-    if ((myResult.ErrorCode == -1) || ((myResult.ErrorCode == 1)))
-    {
-        POPUP_Message('Error',"Operation Cancelled by the user",SDialog.Error);
-        throw new Error("Operation Cancelled by the user");
-    }
-
-    return {     
-        'Choice': myResult
-    };
-}
-
-/**
- * Open menu to select mode to run for LIDAR type.
- * The script offers automatic and a manual processing.
- * - Automatic : Split the data in tiles, then process all tiles one by one.
- * - Manual : Process only of the the selected tiles one by one.
- */
-function MENU_LIDAR()
-{
-    //Create a dialog to choose process to run
-	var myDialog = SDialog.New("LIDAR Orthophoto Menu");
-
-    myDialog.BeginGroup('Processing mode');
-
-    var myOptions = {
-        'option2':String('LIDAR ORTHO (AUTO): Generate Lidar based Ortho (whole scene)'),
-        'option3':String('LIDAR ORTHO (MANUAL): Generate Lidar based Ortho (will process selected tiles only)')
-    }
-    
-    myDialog.AddChoices({
-    'id': 'myChoices',
-    'name': 'Select processing mode: ',
-    'tooltip': "Automatic process will split the data in tiles and process tile individually. Manual allow to choose which tiles to process",
-    'choices': [myOptions.option2,myOptions.option3],
-    'value': 0, //  correspond to 'option A'
-    'saveValue': false,
-    'readOnly': false,
-    'style': SDialog.RadioButtons
-    });
-
-    var myResult = myDialog.Run();
-
-    //close if user cancelled
-    if ((myResult.ErrorCode == -1) || ((myResult.ErrorCode == 1)))
-    {
-        POPUP_Message('Error',"Operation Cancelled by the user",SDialog.Error);
-        throw new Error("Operation Cancelled by the user");
-    }
-
-    return {     
-        'Choice': myResult
-    };
-}
 
 /**
  * Check if the data contains trajectory  information
@@ -189,24 +104,21 @@ function PROCESS_Execute()
 {
     var myChoice1;
     var myChoice2;
+    var myMultilineSelected;
 
     //call main menu
     myChoice1 = MENU_MAINMENU().Choice.myChoices;
 
-    //call menu 2 accordingly
-    switch(myChoice1) {
-    case 0:
-        myChoice2 = MENU_PHOTO().Choice.myChoices;
-        break;
-    case 1:
-        myChoice2 = MENU_LIDAR().Choice.myChoices;
-        break;
-    default:
-        POPUP_Message('Error',"Invalid choice",SDialog.Error);   
-        throw new Error("Invalid choice");;
-        break;
-    }
+    //get current multiline selection
+    myMultilineSelected = SMultiline.FromSel();
 
+    //Detect automatically if processing is over the whole data, or only for selected tiles depending on current selection size
+    if (myMultilineSelected.length == 0)
+    {
+        myChoice2 = 0;
+    } else {
+        myChoice2 = 1;
+    } 
     //Run process accordingly
     var myProcess = Number(myChoice1)*10 + Number(myChoice2);
     var myLGSTiles = [];
@@ -554,7 +466,7 @@ function CLOUDTBL_GenerateAllTilesBounds(myCloudtbl)
 
         for (var column=0; column<myTotalColumns; column++)
         {               
-            try {
+            //try {
                 //Shift position to Column number
                 myOrthoCoordinates.SetY(myUperleftCorner.GetY());
                 myOrthoCoordinates.Translate(myColumnTranslation.Mult(column));
@@ -590,7 +502,7 @@ function CLOUDTBL_GenerateAllTilesBounds(myCloudtbl)
                     myTileTbl.push(myTileBounds);
                 }
 
-            } catch {}            
+            //} catch {}            
         }        
     }
 
@@ -1320,7 +1232,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 CLOUDTBL_SetClassOpacity(myCloudExplodedByClass,myTileSettings.TileOpacityTbl);
                 //Set Color of each cloud 
                 CLOUDTBL_SetClassColor(myCloudExplodedByClass,myTileSettings.TileColorTbl);
-                
+
                 MISC_ForEachPush(myCloudsToDisplay,myOutputCloudTbl);
 
                 break;
