@@ -979,12 +979,12 @@ function LGS_GetClassNumber()
 
     //Explode by Class
     var myExplodedClouds =  myCloud.ExplodeByClass();
-    myNumberOfClasses = myExplodedClouds.ClassTbl.length-1;
+    myNumberOfClasses = myExplodedClouds.ClassTbl.length;
 
     //get names of the classes for user convenience
     var myClassesNames = [];
     var myClassesID = [];
-    for (var i=0;i<=myNumberOfClasses;i++)
+    for (var i=0;i<myNumberOfClasses;i++)
     {
         className = SCloud.GetClassName(myExplodedClouds.ClassTbl[i]).Name;
         myClassesID.push(myExplodedClouds.ClassTbl[i]);
@@ -1775,7 +1775,7 @@ function SETTINGS_LidarClassDisplayType()
     }
     else
     {   
-        for (var i=0; i<= myNumberOfClasses; i++)
+        for (var i=0; i<myNumberOfClasses; i++)
         {
             myID = 'CLASS_';
             myID = myID.concat(String(i));
@@ -1885,7 +1885,7 @@ function SETTINGS_LidarClassOpacity()
     }
     else
     {   
-        for (var i=0; i<= myNumberOfClasses; i++)
+        for (var i=0; i<myNumberOfClasses; i++)
         {
             myID = 'CLASS_'
             myID = myID.concat(String(i));
