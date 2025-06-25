@@ -1893,15 +1893,15 @@ function SETTINGS_LidarClassOpacity()
             myText = myText.concat(String(myClassesList[i]));
             myText = myText.concat(' (10-100%):');
 
-            myDialog.AddTextField({
+            myDialog.AddInt({
                 'id': myID,
                 'name': myText,
                 'tooltip': myTooltip,
-                'value': '100',
+                'value': 100,
                 'saveValue': false,
-                'readOnly': false,
-                'canBeEmpty': false
-            });   
+                'min': 10,
+                'max': 100
+            });
         }
     }
     
