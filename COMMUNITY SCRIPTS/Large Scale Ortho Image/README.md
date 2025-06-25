@@ -24,11 +24,10 @@ For each type of processing manual and automatic mode. <br />
 
 ## How to use  <br />
 1. Run the script and select processing type ("IMAGE" or "LIDAR"). <br />
-2. Select the processing mode ("Automatic" or "Manual") (To select "Manual", please select first the tiles you want to process in your viewport before running the script)  <br />
-3. If no Cloudworx data is already loaded in the project, the script will ask you to select the file (.LGSx) you want to open.  <br />
-4. Input user settings such as road width, triangle size, camera to use, image pixel size, etc... (settings vary depending on processing type) <br />
-5. Set the file save location and file prefix. <br />
-6. Wait for the processing to finish. The files will be saved on the set location on your computer. <br />
+2. If no Cloudworx data is already loaded in the project, the script will ask you to select the file (.LGSx) you want to open.  <br />
+3. Input user settings such as road width, triangle size, camera to use, image pixel size, etc... (settings vary depending on processing type) <br />
+4. Set the file save location and file prefix*. <br /> (*The generated orthoimages name will containt the selected prefix AND the tile name. You can rename the tiles to you preference if you need a specific naming.) <br />
+5. Wait for the processing to finish. The files will be saved on the set location on your computer. <br />
 
 ## Sample data
 
