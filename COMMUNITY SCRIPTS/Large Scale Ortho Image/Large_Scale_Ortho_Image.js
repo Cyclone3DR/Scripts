@@ -1282,20 +1282,43 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 //Add clouds in the tbl of clouds to display
                 myOutputCloudTbl.push(inputTbl[i]);
                 break;
-            case 2:
-                //Display by class
-                var myNumberOfClasses = myScriptParameters_LidarMode.ClassesDisplayTypeTbl.length
+            case 2: 
+                //Set display setting depending on the class    
+
+                //Get user settings
+                var myClassesNamesTbl = myScriptParameters_LidarMode.ClassesNamesTbl;
                 var myDisplaySettingsTbl = myScriptParameters_LidarMode.ClassesDisplayTypeTbl;
                 var myOpacitySettingsTbl = myScriptParameters_LidarMode.ClassesOpacityTbl;
-                
-                //Exploded cloud by class
-                var myCloudExplodedByClass = inputTbl[i].ExplodeByClass().CloudTbl;
 
+                //Get class info of currently opened tile
+                var myTileClasses = LGS_GetClassNumber();
+                var myTileNumberOfClasses = myTileClasses.ClassNb;
+                var myTileClassesNames = myTileClasses.ClassNames;
+                var myTileDisplaySettings = [];
+                var myTileOpacitySettings = [];
+                
+
+                //Map the settings with the classes names found in that tile
+                for (var tileClassIdx=0; tileClassIdx<myTileNumberOfClasses; tileClassIdx++)
+                {
+                    for (var totalClassIdx=0; totalClassIdx<myClassesNamesTbl.length; totalClassIdx++)
+                    {
+                        if (myTileClassesNames[tileClassIdx] == myClassesNamesTbl[totalClassIdx])
+                        {
+                            myTileDisplaySettings.push(myDisplaySettingsTbl[totalClassIdx]);
+                            myTileOpacitySettings.push(myOpacitySettingsTbl[totalClassIdx]);
+                        }
+                    }
+                } 
+                
+                //Explode cloud by class
+                var myCloudExplodedByClass = inputTbl[i].ExplodeByClass().CloudTbl;
+                
                 //Set visibility setting for each class
-                for (var classIdx=0; classIdx<myNumberOfClasses; classIdx++)
+                for (var classIdx=0; classIdx<myTileNumberOfClasses; classIdx++)
                 {
                     //set display type 
-                    switch (myDisplaySettingsTbl[classIdx])
+                    switch (myTileDisplaySettings[classIdx])
                     {
                     case 0:
                         myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
@@ -1320,7 +1343,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                     }                    
                     
                     //set opacity
-                    var myOpacityText = (myOpacitySettingsTbl[classIdx]*255/100).toFixed(0);
+                    var myOpacityText = (myTileOpacitySettings[classIdx]*255/100).toFixed(0);
                     var myOpacity = Number(myOpacityText);                    
                     myCloudExplodedByClass[classIdx].SetTransparency(myOpacity);
 
@@ -1640,8 +1663,9 @@ function SETTINGS_IMAGEMODE()
  */
 function SETTINGS_LIDARMODE()
 {
+    var myClassNamesTbl = [];
     var myClassDisplayTypeTbl = [];
-    var myClassOpacityTbl = [];
+    var myClassOpacityTbl = [];    
     var myResult;
 
 
@@ -1705,9 +1729,11 @@ function SETTINGS_LIDARMODE()
     //if LIDAR Representation is set to be decided by class, call in an extra menu  
     if (myResult.LIDARRepresentation == 2) 
     {
-        var myClasses = LGS_GetClassNumber().ClassNb;
-        if (myClasses != 0)
+        var myClasses = LGS_GetClassNumber();
+        var myNumberOfClasses = myClasses.ClassNb;
+        if (myNumberOfClasses != 0)
         {
+            myClassNamesTbl = myClasses.ClassNames;
             myClassDisplayTypeTbl = SETTINGS_LidarClassDisplayType().DisplayTypeTbl;        
             myClassOpacityTbl = SETTINGS_LidarClassOpacity().OpacityTbl;
         }
@@ -1742,6 +1768,7 @@ function SETTINGS_LIDARMODE()
         "UseCustomColor": Boolean(myResult.UseCustomColor),
         "CustomColorPathToRSI": String(myLoadPath),
         "ExportType": Number(myResult.ExportFormat),
+        "ClassesNamesTbl": myClassNamesTbl,
         "ClassesDisplayTypeTbl": myClassDisplayTypeTbl,
         "ClassesOpacityTbl": myClassOpacityTbl
     };
