@@ -1346,6 +1346,8 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                     {
                     case 0:
                         myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
+                        //Add subClouds in the tbl of clouds to display
+                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);  
                         break;
                     case 1:          
                         //Set special color grading 
@@ -1354,9 +1356,16 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                         tempCloud = myCloudExplodedByClass[classIdx].ConvertInspectionToColor().Cloud;
                         myCloudExplodedByClass[classIdx] = SCloud.New(tempCloud);
                         myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED );
+                        //Add subClouds in the tbl of clouds to display
+                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);   
                         break;
                     case 2:
                         myCloudExplodedByClass[classIdx].SetCloudRepresentation(SCloud.CLOUD_CLASSIFICATION);
+                        //Add subClouds in the tbl of clouds to display
+                        myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);
+                        break;
+                    case 3:         
+                        //Do not add the data to the tbl of clouds to display               
                         break;
                     default:
                         break;
@@ -1366,9 +1375,6 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                     var myOpacityText = (myTileOpacitySettings[classIdx]*255/100).toFixed(0);
                     var myOpacity = Number(myOpacityText);                    
                     myCloudExplodedByClass[classIdx].SetTransparency(myOpacity);
-
-                    //Add subClouds in the tbl of clouds to display
-                    myOutputCloudTbl.push(myCloudExplodedByClass[classIdx]);
                 }                
                 break;
             default:
@@ -1818,7 +1824,7 @@ function SETTINGS_LidarClassDisplayType()
     var myText;
     var myIDs = [];
     var myTooltip = 'Choose display type';
-    var myChoices = ['Color','Intensity','Class']
+    var myChoices = ['Color','Intensity','Class','Hidden']
     var myDisplayTypeTbl = [];
 
     //Create a dialog to enter script settings
