@@ -461,11 +461,12 @@ function LGS_GenerateLidarOrtho(myMozaictileTbl)
         MISC_ForEach_AddToDoc(myCloudToDisplayTbl);           
         MISC_ShowSpecific(myCloudToDisplayTbl);
 
-        //Export point cloud data if requested by user
-        CLOUDTBL_Export(myCloudToDisplayTbl,myMozaictileTbl[tile].GetName());
-
-        //Generate Ortho
+        //Generate Ortho        
         MOZAIC_GenerateSingleOrtho(myMozaictileTbl[tile]);
+
+        //Export point cloud data if requested by user
+        //(Placed at the end of the process so the ortho is still generated in case of error)
+        CLOUDTBL_Export(myCloudToDisplayTbl,myMozaictileTbl[tile].GetName());
 
         //Turn on display of grid
         MISC_ShowSpecific(myMozaictileTbl);
