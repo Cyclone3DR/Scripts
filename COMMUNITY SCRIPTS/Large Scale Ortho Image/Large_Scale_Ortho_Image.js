@@ -2,17 +2,20 @@
  * Orthographic image generation utility
  * 
  * This script provides a functionality to export top-down orthographic images from LGSx data. Both LIDAR and image based orthographic images are supported. Results are exported as .JPG data with geographic information (.JGW). 
+ * 
+ * The following script has been tested on the following release versions:
+    - Cyclone 3DR 2025.1.2.47945 
 
  * For more information regarding this script consult the project .md file 
  * --> [LINK TO .MD FILE ON GITHUB]
  * 
  * How to use
     1. Run the script and select processing type ("IMAGE" or "LIDAR").
-    2. Select the processing mode ("Automatic" or "Manual") (To select "Manual", please select first the tiles you want to process in your viewport before running the script)
-    3. If no Cloudworx data is already loaded in the project, the script will ask you to select the file (.LGSx) you want to open.
-    4. Input user settings such as road width, triangle size, camera to use, image pixel size, etc... (settings vary depending on processing type)
-    5. Set the file save location and file prefix.
-    6. Wait for the processing to finish. The files will be saved on the set location on your computer. 
+    2. If no Cloudworx data is already loaded in the project, the script will ask you to select the file (.LGSx) you want to open.  
+    3. Input user settings such as road width, triangle size, camera to use, image pixel size, etc... (settings vary depending on processing type)
+    4. Set the file save location and file prefix*. 
+    (*The generated orthoimages name will containt the selected prefix AND the tile name. You can rename the tiles to you preference if you need a specific naming.) 
+    5. Wait for the processing to finish. The files will be saved on the set location on your computer. 
  */
 
 /* ---- Main code Starts here ------ */
@@ -77,7 +80,6 @@ function MENU_MAINMENU()
         'Choice': myResult
     };
 }
-
 
 
 /**
@@ -466,7 +468,7 @@ function CLOUDTBL_GenerateAllTilesBounds(myCloudtbl)
 
         for (var column=0; column<myTotalColumns; column++)
         {               
-            //try {
+            try {
                 //Shift position to Column number
                 myOrthoCoordinates.SetY(myUperleftCorner.GetY());
                 myOrthoCoordinates.Translate(myColumnTranslation.Mult(column));
@@ -502,7 +504,7 @@ function CLOUDTBL_GenerateAllTilesBounds(myCloudtbl)
                     myTileTbl.push(myTileBounds);
                 }
 
-            //} catch {}            
+            } catch {}            
         }        
     }
 
@@ -565,7 +567,7 @@ function LGS_ImportTile_LIDAR(myTile)
     myClipBox.ActivateInAllScenes();
 
     //Import cloud Data
-    myLGSClouds = LGS_ImportCloud(25000000).CloudTbl;
+    myLGSClouds = LGS_ImportCloud(myScriptParameters_LidarMode.LGSPointNumber).CloudTbl;
 
     //Remove ClipBox
     myClipBox.DeactivateInAllScenes();
@@ -1232,7 +1234,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 CLOUDTBL_SetClassOpacity(myCloudExplodedByClass,myTileSettings.TileOpacityTbl);
                 //Set Color of each cloud 
                 CLOUDTBL_SetClassColor(myCloudExplodedByClass,myTileSettings.TileColorTbl);
-
+                
                 MISC_ForEachPush(myCloudsToDisplay,myOutputCloudTbl);
 
                 break;
@@ -1396,8 +1398,8 @@ function CLOUD_ApplyColorGradient(myCloud)
 
     if (myScriptParameters_LidarMode.UseCustomColor == true)
     {
-        myCloud.SetCloudRepresentation(SCloud.CLOUD_INTENSITY);
-        var result = myCloud.LoadColorGradient(myPath);
+        myCloud.GetColorGradientAttribute("intensity");
+        var result = myCloud.LoadColorGradientAttribute(myPath, "intensity");
     } 
 }
 
@@ -1722,6 +1724,16 @@ function SETTINGS_LIDARMODE()
     myDialog.BeginGroup('LIDAR display settings');
 
     myDialog.AddTextField({
+        'id': 'LgsImportNumber',
+        'name': 'Max number of point per tile :',
+        'tooltip': 'Number of point to import from LGS file for each tile. A larger number increase point density.',
+        'value': '25000000',
+        'saveValue': true,
+        'readOnly': false,
+        'canBeEmpty': false
+    });    
+
+    myDialog.AddTextField({
         'id': 'LidarPointSize',
         'name': 'LIDAR point size (%) :',
         'tooltip': 'LIDAR point size scale factor in percent. Larger number increase the size of each point, making them more visible at the cost of details',
@@ -1819,7 +1831,8 @@ function SETTINGS_LIDARMODE()
         "ClassesNamesTbl": myClassNamesTbl,
         "ClassesDisplayTypeTbl": myClassDisplayTypeTbl,
         "ClassesOpacityTbl": myClassOpacityTbl,
-        "ClassColorsTbl": myClassColorsTbl
+        "ClassColorsTbl": myClassColorsTbl,
+        "LGSPointNumber": Number(myResult.LgsImportNumber)
     };
 }
 
