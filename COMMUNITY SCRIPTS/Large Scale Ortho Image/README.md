@@ -29,10 +29,16 @@ For each type of processing manual and automatic mode. <br />
 4. Set the file save location and file prefix*. <br /> (*The generated orthoimages name will containt the selected prefix AND the tile name. You can rename the tiles to you preference if you need a specific naming.) <br />
 5. Wait for the processing to finish. The files will be saved on the set location on your computer. <br />
 
+## Result preview
+![alt text](./MozaicSplit.png "Mozaic Split sample")
+![alt text](./LidarOrtho.jpg "Lidar Ortho sample")
+![alt text](./Photo_Ortho.jpg "Photo Ortho sample")
+
+
 ## Sample data
 
 You can download sample TRK and TLS dataset below :
 
-- TRK Dataset ()
-- TLS Dataset ()
+- TRK Dataset (available soon)
+- TLS Dataset (available soon)
 
