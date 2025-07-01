@@ -7,7 +7,7 @@
     - Cyclone 3DR 2025.1.2.47945 
 
  * For more information regarding this script consult the project .md file 
- * --> [LINK TO .MD FILE ON GITHUB]
+ * --> https://github.com/Cyclone3DR/Scripts/tree/master/COMMUNITY%20SCRIPTS/Large%20Scale%20Ortho%20Image/README.md
  * 
  * How to use
     1. Run the script and select processing type ("IMAGE" or "LIDAR").
@@ -1206,7 +1206,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
             switch(myScriptParameters_LidarMode.LidarRepresentation) {
             case 0:
                 //display cloud as colored
-                inputTbl[i].SetCloudRepresentation(SCloud.CLOUD_COLORED);
+                inputTbl[i].SetCloudRepresentation("real_color");
                 //Add clouds in the tbl of clouds to display
                 myOutputCloudTbl.push(inputTbl[i]);
                 break;
@@ -1216,7 +1216,7 @@ function CLOUDTBL_ForEach_SetRepresentation(inputTbl)
                 //Convert intensity as color to get rid of the intensity scale display
                 tempCloud = inputTbl[i].ConvertInspectionToColor().Cloud;
                 inputTbl[i] = SCloud.New(tempCloud);
-                inputTbl[i].SetCloudRepresentation(SCloud.CLOUD_COLORED );
+                inputTbl[i].SetCloudRepresentation("real_color");
                 //Add clouds in the tbl of clouds to display
                 myOutputCloudTbl.push(inputTbl[i]);
                 break;
@@ -1303,7 +1303,7 @@ function CLOUDTBL_SetClassDisplayType(myCloudTbl,myTileDisplaySettings)
         switch (myTileDisplaySettings[classIdx])
         {
         case 0:
-            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED);
+            myCloudTbl[classIdx].SetCloudRepresentation("real_color");
             //Add subClouds in the tbl of clouds to display
             myOutputCloudTbl.push(myCloudTbl[classIdx]);  
             break;
@@ -1313,12 +1313,12 @@ function CLOUDTBL_SetClassDisplayType(myCloudTbl,myTileDisplaySettings)
             //Convert intensity as color to get rid of the intensity scale display
             tempCloud = myCloudTbl[classIdx].ConvertInspectionToColor().Cloud;
             myCloudTbl[classIdx] = SCloud.New(tempCloud);
-            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_COLORED );
+            myCloudTbl[classIdx].SetCloudRepresentation("real_color");
             //Add subClouds in the tbl of clouds to display
             myOutputCloudTbl.push(myCloudTbl[classIdx]);   
             break;
         case 2:
-            myCloudTbl[classIdx].SetCloudRepresentation(SCloud.CLOUD_FLAT);
+            myCloudTbl[classIdx].SetCloudRepresentation("flat");
             //Add subClouds in the tbl of clouds to display
             myOutputCloudTbl.push(myCloudTbl[classIdx]);
             break;
