@@ -6,6 +6,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 
 ## Available scripts
 - [_TEMPLATE](./_TEMPLATE/): Folder acting as an example to help understand the expected structure of custom scripts. It is not a valid script.
+- [Large Scale Ortho Image](./Large%20Scale%20Ortho%20Image): Functionality to export large scale top-down orthographic images from LGSx data. (LIDAR and IMAGE)
 
 ## ⚠️ Disclaimer ⚠️
 
