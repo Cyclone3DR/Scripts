@@ -1,4 +1,5 @@
 # Swisstopo Height Validation Tool for Cyclone 3DR
+Created by Bimatic, Jan Sigrist - for any Questions and Feedback contact me at jan.sigrist@bimatic.ch
 
 ## Description / Beschreibung
 
@@ -31,15 +32,14 @@ Interaktives Qualitätskontroll-Tool zum Vergleich von Höhendaten gegen swissto
 
 ## Installation
 
-1. Download `SwisstopoHeightValidation.js`
+1. Download `SwisstopoHeightValidation.js` or the whole folder.
 2. Place in Cyclone 3DR scripts directory:
    - `C:\Users\[Username]\Documents\3DReshaper Scripts\`
-3. Restart Cyclone 3DR if required
 
 ## Usage
 
 ### Configuration
-1. **Run script**: `Tools` → `Execute Script` → `SwisstopoHeightValidation.js`
+1. **Run script**: `Scripts` → `Execute Script` → `Load` → `SwisstopoHeightValidation.js`
 2. **Set warning threshold**: Maximum acceptable height difference (recommended: 0.2-1.0m)
 3. **Enable auto-labels**: Automatically create validation labels
 4. **Show coordinates**: Include LV95 coordinates in labels (optional)

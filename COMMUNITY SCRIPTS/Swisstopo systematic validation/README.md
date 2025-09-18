@@ -1,6 +1,7 @@
 # Swisstopo Systematic Point Cloud Validation
 
 **Professional point cloud validation tool for Cyclone 3DR** - Validates measured heights against official Swiss topographic reference data.
+Created by Bimatic, Jan Sigrist - for any Questions and Feedback contact me at jan.sigrist@bimatic.ch
 
 ## 🎯 Overview
 
