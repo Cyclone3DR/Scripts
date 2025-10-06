@@ -12,4 +12,4 @@ To use this script, select the aligned clouds and launch the script. Then modify
 You can download individual file using these links (for text file, right click on the link and choose "Save as..."):
 
 - [AlignedClouds-BatchExport.js](./AlignedClouds-BatchExport.js)
-- [Sample.3dr](./AlignedClouds-BatchExport/Sample.3dr)
+- [Sample.3dr](./Sample.3dr)

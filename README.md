@@ -9,7 +9,7 @@ Take a tour our dedicated Youtube playlist [Cyclone 3DR Scripts](https://youtube
 
 # Download Scripts
 
-All scripts can be download in a single [zip archive](https://github.com/Cyclone3DR/Scripts/archive/master.zip).
+All scripts can be download in a single [zip archive](https://github.com/Cyclone3DR/Scripts/archive/refs/heads/master.zip).
 
 # Want to propose your own script?
 
