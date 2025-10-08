@@ -34,8 +34,7 @@ function getCloud() {
 	var PrevCol = result[0].GetColors()
 	theCloud.SetName('Aligned Dam Cleaned')
 	theCloud.SetColors(PrevCol.Red, PrevCol.Green, PrevCol.Blue)
-	theCloud.SetCloudRepresentation(SCloud.CLOUD_SMOOTH)
-
+	theCloud.SetCloudRepresentation("smooth");
 
 	return theCloud;
 }
@@ -85,7 +84,7 @@ function updateView(AllData) {
 	AllData.reportChapter1.UpdateMainViewSet()
 }
 
-function createLabels(AllData) {
+function createMeasures(AllData) {
 	var gradient = AllData.inspectedMesh.GetColorGradient().Gradient
 	var min = gradient.GetRange().Min;
 	var max = gradient.GetRange().Max;
@@ -95,19 +94,23 @@ function createLabels(AllData) {
 
 	var idx = 0;
 	ret.Results.forEach(function (curResult) {
-		var theComp = curResult.Comp
-		var theLabel = curResult.Label;
+		var theComp = curResult.Comp;
+        var pt = theComp;
+
+        var retMeas = SMeasure.CreateAnalysisMeasure(theComp, AllData.inspectedMesh);
+		var theMeasure = retMeas.Measure;
+        theMeasure.SetID(idx);
 		var labelName = "Most internal deviation"
 		if (idx == 1)
 			labelName = "Most external deviation"
-		theLabel.SetName(labelName)
-		theLabel.AddToDoc();
-		AllData.labels.push(theLabel)
+		theMeasure.SetName(labelName)
+		theMeasure.AddToDoc();
+		AllData.measures.push(theMeasure)
 		idx++
 	}
 	);
 
-	AllData.reportChapter1.AddLabels("Deviations", AllData.labels)
+	AllData.reportChapter1.AddMeasures("Deviations", AllData.measures)
 }
 
 function create2ndChapter(AllData) {
@@ -179,12 +182,12 @@ var AllData = {
 	inspectedMesh: '',
 	reportChapter1: '',
 	reportChapter2: '',
-	labels: []
+	measures: []
 };
 
 cleanDocument()
 create1stChapter(AllData)
 create2ndChapter(AllData)
-createLabels(AllData)
+createMeasures(AllData)
 updateView(AllData)
 createReport(AllData)

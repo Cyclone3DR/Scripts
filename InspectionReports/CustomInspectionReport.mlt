@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<RshReport type="template-part" version="1">
+<RshReport type="template-part" version="2">
     <Meta>
-        <Value name="comment" type="string"></Value>
-        <Value name="name" type="string">CustomInspectionReport</Value>
+        <String name="comment"></String>
+        <String name="name">CustomInspectionAnalysis</String>
     </Meta>
-    <Template path="C:/Users/Gilles/Documents/3DReshaper Reporting Templates/CustomInspectionReport.mlt">
+    <Template path="D:\OneDrive - Hexagon\Documents\Cyclone 3DR Reporting Templates\CustomInspectionReport.mlt">
         <Columns>
             <Column width="1">
                 <Text>
@@ -18,22 +18,25 @@ p, li { white-space: pre-wrap; }
         </Columns>
         <Columns>
             <Column width="1">
-                <Scene full-path="/RshCompareInspectFA0FED158CD80000/key_viewset_3d" root-type="RshCompareInspect">
+                <Scene h-align="center" full-path="/RshCompareInspect991E30A675C68F98/key_viewset_3d" root-type="RshCompareInspect">
                     <RatioHW>2.5</RatioHW>
                     <BackgroundColor r="255" g="255" b="255"/>
                     <GridVisible>true</GridVisible>
-                    <HistogramPos>1</HistogramPos>
+                    <HistogramPos>Right</HistogramPos>
                     <Mode>2D</Mode>
                     <Scene2D>
                         <CoordSys>15</CoordSys>
                         <TextHeightInPx>8</TextHeightInPx>
                         <Dpi>300</Dpi>
-                        <ZoomMode>1</ZoomMode>
-                        <LabelSize>0</LabelSize>
+                        <ZoomMode>ZoomAll</ZoomMode>
+                        <LabelSize>Default</LabelSize>
+                        <MeasureLayoutMode>FromViewset</MeasureLayoutMode>
+                        <MeasureTemplateMode>IdOnly</MeasureTemplateMode>
+                        <MeasureStyle>Light</MeasureStyle>
+                        <MeasureUseGradientAsBackgroundColor>true</MeasureUseGradientAsBackgroundColor>
                     </Scene2D>
                     <Scene3D>
                         <LabelDir x="0" y="0" z="1"/>
-                        <LabelColor r="0" g="0" b="0"/>
                         <IsoTextDist>0</IsoTextDist>
                         <IsoTextColor r="0" g="0" b="0"/>
                     </Scene3D>
@@ -41,7 +44,7 @@ p, li { white-space: pre-wrap; }
             </Column>
         </Columns>
         <Columns>
-            <Column width="0.6">
+            <Column width="0.59999999999999998">
                 <Text>
                     <Str>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd"&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name="qrichtext" content="1" /&gt;&lt;style type="text/css"&gt;
@@ -49,31 +52,36 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=" font-family:'Arial'; font-size:10pt; font-weight:400; font-style:normal;"&gt;
 &lt;p align="center" style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;"&gt;&lt;span style=" font-size:14pt; font-weight:600;"&gt;Table of Most internal and external deviations&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</Str>
                 </Text>
-                <Table h-align="center" full-path="/RshCompareInspectFA0FED158CD80000/Deviations" root-type="RshCompareInspect" family="Arial" size="8">
+                <Table h-align="center" full-path="/RshCompareInspect991E30A675C68F98/Deviations" root-type="RshCompareInspect" family="Arial" size="8">
                     <Headers>
                         <Header bind="id" tr="id" type="int"/>
                         <Header bind="name" tr="name" type="string"/>
-                        <Header bind="Dev3D" tr="Dev 3D" type="length" unit="m"/>
+                        <Header bind="d3dvalue" tr="Δ 3D" type="length" unit="m"/>
+                        <Header bind="d3dtolMin" tr="Δ 3D Tol-" type="length" unit="m"/>
+                        <Header bind="d3dtolMax" tr="Δ 3D Tol+" type="length" unit="m"/>
                     </Headers>
                 </Table>
             </Column>
-            <Column width="0.40">
-                <Scene full-path="/RshCompareInspectFA0FED158CD80000/key_viewset_3d" root-type="RshCompareInspect">
+            <Column width="0.40000000000000002">
+                <Scene h-align="center" full-path="/RshCompareInspect991E30A675C68F98/key_viewset_3d" root-type="RshCompareInspect">
                     <RatioHW>2.5</RatioHW>
                     <BackgroundColor r="255" g="255" b="255"/>
                     <GridVisible>true</GridVisible>
-                    <HistogramPos>1</HistogramPos>
+                    <HistogramPos>Right</HistogramPos>
                     <Mode>3D</Mode>
                     <Scene2D>
                         <CoordSys>15</CoordSys>
                         <TextHeightInPx>8</TextHeightInPx>
                         <Dpi>300</Dpi>
-                        <ZoomMode>0</ZoomMode>
-                        <LabelSize>0</LabelSize>
+                        <ZoomMode>Default</ZoomMode>
+                        <LabelSize>Default</LabelSize>
+                        <MeasureLayoutMode>FromViewset</MeasureLayoutMode>
+                        <MeasureTemplateMode>IdOnly</MeasureTemplateMode>
+                        <MeasureStyle>Light</MeasureStyle>
+                        <MeasureUseGradientAsBackgroundColor>true</MeasureUseGradientAsBackgroundColor>
                     </Scene2D>
                     <Scene3D>
                         <LabelDir x="0" y="0" z="1"/>
-                        <LabelColor r="0" g="0" b="0"/>
                         <IsoTextDist>0</IsoTextDist>
                         <IsoTextColor r="0" g="0" b="0"/>
                     </Scene3D>
