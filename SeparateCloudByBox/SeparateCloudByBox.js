@@ -274,7 +274,7 @@ function SplitCloudWithBox(iCloud, iBoxDef)
  */
 function ExportCloudToDisk(iComp, iPath, iNbMaxPts)
 {
-    return SSurveyingFormat.ExportCloud(iComp, iPath);
+    return SSurveyingFormat.ExportE57([iComp], [], iPath);
 }
 
 /**
@@ -457,7 +457,7 @@ function Main()
         id: "boxNamePattern",
         name: "Box Names",
         value: "Box_[#I#_#J#_#K#].e57",
-        tooltip: "Use #I#, #J# and #K# to insert cell index in the box names.\nSupported format: e57, las and laz."
+        tooltip: "Use #I#, #J# and #K# to insert cell index in the box names.\nSupported format: e57."
     });
 
     userForm.AddTextField({
