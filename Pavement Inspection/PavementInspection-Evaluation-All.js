@@ -1,7 +1,10 @@
 //verify user has selected lines to be evaluated
 var theLines = SMultiline.FromSel();
 if (theLines.length == 0)
-    throw new Error('no polylines selected for evaluation');
+{
+    SDialog.Message('no polylines selected for evaluation', SDialog.Error, "Empty selection");
+    throw new Error('Script Aborted');
+}
 
 //Ask user for ruler dimension and tolerance
 
@@ -123,17 +126,17 @@ if (result.ErrorCode == 0) { // result == 0 means the user click on the "OK" but
     var allRedCloud = mergeRed.Cloud;
     allRedCloud.SetName('Red');
     allRedCloud.SetColors(1, 0, 0);
-    allRedCloud.SetCloudRepresentation(SCloud.CLOUD_FLAT);
+    allRedCloud.SetCloudRepresentation("flat");
     allRedCloud.AddToDoc();
     var allGreenCloud = mergeGreen.Cloud;
     allGreenCloud.SetName('Green');
     allGreenCloud.SetColors(0, 1, 0);
-    allGreenCloud.SetCloudRepresentation(SCloud.CLOUD_FLAT);
+    allGreenCloud.SetCloudRepresentation("flat");
     allGreenCloud.AddToDoc();
     var allBlueCloud = mergeBlue.Cloud;
     allBlueCloud.SetName('Blue');
     allBlueCloud.SetColors(0, 0, 1);
-    allBlueCloud.SetCloudRepresentation(SCloud.CLOUD_FLAT);
+    allBlueCloud.SetCloudRepresentation("flat");
     allBlueCloud.AddToDoc();
 }
 

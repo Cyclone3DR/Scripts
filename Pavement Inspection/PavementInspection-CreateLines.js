@@ -4,14 +4,18 @@
 var testForMesh = SPoly.FromSel()
 
 if (testForMesh.length != 1)
-    throw new Error('No mesh selected.\nSelect a mesh and run the script again!');
+{
+    SDialog.Message('Select a mesh and run the script again!', SDialog.Error, "No mesh selected");
+    throw new Error("Script aborted.");
+}
 
 var testForOnePoly = SMultiline.FromSel();
 
 if ((testForOnePoly.length == 0) || (testForOnePoly.length > 1))
-    throw new Error('No polyline selected, or more than one polyline selected.\nSelect one  polyline and run the script again!');
-
-
+{
+    SDialog.Message('Select one and only polyline and run the script again!', SDialog.Error, "Wrong polyline selection");
+    throw new Error('Script aborted.');
+}
 
 //Enter the number of offsets required and the height at which the radials are to be created
 var theDialog = SDialog.New('Pavement Inspection');
