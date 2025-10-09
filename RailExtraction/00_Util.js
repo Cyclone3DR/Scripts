@@ -57,16 +57,14 @@ function SelNbMultilines(NbLines)
 
 function LoadCloud(_iFileName)
 {
-	var rshLoadCloud = SSurveyingFormat.ImportCloud(_iFileName, 0);
+	var rshLoadCloud = SSurveyingFormat.ImportLASLAZ(_iFileName, 0);
 	if(rshLoadCloud.ErrorCode != 0) 
-		throw new Error('Error when loading *.pts file: ' + _iFileName);
-	if(rshLoadCloud.CloudTbl.length != 1) 
-		throw new Error('There isn\'t only one cloud in the file: ' + _iFileName);
+		throw new Error('Error when loading: ' + _iFileName);
 	
-	rshLoadCloud.CloudTbl[0].SetCloudRepresentation(SCloud.CLOUD_SMOOTH);
-	rshLoadCloud.CloudTbl[0].SetColors(0, 0, 1);
-	rshLoadCloud.CloudTbl[0].AddToDoc();
-	return rshLoadCloud.CloudTbl[0];
+	rshLoadCloud.Cloud.SetCloudRepresentation("smooth");
+	rshLoadCloud.Cloud.SetColors(0, 0, 1);
+	rshLoadCloud.Cloud.AddToDoc();
+	return rshLoadCloud.Cloud;
 }
 
 
