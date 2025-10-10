@@ -37,14 +37,33 @@ COMMUNITY SCRIPTS/
 ## Contributing
 
 To contribute with a new script:
-1. Fork the script repository using your GitHub account.
-2. Create a new branch
-2. Create a new subfolder under `COMMUNITY SCRIPTS/`.
-3. Add your script files, a `README.md` file in the script's subfolder. Check the [Guidelines](<#guidelines-for-developers>) section for details.
-5. Update the [Available scripts](<#available-scripts>) section of this page, if necessary.
-6. git commit local changes.
-7. git push the created branch on your custom forked repository.
-8. Create a pull request to merge your branch to the `master` branch of the Cyclone 3DR Repository.
+1. Fork the script repository using your GitHub account:
+```shell
+# Open a terminal at a valid working directory
+mkdir Cyclone3DR_Scripts
+git clone "https://github.com/Cyclone3DR/Scripts.git" ./Cyclone3DR_Scripts
+cd Cyclone3DR_Scripts
+```
+2. Create a new branch:
+```shell
+git checkout -b "name_of_the_branch" master
+```
+3. Create a new subfolder under `COMMUNITY SCRIPTS/`.
+4. Add your script files:
+    - A `README.md` file in the script's subfolder. Check the [Guidelines](<#guidelines-for-developers>) section for details.
+    - Update the [Available scripts](<#available-scripts>) section of this page, if necessary.
+5. git commit local changes:
+```shell
+git add .
+git commit -m "Adding a new script to COMMUNITY SCRIPT"
+```
+7. Push the created branch:
+```shell
+git push -u origin "name_of_the_branch" master
+```
+8. Create a pull request to merge your branch to the `master` branch of the Cyclone 3DR Repository:
+Open this url (don't forget to edit the link): https://github.com/Cyclone3DR/Scripts/pull/new/name_of_the_branch
+
 
 ## Guidelines for developers
 
@@ -53,6 +72,11 @@ To ensure consistency and maintainability, please follow these guidelines when c
 - **Compatibility**: Ensure your script is compatible with Leica Cyclone 3DR and specify the version it was tested on.
 - **Licensing**: Clearly state the license under which your script is distributed.
 - **Testing**: Test your script thoroughly before submitting it.
+- **Ressources**: To help users get the most out of your script, we encourage you to include relevant datasets or tutorial videos. However, to keep this repository lightweight and efficient, please follow these rules:
+    - **Minimal datasets only**  
+    You may include files up to **100 MB** in size. If your dataset exceeds this limit, please host it externally (e.g., Google Drive, Dropbox, etc.) and link to it in your README.
+    - **No video uploads ⛔**  
+    Videos should not be stored directly in the repository. Instead, please host your tutorials on platforms like **YouTube**, **Vimeo**, or any other video streaming service, and share the link.
 - **Documentation**: Provide clear and detailed documentation in the `README.md` file (check the [README](./_TEMPLATE/README.md) example). The readme file should include the following:
     - A brief introduction containning the script name, explainning the purpose of the script, with the contact (name + email) for any support
     - A `Description` section explaining how to use the script. Idealy, a script output preview in the application (3D scene)
