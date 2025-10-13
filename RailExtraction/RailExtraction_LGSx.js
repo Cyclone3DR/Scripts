@@ -158,8 +158,6 @@ function Convert(iSCWCloud)
             clouds2Merge.push(track.Cloud);
         });
 
-        print(typeof (resToCloud.StaticData.Cloud));
-
         if (resToCloud.StaticData)
             clouds2Merge.push(resToCloud.StaticData.Cloud);
 
