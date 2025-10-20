@@ -546,8 +546,7 @@ function CreateSimpleSMeasureObjects(measurements) {
         // Add simple distance row
         var rowDefinition = {
             "key": "distance",
-            "name": "",
-            "unit": "units",
+            "name": "Distance",
             "values": [
                 {
                     "key": "actual",
@@ -608,8 +607,7 @@ function CreateSMeasureObjects(measurements, toleranceData) {
         // Add measurement data row
         var rowDefinition = {
             "key": "distance",
-            "name": "",
-            "unit": "units",
+            "name": "Distance",
             "tolMin": tolMin,
             "tolMax": tolMax,
             "values": [
@@ -619,10 +617,12 @@ function CreateSMeasureObjects(measurements, toleranceData) {
                 },
                 {
                     "key": "nominal",
+                    "prefix": "Nom.",
                     "value": nominal
                 },
                 {
                     "key": "deviation",
+                    "prefix": "Dev.",
                     "value": deviation
                 }
             ]

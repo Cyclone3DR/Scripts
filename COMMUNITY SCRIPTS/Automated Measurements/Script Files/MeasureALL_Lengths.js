@@ -1,4 +1,4 @@
-// === MeasureALL - Измерение длин между сферами ===
+// === MeasureALL - Length Measurements between Spheres ===
 
 Print("🚀 Starting Length Measurement Tool...");
 
@@ -394,8 +394,7 @@ function CreateSMeasureLengthsFromPairs(spheres, selectedPairs, modeData) {
             // Add measurement data row with tolerances
             var rowDefinition = {
                 "key": "length",
-                "name": "",
-                "unit": "units",
+                "name": "Length",
                 "tolMin": -modeData.tolerances.lengthWarning,
                 "tolMax": modeData.tolerances.lengthWarning,
                 "values": [
@@ -405,10 +404,12 @@ function CreateSMeasureLengthsFromPairs(spheres, selectedPairs, modeData) {
                     },
                     {
                         "key": "nominal",
+                        "prefix": "Nom.",
                         "value": nominal
                     },
                     {
                         "key": "deviation",
+                        "prefix": "Dev.",
                         "value": deviation
                     }
                 ]
@@ -421,8 +422,7 @@ function CreateSMeasureLengthsFromPairs(spheres, selectedPairs, modeData) {
             // Add simple measurement data row
             var rowDefinition = {
                 "key": "length",
-                "name": "",
-                "unit": "units",
+                "name": "Length",
                 "values": [
                     {
                         "key": "actual",

@@ -609,7 +609,7 @@ function CreateSMeasureAnglesWithSelection(modeData) {
                     // Add measurement data row with tolerances
                     var rowDefinition = {
                         "key": "angle",
-                        "name": "",
+                        "name": "Angle",
                         "unit": "degrees",
                         "tolMin": -modeData.tolerances.angleWarning,
                         "tolMax": modeData.tolerances.angleWarning,
@@ -620,10 +620,12 @@ function CreateSMeasureAnglesWithSelection(modeData) {
                             },
                             {
                                 "key": "nominal",
+                                "prefix": "Nom.",
                                 "value": nominal
                             },
                             {
                                 "key": "deviation",
+                                "prefix": "Dev.",
                                 "value": deviation
                             }
                         ]
@@ -636,7 +638,7 @@ function CreateSMeasureAnglesWithSelection(modeData) {
                     // Add simple measurement data row
                     var rowDefinition = {
                         "key": "angle",
-                        "name": "",
+                        "name": "Angle",
                         "unit": "degrees",
                         "values": [
                             {
