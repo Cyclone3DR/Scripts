@@ -228,6 +228,7 @@ Each measurement creates professional Label objects containing:
 ## License & Attribution
 
 - **Development**: Aleksand Solopov
+- **Email**: Alexander.Solopov@leica-geosystems.com
 - **Platform**: Leica Cyclone 3DR
 - **Application**: Industrial measurement and quality control
 - **Compatibility**: Cyclone 3DR 2025.2+
