@@ -1,31 +1,47 @@
 /*
  * 	Scan for files in a given directory with a given extension and print their path
- *
- * 	Note:
- * 	The file RshFileListing.bat must be present on your computer
  */
 
 // INPUTS
-// Path of the batch file that will scan for files
-var batchFile = "C:/Users/Nicolas S/Documents/RshFileListing.bat"
-// The path where to look for files. Do not forget to add the caracter '/' at the end
-var Path = "C:/Users/Public/Documents/3DReshaper 2016 MR1 (x64)/Samples/";
-// The extension to look for. Optionnal.
-var Ext = "3dr"
+let dial = SDialog.New("Folder configuration");
+dial.AddFileSelector(
+    {
+        id: "path_selector",
+        name: "Path to inspect",
+        mode: SDialog.EMode.OpenDirectory,
+        tooltip: "Select a path where to list files from.",
+        value: CurrentScriptPath(),
+        saveValue: true
+    });
 
-// SCAN Directory
-var errorCode = Execute(batchFile, [Path, Ext]);
-// To list all existing files without taking care of the extension, call the line below instead:
-// Execute("C:/Users/Nicolas S/Documents/RshFileListing.bat", [Path]);
+dial.AddTextField(
+    {
+        id: "extension_selector",
+        name: "File extension",
+        value: "e57",
+        tooltip: 'Extension to list. Such as "3dr", "e57", etc.'
+    });
 
-var file = SFile.New(Path + "RshFileList.txt");
-if (!file.Open(SFile.ReadOnly))
-    throw new Error('Failed to open file.');
-
-// OUTPUT file paths
-while (file.AtEnd() == false) {
-    var fileName = file.ReadLine();
-    print(Path + fileName);
+let exec = dial.Run();
+if(exec.ErrorCode != 0)
+{
+    throw new Error("Dialog cancelled.")
 }
 
-file.Close();
+let path = exec.path_selector;
+let ext = exec.extension_selector;
+
+// SCAN Directory
+let scanRes = SFile.ListEntries(path, SFile.EntriesType.Files, false, ext.length > 0 ? [ext] : []);
+
+// To list all existing files without taking care of the extension, call the line below instead:
+// let scanRes = SFile.ListEntries(Path, SFile.EntriesType.Files);
+// To list all existing files recursively, call the line below instead:
+// let scanRes = SFile.ListEntries(Path, SFile.EntriesType.Files, true, ext.length > 0 ? [ext] : []);
+
+if(scanRes.ErrorCode != 0)
+    throw new Error('Failed to open directory.');
+
+// OUTPUT file paths
+for(let filePath of scanRes.Entries)
+    Print(filePath);
