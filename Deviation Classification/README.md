@@ -1,4 +1,4 @@
-# Inspection Classification
+# Deviation Classification
 
  This script demonstrates how point cloud classification can be used to highlight deviation information in regards of a BIM object.
  
