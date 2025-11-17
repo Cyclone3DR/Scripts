@@ -10,6 +10,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Swisstopo validation](./Swisstopo%20validation): Interactive quality control tool for comparing elevation data against Swisstopo reference heights.
 - [Swisstopo systematic validation](./Swisstopo%20systematic%20validation): Grid-based validation of point cloud heights against official Swisstopo reference data.
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
+- [Tuto_CRK](./Tuto_CRK/): Tutorials to help beginners starting with scripts.
 
 ## ⚠️ Disclaimer ⚠️
 
