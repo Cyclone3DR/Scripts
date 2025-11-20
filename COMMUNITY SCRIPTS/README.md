@@ -11,7 +11,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Swisstopo systematic validation](./Swisstopo%20systematic%20validation): Grid-based validation of point cloud heights against official Swisstopo reference data.
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
 
-## ⚠️ Disclaimer ⚠️
+## âš ï¸ Disclaimer âš ï¸
 
 Scripts in this folder are created and maintained by external developers and are not officially supported by Leica Geosystems. Use them at your own discretion. 
 
@@ -23,16 +23,16 @@ Each script is stored in a dedicated subfolder. The structure is as follows:
 
 ```
 COMMUNITY SCRIPTS/ 
-├── Script-1/ 
-│ ├── script-file.js 
-│ ├── README.md
-│ ├── screenshot.png
-│ └── other-files...
-├── Script-2/
-│ ├── script-file.js
-│ └── ...
-├── ...  
-└── 
+â”œâ”€â”€ Script-1/ 
+â”‚ â”œâ”€â”€ script-file.js 
+â”‚ â”œâ”€â”€ README.md
+â”‚ â”œâ”€â”€ screenshot.png
+â”‚ â””â”€â”€ other-files...
+â”œâ”€â”€ Script-2/
+â”‚ â”œâ”€â”€ script-file.js
+â”‚ â””â”€â”€ ...
+â”œâ”€â”€ ...  
+â””â”€â”€ 
 ```
 
 ## Contributing
@@ -78,7 +78,7 @@ To ensure consistency and maintainability, please follow these guidelines when c
 - **Ressources**: To help users get the most out of your script, we encourage you to include relevant datasets or tutorial videos. However, to keep this repository lightweight and efficient, please follow these rules:
     - **Minimal datasets only**  
     You may include files up to **100 MB** in size. If your dataset exceeds this limit, please host it externally (e.g., Google Drive, Dropbox, etc.) and link to it in your README.
-    - **No video uploads ⛔**  
+    - **No video uploads â›”**  
     Videos should not be stored directly in the repository. Instead, please host your tutorials on platforms like **YouTube**, **Vimeo**, or any other video streaming service, and share the link.
 - **Documentation**: Provide clear and detailed documentation in the `README.md` file (check the [README](./_TEMPLATE/README.md) example). The readme file should include the following:
     - A brief introduction containning the script name, explainning the purpose of the script, with the contact (name + email) for any support
