@@ -11,7 +11,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Swisstopo systematic validation](./Swisstopo%20systematic%20validation): Grid-based validation of point cloud heights against official Swisstopo reference data.
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
 
-## âš ï¸ Disclaimer âš ï¸
+## ⚠️ Disclaimer ⚠️
 
 Scripts in this folder are created and maintained by external developers and are not officially supported by Leica Geosystems. Use them at your own discretion. 
 
@@ -23,16 +23,16 @@ Each script is stored in a dedicated subfolder. The structure is as follows:
 
 ```
 COMMUNITY SCRIPTS/ 
-â”œâ”€â”€ Script-1/ 
-â”‚ â”œâ”€â”€ script-file.js 
-â”‚ â”œâ”€â”€ README.md
-â”‚ â”œâ”€â”€ screenshot.png
-â”‚ â””â”€â”€ other-files...
-â”œâ”€â”€ Script-2/
-â”‚ â”œâ”€â”€ script-file.js
-â”‚ â””â”€â”€ ...
-â”œâ”€â”€ ...  
-â””â”€â”€ 
+├── Script-1/ 
+│ ├── script-file.js 
+│ ├── README.md
+│ ├── screenshot.png
+│ └── other-files...
+├── Script-2/
+│ ├── script-file.js
+│ └── ...
+├── ...  
+└── 
 ```
 
 ## Contributing
