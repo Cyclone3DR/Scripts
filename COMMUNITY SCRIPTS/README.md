@@ -37,34 +37,36 @@ COMMUNITY SCRIPTS/
 
 ## Contributing
 
-To contribute with a new script:
-1. Fork the script repository using your GitHub account:
+1. Fork the script repository using your GitHub account
+1. Clone the fork localy
+1. Create a new branch
+1. Add your script:
+    - Create a new subfolder under `COMMUNITY SCRIPTS/`
+    - Add your script files
+        - A `README.md` file in the script's subfolder (check the [guidelines](<#guidelines-for-developers>))
+        - Update the [Available scripts](<#available-scripts>) section of this page, if necessary.
+1. Commit local changes and  push the created branch to the fork
+1. Finaly, go back to GitHub interface and [create a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork#syncing-a-fork-branch-from-the-web-ui) to merge your work to the Cyclone 3DR repository
+1. Your work will then be reviewed by our team
+
+Here are the corresponding **git** instructions:
+
 ```shell
-# Open a terminal at a valid working directory
+# 2. Clone the fork localy
 mkdir Cyclone3DR_Scripts
-git clone "https://github.com/Cyclone3DR/Scripts.git" ./Cyclone3DR_Scripts
+git clone "FORK_URL" ./Cyclone3DR_Scripts
 cd Cyclone3DR_Scripts
-```
-2. Create a new branch:
-```shell
+
+# 3. Create a new branch
 git checkout -b "name_of_the_branch" master
-```
-3. Create a new subfolder under `COMMUNITY SCRIPTS/`.
-4. Add your script files:
-    - A `README.md` file in the script's subfolder. Check the [Guidelines](<#guidelines-for-developers>) section for details.
-    - Update the [Available scripts](<#available-scripts>) section of this page, if necessary.
-5. git commit local changes:
-```shell
+
+# 4 has to be done manualy, outside of the terminal...
+
+# 5. Commit local changes and  push the created branch to the fork
 git add .
 git commit -m "Adding a new script to COMMUNITY SCRIPT"
-```
-7. Push the created branch:
-```shell
 git push -u origin "name_of_the_branch" master
 ```
-8. Create a pull request to merge your branch to the `master` branch of the Cyclone 3DR Repository:
-Open this url (don't forget to edit the link): https://github.com/Cyclone3DR/Scripts/pull/new/name_of_the_branch
-
 
 ## Guidelines for developers
 
