@@ -9,6 +9,8 @@ This folder contains utility scripts allowing to interact directly with [Leica R
 
 Simple script shows how to to import RTC360 job scans (raw data) from a specified local directory.
 
+A sample data [Job 001-Vkwn.zip](./Job%20001-Vkwn.zip) is available for testing. Just unzip it and select the folder after launching the script.
+
 > The script assumes that the raw data have been previously exported from the scanner.
 
 ## [RemoteJob_And_ImportJob.js](./RemoteJob_And_ImportJob.js)
