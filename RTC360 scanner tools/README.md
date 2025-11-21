@@ -13,7 +13,9 @@ Simple script shows how to to import RTC360 job scans (raw data) from a specifie
 
 ## [RemoteJob_And_ImportJob.js](./RemoteJob_And_ImportJob.js)
 
-This script demonstrates how to communicate directly with the scanner. From job creation to direct import into the Cyclone 3DR project, it is is implemented to automates the entire scanning process. 
+This script demonstrates how to communicate directly with the scanner. 
+
+From job creation to direct import into the Cyclone 3DR project, it allows automating the entire scanning process. 
 
 > This script requires the scanner to be connected to the same network as the computer running the Cyclone 3DR.
 

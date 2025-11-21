@@ -1,3 +1,6 @@
+/// Script engine API documentation
+/// <reference path="C:/Program Files/Leica Geosystems/Cyclone 3DR/Script/JsDoc/Reshaper.d.ts" />
+
 // ===================================================================
 // --- RTC360 Import Local Job Script ---
 // This script retrieves a job stored locally and imports its point

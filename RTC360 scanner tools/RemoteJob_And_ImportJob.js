@@ -1,3 +1,6 @@
+/// Script engine API documentation
+/// <reference path="C:/Program Files/Leica Geosystems/Cyclone 3DR/Script/JsDoc/Reshaper.d.ts" />
+
 // ===================================================================
 // --- RTC360 Full Workflow Script ---
 // This script automates the entire process from job creation to import,
@@ -29,20 +32,95 @@ function handleError(functionName, errorCode) {
     return false;
 }
 
-// --- Configuration ---
-var localDownloadPath = "C:/Temp";
-// --- End Configuration ---
+function GetUserParameters()
+{
+    let configForm = SDialog.New("RTC360 Single scan configuration");
+
+    configForm.AddTextField({
+        "id": "jobName",
+        "name": "Job name",
+        "value": "Job_" + new Date().getTime(),
+        "canBeEmpty": false
+    });    
+
+    configForm.BeginGroup("Scan settings");
+
+    configForm.AddChoices({
+        "id": "scanResolution",
+        "name": "Resolution",
+        "choices": ["Low", "Medium", "High"],
+        "style": SDialog.ComboBox
+    });
+
+    configForm.AddBoolean({
+        "id": "enableScanImaging",
+        "name": "Enable imaging",
+        "value": true
+    });
+
+    configForm.AddBoolean({
+        "id": "enableDoubleScan",
+        "name": "Enable double scan",
+        "value": false
+    });
+
+    configForm.AddBoolean({
+        "id": "enableVIS",
+        "name": "Enable VIS",
+        "value": true
+    });
+
+    configForm.AddTextField({
+        "id": "setupName",
+        "name": "Setup name",
+        "value": "Setup_" + new Date().getTime(),
+        "saveValue": false,
+        "canBeEmpty": true
+    });
+
+    configForm.BeginGroup("Advanced");
+
+    configForm.AddFileSelector({
+        "id": "tempDir",
+        "name": "Temporary dir",
+        "tooltip": "Select a folder where to downloaded scans",
+        "mode": SDialog.EMode.OpenDirectory,
+        "value": TempPath()
+    });
+
+    configForm.SetButtons(["▶️ Start scan", "Cancel"]);
+
+    let exec = configForm.Run();
+    if(exec.errorCode == 1)
+        return;
+
+    return {
+        "jobName": exec.jobName,
+        "scanResolution": exec.scanResolution,
+        "enableScanImaging": exec.enableScanImaging,
+        "enableDoubleScan": exec.enableDoubleScan,
+        "enableVIS": exec.enableVIS,
+        "setupName": exec.setupName,
+        "tempDir": exec.tempDir
+    };
+}
 
 try {
     // 1. Connect
     var rtc = SRTC360Interface.New();
     if (!rtc || !rtc.IsConnected()) {
-        throw new Error("Failed to connect to scanner. Please check connection.");
+        throw new Error("Failed to connect to scanner.\nPlease check connection.");
     }
     print("--> Step 1: Successfully connected to scanner.");
 
+    let config = GetUserParameters();
+    if(config == undefined)
+    {
+        throw new Error("Script cancelled.");
+    }
+
     // 2. Create Job
-    var newJobName = "Workflow_Job_" + new Date().getTime();
+    var newJobName = config.jobName;
     print("--> Step 2: Creating new job named '" + newJobName + "'...");
     var createResult = rtc.CreateJob(newJobName);
     if (!handleError("CreateJob", createResult.ErrorCode)) {
@@ -60,10 +138,11 @@ try {
 
     // 4. Start Scan
     var scanOptions = {
-        resolution: 0, // Low
-        imaging: true,
-        doubleScan: false,
-        vis: false,
+        resolution: config.scanResolution,
+        imaging: config.enableScanImaging,
+        doubleScan: config.enableDoubleScan,
+        vis: config.enableVIS,
+        setupName: config.setupName
     };
     print("--> Step 4: Starting scan...");
     var scanResult = rtc.StartScan(scanOptions);
@@ -76,7 +155,7 @@ try {
     print("--> Step 5: Importing scan data from job '" + newJobName + "'...");
     var importOptions = {
         jobName: newJobName,
-        dirName: localDownloadPath,
+        dirName: config.tempDir,
         cloud: true,
         color: true
     };
@@ -104,7 +183,7 @@ try {
     }
 
 } catch (e) {
-    print("SCRIPT HALTED: " + e.message);
+    SDialog.Message(e.message, SDialog.Error);
 }
 
 print("--- End of script ---");
