@@ -10,6 +10,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Swisstopo validation](./Swisstopo%20validation): Interactive quality control tool for comparing elevation data against Swisstopo reference heights.
 - [Swisstopo systematic validation](./Swisstopo%20systematic%20validation): Grid-based validation of point cloud heights against official Swisstopo reference data.
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
+- [CRKennedy-Tutorials](./CRKennedy-Tutorials/): Collection of scripts to help beginners getting familiar with script API.
 
 ## ⚠️ Disclaimer ⚠️
 
@@ -76,9 +77,9 @@ To ensure consistency and maintainability, please follow these guidelines when c
 - **Licensing**: Clearly state the license under which your script is distributed.
 - **Testing**: Test your script thoroughly before submitting it.
 - **Ressources**: To help users get the most out of your script, we encourage you to include relevant datasets or tutorial videos. However, to keep this repository lightweight and efficient, please follow these rules:
-    - **Minimal datasets only**  
+    - **⚠️Minimal datasets only**  
     You may include files up to **100 MB** in size. If your dataset exceeds this limit, please host it externally (e.g., Google Drive, Dropbox, etc.) and link to it in your README.
-    - **No video uploads â›”**  
+    - **⛔ Videos are not allowed**  
     Videos should not be stored directly in the repository. Instead, please host your tutorials on platforms like **YouTube**, **Vimeo**, or any other video streaming service, and share the link.
 - **Documentation**: Provide clear and detailed documentation in the `README.md` file (check the [README](./_TEMPLATE/README.md) example). The readme file should include the following:
     - A brief introduction containning the script name, explainning the purpose of the script, with the contact (name + email) for any support
