@@ -5,8 +5,6 @@
 | Contact | Jennfier CLEAR |
 | Email | jclear@crkennedy.com.au |
 
-Here is an example of a custom script.
-
 ## Description
 
 This script asks the user to select a mesh and colours it along the Z axis. 
