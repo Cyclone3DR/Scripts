@@ -5,8 +5,6 @@
 | Contact | Jennfier CLEAR |
 | Email | jclear@crkennedy.com.au |
 
-Here is an example of a custom script.
-
 ## Description
 
 This script runs the Indoor Constructon Site 1.3 classification on a point cloud and extract the Pipe class.

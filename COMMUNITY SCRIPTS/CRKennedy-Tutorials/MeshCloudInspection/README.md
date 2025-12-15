@@ -5,8 +5,6 @@
 | Contact | Jennfier CLEAR |
 | Email | jclear@crkennedy.com.au |
 
-Here is an example of a custom script.
-
 ## Description
 
 This script will compare a point cloud to a mesh, both selected by the user when prompted by the script.
