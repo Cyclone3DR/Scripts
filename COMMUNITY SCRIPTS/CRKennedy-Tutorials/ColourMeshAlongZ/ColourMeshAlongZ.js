@@ -1,50 +1,43 @@
-// JCLEAR-NOV2025
-//------------------------------------------------------------------------------------
-//This script will colour a mesh along the Z direction.
-//The user will be prompted to click on the mesh at the launch of the script.
-//------------------------------------------------------------------------------------
+// Select a mesh and colour it according to the elevation
+//-------------------------------------------------------
 
+print("Select the mesh to colour"); //inform the user
 
-//Inform the user
-print("Select the mesh to colour");
-
-//Ask the user to click on a mesh in the scene
+//Start the command for the user to click on a mesh
 var resClick = SPoly.FromClick();
 
 //Check the selection
-if(resClick.ErrorCode != 0)
-	throw new Error ("Nothing is selected");
+if (resClick.ErrorCode != 0)
+	throw new Error ("Nothing is selected.");
 
-//Get the selected mesh
-var myMesh = resClick.Poly;
+//get the cloud the user has clicked on
+var myMesh = resClick.Poly; 
 
-//Colour the mesh along the elevation
-//-----------------------------------
+//Colour the mesh along elevation
+//-------------------------------
 
-//defining the direction as the Z vector
-var myVector = SVector(0, 0, 1);
+//define the direction
+var myVector = SVector(0,0,1); //to colour according to elevation, the vector to use is Z
 
-//colour the mesh
 var resColour = SPoly.ColorAlongDir(
 	[myMesh],	//(Array<SPoly>) The table of SPoly to color
-	myVector	//(SVector) The direction used for coloring
-	);
-
+	myVector);	//(SVector) The direction used for coloring
+	
 //Check the result
-if(resColour.ErrorCode != 0)
+if (resColour.ErrorCode != 0)
 	throw new Error ("Colouring failed");
 
-//Get the coloured mesh
+//get the coloured mesh
 var myColouredMesh = resColour.PolyTbl[0];
 
-//Add the mesh into the document
+//add the mesh to the document
 myColouredMesh.AddToDoc();
 
-//Hide the selected mesh
+//hide the original mesh
 myMesh.SetVisibility(false);
 
-//Rename the coloured mesh
-myColouredMesh.SetName(myMesh.GetName()+"-Elevation");	
+//name the colouredmesh
+myColouredMesh.SetName(myMesh.GetName()+"-Elevation");
 
-	
-
+//display it in inspection mode
+myColouredMesh.SetPolyRepresentation(SPoly.POLY_INSPECTION);
