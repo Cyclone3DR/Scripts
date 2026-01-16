@@ -1,13 +1,15 @@
-# Demo template
+# Mesh-Cloud Inspection
 
-| Script info |  |
+| Script info | |
 | -------- | ------- |
-| Contact | Jennfier CLEAR |
+| Contact | Jennifer CLEAR |
 | Email | jclear@crkennedy.com.au |
+
+This script is used for a webinar series teaching how to start writing scripts in 3DR. 
 
 ## Description
 
-This script will compare a point cloud to a mesh, both selected by the user when prompted by the script.
+This script compares a point cloud to a mesh; both selected by the user when prompted by the script.
 The colour gradient resulting from the inspection will be modified to have 5 regular steps.
 
 ![Script Preview](./MeshCloudInspection.png)
@@ -24,5 +26,5 @@ This script is compatible with any module of 3DR.
 
 ## Files
 
-- The main script [DemoScript.js](./MeshCloudInspection.js)
-- Sample Data: [DataSet.3dr](./MeshCloudInspection.3dr)
+- The main script: [MeshCloudInspection.js](./MeshCloudInspection.js)
+- Sample Data: [MeshCloudInspection.3dr](./MeshCloudInspection.3dr)
