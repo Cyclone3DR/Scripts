@@ -1,13 +1,15 @@
-# Demo template
+# Automating Pipe classification
 
 | Script info |  |
 | -------- | ------- |
-| Contact | Jennfier CLEAR |
+| Contact | Jennifer CLEAR |
 | Email | jclear@crkennedy.com.au |
+
+This script is used for a webinar series teaching how to start writing scripts in 3DR.
 
 ## Description
 
-This script runs the Indoor Constructon Site 1.3 classification on a point cloud and extract the Pipe class.
+This script runs the Indoor Constructon Site 1.3 classification on a point cloud and extracts the Pipe class.
 It can be easily adapted to run an other classification model and extract a different class.
 
 ![Script Preview](./Classification-Pipes.png)
@@ -24,5 +26,5 @@ This script is compatible with Survey, AEC, Plant or Pro Edition of 3DR.
 
 ## Files
 
-- The main script [DemoScript.js](./Classification-Pipes.js)
-- Sample Data: [DataSet.3dr](./Classification-Pipes.3dr)
+- The main script: [Classification-Pipes.js](./Classification-Pipes.js)
+- Sample Data: [Classification-Pipes.3dr](./Classification-Pipes.3dr)

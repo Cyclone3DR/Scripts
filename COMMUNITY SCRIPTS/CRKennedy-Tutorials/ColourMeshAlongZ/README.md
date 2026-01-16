@@ -1,9 +1,11 @@
-# Demo template
+# Colour a mesh along Z
 
 | Script info |  |
 | -------- | ------- |
-| Contact | Jennfier CLEAR |
+| Contact | Jennifer CLEAR |
 | Email | jclear@crkennedy.com.au |
+
+This script is used for a webinar series teaching how to start writing scripts in 3DR.
 
 ## Description
 
@@ -25,5 +27,5 @@ This script is compatible with any module of 3DR.
 
 ## Files
 
-- The main script [DemoScript.js](./ColourMeshAlongZ.js)
-- Sample Data: [DataSet.3dr](./ColourMeshAlongZ.3dr)
+- The main script: [ColourMeshAlongZ.js](./ColourMeshAlongZ.js)
+- Sample Data: [ColourMeshAlongZ.3dr](./ColourMeshAlongZ.3dr)
