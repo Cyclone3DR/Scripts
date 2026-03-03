@@ -69,16 +69,28 @@ if (!(Test-Path -Path $filePath -Type Leaf -ErrorAction SilentlyContinue)) {
 
 #Write handle and mesasge id in the PMDataExchange File
 $content = Get-Content $FilePath -Raw
-$content = $content -replace "EAMessage_CoordFromPegasus=\d+", "EAMessage_CoordFromPegasus=$messageId"
-$content = $content -replace "\[PegasusManager\]\s+Handle=\d+", "[PegasusManager]`r`nHandle=$Handle"
-$content | Set-Content $FilePath
 
+# Check and replace/add PegasusManager Handle
+if ($content -match "\[PegasusManager\]\s+Handle=") {
+    $content = $content -replace "\[PegasusManager\]\s+Handle=.*", "[PegasusManager]`r`nHandle=$Handle"
+} else {
+	$content = $content -replace "\[PegasusManager\].*", ""
+    $content += "`r`n[PegasusManager]`r`nHandle=$Handle"
+}
+
+if ($content -match "EAMessage_CoordFromPegasus=") {
+    $content = $content -replace "EAMessage_CoordFromPegasus=.*", "EAMessage_CoordFromPegasus=$messageId"
+} else {	
+    $content += "`r`nEAMessage_CoordFromPegasus=$messageId"
+}
+
+
+$content | Set-Content $FilePath
 
 #Read Handle of target application
 if ($content -match '\[ExternalApp\]\s+Handle=(\d+)') {
     $Foundhandle = $matches[1]
 } 
-
 
 # Create coordinate structure
 $coord = New-Object -TypeName STCoord
@@ -113,5 +125,6 @@ $result = [WindowMessage]::SendMessage($Targethandle, [WindowMessage]::WM_COPYDA
 # Clean up memory
 [System.Runtime.InteropServices.Marshal]::FreeHGlobal($ptrCoord)
 [System.Runtime.InteropServices.Marshal]::FreeHGlobal($ptrCds)
+
 
 
