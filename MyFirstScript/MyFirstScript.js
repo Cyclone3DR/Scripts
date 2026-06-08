@@ -67,7 +67,7 @@ function createsimpleMesh(iCloud) {
     var newMesh = SPoly.New(); // creation of new object 
     var deviationError = 0; // deviation error. 0 means that deviation error is not used
     var miniaverageDist = 0.05; // average distance between points in current distance unit
-    var meshHoles = SPoly.ALL_CLOSED; // all the detected holes are closed in this case
+    var meshHoles = SPoly.HoleOptionEnum.INSIDE_CLOSED; // all the detected holes are closed in this case
     var sizeHoles = miniaverageDist * 3; // size of the holes in current distance unit
 
     var iResult = SPoly.Direct3DMesh(iCloud, deviationError, miniaverageDist, meshHoles, sizeHoles); // basic 3D MESH function
@@ -194,12 +194,43 @@ function bestPlane(iCloud) {
         var planeNormal = myPlane.GetNormal(); // normal of the best plane
         var planePoint = myPlane.GetCenter(); // center of the best plane
 
-        var iLabel = SLabel.New(4, 1); // creation of a label
-        iLabel.SetColType([SLabel.Measure]); // column that contains measures
-        iLabel.SetLineType([SLabel.Surface, SLabel.NormalX, SLabel.NormalY, SLabel.NormalZ,]); // lines are surface and directions of the normal vector
-        iLabel.SetCol(0, [planeSurface, planeNormal.GetX(), planeNormal.GetY(), planeNormal.GetZ()]);
-        iLabel.AttachToPoint(planePoint); // label is attached to the center of the best plane
-        iLabel.AddToDoc();
+        // Create a measure attached to the center of the best plane
+        let measure = SMeasure.New("Best plane", planePoint, 0);
+
+        // Add a first row for the plane normal
+        measure.AddRow({
+            "key": "planeNormal",
+            "name": "Normal",
+            "values":[
+                {
+                    "key": "normal_X",
+                    "value": planeNormal.GetX()
+                },
+                {
+                    "key": "normal_Y",
+                    "value": planeNormal.GetY()
+                },
+                {
+                    "key": "normal_Z",
+                    "value": planeNormal.GetZ()
+                },
+            ]
+        });
+
+        // Add a second row for the surface with unit support
+        measure.AddRow({
+            "key": "surface",
+            "name": "Surface",
+            "unit": "m²",
+            "values":[
+                {
+                    "key": "surfaceValue",
+                    "value": planeSurface
+                }
+            ]
+        });
+
+        measure.AddToDoc();
 
         return myPlane;
     }
@@ -237,7 +268,7 @@ function colorandexportinObj(iMesh, iPath) {
 // EXECUTION OF THE FULL SCRIPT
 
 // Step 1: open an existing 3DR file
-var myfileName = GetOpenFileName("Select the file to open", "3DR files (*.3dr)", "C://"); // Define the path and the name of your file
+var myfileName = GetOpenFileName("Select the file to open", "3DR files (*.3dr)", CurrentScriptPath()); // Define the path and the name of your file
 if (myfileName.length == 0) {
     ErrorMessage("Operation canceled");
 }
@@ -262,7 +293,7 @@ var myInspection = basicInspection(myMesh, myCloud);
 var myPlane = bestPlane(myCloud);
 
 // Step 8:
-var exportPath = GetOpenFolder("Select folder to save the mesh to OBJ", "C:/"); // define the path of the folder to store the saved OBJ file
+var exportPath = GetOpenFolder("Select folder to save the mesh to OBJ", CurrentScriptPath()); // define the path of the folder to store the saved OBJ file
 if (exportPath.length == 0) {
     ErrorMessage("Operation canceled");
 }
