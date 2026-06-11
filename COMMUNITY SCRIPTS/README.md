@@ -5,6 +5,7 @@ Welcome to the **COMMUNITY SCRIPTS** folder of the Leica Cyclone 3DR GitHub repo
 This folder is dedicated to scripts contributed by developers external to Leica Geosystems, aiming to extend the functionality of Cyclone 3DR and provide creative solutions for all users.
 
 ## Available scripts
+- [Separate Point Cloud by Polyline](https://github.com/Cyclone3DR/Scripts/blob/master/COMMUNITY%20SCRIPTS/Separate%20Point%20Cloud%20by%20Polyline): Brings some old school CORE functionality into 3DR by importing a polyline from CAD and using it to separate your point cloud
 - [_TEMPLATE](./_TEMPLATE/): Folder acting as an example to help understand the expected structure of custom scripts. It is not a valid script.
 - [Large Scale Ortho Image](./Large%20Scale%20Ortho%20Image): Functionality to export large scale top-down orthographic images from LGSx data. (LIDAR and IMAGE)
 - [Swisstopo validation](./Swisstopo%20validation): Interactive quality control tool for comparing elevation data against Swisstopo reference heights.
