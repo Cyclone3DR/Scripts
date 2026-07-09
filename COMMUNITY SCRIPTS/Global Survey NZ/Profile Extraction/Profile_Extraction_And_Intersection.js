@@ -13,10 +13,21 @@ function main() {
     // INTERACTIVE SCRIPT: Integrated Profile & Direction Generator
     // Leica Cyclone 3DR Scripting
     
-    // 1. Get the massive 3D cloud
-    var selCloud = SCloud.FromSel()[0];
+    // 1. Get the massive 3D cloud WITHOUT requiring tree selection (to avoid visual noise)
+    var allClouds = SCloud.All();
+    var selCloud = null;
+    
+    if (allClouds.length === 1) {
+        // Automatically use the only cloud in the document
+        selCloud = allClouds[0];
+    } else if (allClouds.length > 1) {
+        // Multiple clouds exist: ask the user to click the one they want
+        print("Multiple clouds detected. Please CLICK on the cloud you want to use...");
+        selCloud = SCloud.FromClick();
+    }
+    
     if (!selCloud) {
-        throw new Error("Please select the massive 3D Point Cloud first.");
+        throw new Error("No point cloud found. Please ensure a point cloud is loaded.");
     }
     
     // 2. Define Direction
