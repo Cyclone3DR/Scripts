@@ -23,8 +23,10 @@ function main() {
     } else if (allClouds.length > 1) {
         // Multiple clouds exist: ask the user to click the one they want
         print("Multiple clouds detected. Please CLICK on the cloud you want to use...");
-        selCloud = SCloud.FromClick();
-    }
+        var clickRes = SCloud.FromClick();
+        if (clickRes && clickRes.ErrorCode === 0) {
+            selCloud = clickRes.Cloud;
+        }
     
     if (!selCloud) {
         throw new Error("No point cloud found. Please ensure a point cloud is loaded.");
