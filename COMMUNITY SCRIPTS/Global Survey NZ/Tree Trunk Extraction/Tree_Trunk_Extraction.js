@@ -1,10 +1,11 @@
 /**
- * Tree Trunk Extractor - Optimised (V3 - 3D Cylinder Volumetric + DTM Projection)
- * 
- * Automates the extraction of tree trunks from point clouds.
- * Features:
- * - Loopable Preview Mode: Generates 3D Cylinders hovering exactly over the trunks for visual inspection.
- * - Final Export Mode: Projects the 3D axes mathematically onto the DTM topographical ground to generate 2D CAD Topo Rings!
+ * @name Tree Trunk Extraction
+ * @author Thomas (Global Survey NZ)
+ * @description Automates the extraction of tree trunks from classified point clouds.
+ * Features two main workflows:
+ * 1. Preview Mode: Generates 3D Cylinders hovering over the trunks for visual inspection.
+ * 2. Export Mode: Projects the 3D axes mathematically onto the DTM ground to generate 2D CAD Topo Rings.
+ * @version 1.0
  */
 function main() {
     // --- STAGE 1: Setup & Classification ---
