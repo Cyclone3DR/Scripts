@@ -12,6 +12,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
 - [CRKennedy-Tutorials](./CRKennedy-Tutorials/): Collection of scripts to help beginners getting familiar with script API.
 - [Cyclone 3DR Scripting Webinar - March, 2026](./Cyclone%203DR%20Scripting%20Webinar%20Series%20-%20Tips'n%20Trick%20-%20March,%202026): Script serving as a support for the scripting webinar series.
+- [Tree Trunk Extraction](./Global%20Survey%20NZ/Tree%20Trunk%20Extraction): Automates the extraction of tree trunks from point clouds in Leica Cyclone 3DR using volumetric logic and topographical projections.
 
 ## ⚠️ Disclaimer ⚠️
 
