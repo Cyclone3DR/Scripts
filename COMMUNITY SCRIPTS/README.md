@@ -81,14 +81,14 @@ To ensure consistency and maintainability, please follow these guidelines when c
 - **Compatibility**: Ensure your script is compatible with Leica Cyclone 3DR and specify the version it was tested on.
 - **Licensing**: Clearly state the license under which your script is distributed.
 - **Testing**: Test your script thoroughly before submitting it.
-- **Ressources**: To help users get the most out of your script, we encourage you to include relevant datasets or tutorial videos. However, to keep this repository lightweight and efficient, please follow these rules:
+- **Resources**: To help users get the most out of your script, we encourage you to include relevant datasets or tutorial videos. However, to keep this repository lightweight and efficient, please follow these rules:
     - **⚠️Minimal datasets only**  
     You may include files up to **100 MB** in size. If your dataset exceeds this limit, please host it externally (e.g., Google Drive, Dropbox, etc.) and link to it in your README.
     - **⛔ Videos are not allowed**  
     Videos should not be stored directly in the repository. Instead, please host your tutorials on platforms like **YouTube**, **Vimeo**, or any other video streaming service, and share the link.
 - **Documentation**: Provide clear and detailed documentation in the `README.md` file (check the [README](./_TEMPLATE/README.md) example). The readme file should include the following:
-    - A brief introduction containning the script name, explainning the purpose of the script, with the contact (name + email) for any support
-    - A `Description` section explaining how to use the script. Idealy, a script output preview in the application (3D scene)
+    - A brief introduction containing the script name, explaining the purpose of the script, with the contact (name + email) for any support
+    - A `Description` section explaining how to use the script. Ideally, a script output preview in the application (3D scene)
     - A `Tested version` section that list the version of Cyclone 3DR where this script has been tested. For example, "Cyclone 3DR 2025.0.1".
     - A `Licensing` section to describe which edition of Cyclone 3DR is compatible with the script (Standard, Survey, etc.)
-    - Idealy, a `Files` section including link to dataset files that will help user to get familiar with your script. Be careful with the size of the data.
+    - Ideally, a `Files` section including link to dataset files that will help user to get familiar with your script. Be careful with the size of the data.
