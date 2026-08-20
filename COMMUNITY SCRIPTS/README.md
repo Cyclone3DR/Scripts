@@ -14,6 +14,8 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Cyclone 3DR Scripting Webinar - March, 2026](./Cyclone%203DR%20Scripting%20Webinar%20Series%20-%20Tips'n%20Trick%20-%20March,%202026): Script serving as a support for the scripting webinar series.
 - [NavVis Panoramas to Floor Plans](./NavVis%20Panoramas%20to%20Floor%20Plans): Import NavVis panoramas + a registered cloud, then export per-building / per-level georeferenced floor-plan orthophotos with the panos on each floor, ready for a 360° pano-viewer web app.
 - [Tree Trunk Extraction](./Global%20Survey%20NZ/Tree%20Trunk%20Extraction): Automates the extraction of tree trunks from point clouds in Leica Cyclone 3DR using volumetric logic and topographical projections.
+- [Pipe Crown Extraction](./Global%20Survey%20NZ/Pipe%20Crown%20Extraction/): An advanced, highly robust Cyclone 3DR JavaScript script designed to extract the true geometric apex (crown) of a pipe from noisy, raw 3D point cloud data.
+- [Profile Extraction](./Global%20Survey%20NZ/Profile%20Extraction/): Automates the extraction of a cross-section profile and calculates a theoretical intersection point.
 
 ## ⚠️ Disclaimer ⚠️
 
