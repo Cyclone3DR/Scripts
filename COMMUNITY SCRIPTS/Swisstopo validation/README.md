@@ -1,112 +1,97 @@
 # Swisstopo Height Validation Tool for Cyclone 3DR
-Created by Bimatic, Jan Sigrist - for any Questions and Feedback contact me at jan.sigrist@bimatic.ch
 
-## Description / Beschreibung
+| Script info |  |
+| -------- | ------- |
+| Contact | Jan Sigrist, Bimatic GmbH |
+| Email | jan.sigrist@bimatic.ch |
 
-**English:**
-Interactive quality control tool for comparing elevation data against swisstopo reference heights. Click on any point in your mesh or point cloud to instantly compare local height measurements with swisstopo data. Note: Swisstopo data should be used as a reference aid only, as there may be an undetermined time span between the acquisition of swisstopo data and the object being controlled.
+## Description
 
-**Deutsch:**
-Interaktives Qualitätskontroll-Tool zum Vergleich von Höhendaten gegen swisstopo-Referenzhöhen. Klicken Sie auf beliebige Punkte in Ihrem Mesh oder Ihrer Punktwolke, um lokale Höhenmessungen sofort mit swisstopo-Daten zu vergleichen. Hinweis: Swisstopo-Daten sind nur als Hilfsmittel zu betrachten, da zwischen der Erfassung der swisstopo-Daten und dem zu kontrollierenden Objekt eine unbestimmte Zeitspanne liegen kann.
+Interactive quality control tool for comparing elevation data against official swisstopo reference heights. Click on any point in a mesh or point cloud and the script instantly compares the local height against the swisstopo height API.
 
-## Features
+swisstopo data should be used as a reference aid only: there can be an undetermined time span between the acquisition of the swisstopo reference data and the object being controlled.
 
-- Interactive point selection with instant height comparison
-- Real-time validation against swisstopo API
-- Automatic label creation with pass/fail results
-- Configurable warning thresholds
-- Automatic grouping of validation labels
-- Bilingual interface (EN/DE)
+**Deutsch:** Interaktives Qualitätskontroll-Tool zum Vergleich von Höhendaten gegen swisstopo-Referenzhöhen. Klicken Sie auf beliebige Punkte in Ihrem Mesh oder Ihrer Punktwolke, um lokale Höhenmessungen sofort mit swisstopo-Daten zu vergleichen. Swisstopo-Daten sind nur als Hilfsmittel zu betrachten, da zwischen der Erfassung der swisstopo-Daten und dem zu kontrollierenden Objekt eine unbestimmte Zeitspanne liegen kann.
 
-## Requirements
+### What's new (2026-09-01)
 
-### Software
-- **Leica Cyclone 3DR 2025.1.4** or compatible version
-- **curl** command-line tool (must be in system PATH)
-- Internet connection for swisstopo API access
+- **Continuous workflow**: no more "continue?" dialog after every click. The script keeps validating until Esc; a per-point result popup is now opt-in (off by default) instead of forced.
+- **Session summary**: on exit, one dialog reports how many points were checked, how many passed, how many exceeded tolerance, how many lookups failed, the mean deviation and the largest absolute deviation.
+- **Coordinate guardrail**: a point clicked outside Switzerland's LV95 extent is caught immediately with a clear message instead of surfacing as an unexplained API failure.
+- **Bilingual dialogs**: field names, tooltips and messages are English / German throughout.
+- **Reliable transport**: height lookups go through a curl subprocess with a 30 second timeout. The script engine's own `fetch()` API intermittently fails inside the GUI process with an SSL certificate-chain error when calling `api3.geo.admin.ch`; curl as a separate process is not affected.
+- **Readable failures**: every error names the step it happened in, and the message is never blank, even for exceptions the engine throws as bare strings or objects.
 
-### Data Requirements
-- **Coordinate System**: LV95 (EPSG:2056)
-- **Coverage Area**: Switzerland and Liechtenstein
-- **Data Types**: Point clouds, meshes, or any clickable 3D geometry
+![UI](UI.png)
+![Validation passed](Validation%20passed.png)
+![Validation failed](Validation%20failed.png)
 
-## Installation
+## Tested version
 
-1. Download `SwisstopoHeightValidation.js` or the whole folder.
-2. Place in Cyclone 3DR scripts directory:
-   - `C:\Users\[Username]\Documents\3DReshaper Scripts\`
+- Cyclone 3DR 2026.1.2.50530 (headless and interactive)
+- Should run on Cyclone 3DR 2025.1 or newer (no dependency on the 2026.1.2 `fetch()` runtime)
+
+## Licensing
+
+Free to use and adapt, no warranty. Compatible with any Cyclone 3DR edition (Standard, Survey, Advanced).
 
 ## Usage
 
-### Configuration
-1. **Run script**: `Scripts` → `Execute Script` → `Load` → `SwisstopoHeightValidation.js`
-2. **Set warning threshold**: Maximum acceptable height difference (recommended: 0.2-1.0m)
-3. **Enable auto-labels**: Automatically create validation labels
-4. **Show coordinates**: Include LV95 coordinates in labels (optional)
+1. Run the script from the Cyclone 3DR Scripts menu.
+2. Set the tolerance, and optionally enable per-point popups.
+3. Click points in your 3D data. Labels are created automatically (unless disabled); out-of-tolerance points additionally get a red marker sphere.
+4. Press **Esc** to stop. A summary dialog reports the session statistics.
 
-### Validation Process
-1. **Click on points** in your 3D data to validate heights
-2. **Review results** in the popup dialog
-3. **Check labels** created automatically in the document
-4. **Continue validation** or finish session
+### Label information
 
-### Label Information
-Labels contain numeric values only:
-- **Row 1**: Local height (measured)
-- **Row 2**: Swisstopo reference height
-- **Row 3**: Height difference (local - swisstopo)
-- **Row 4-5**: Coordinates (if enabled)
+Each label has 3 columns:
+- **Measure**: local height at the clicked point
+- **Reference**: swisstopo reference height
+- **Deviation**: local minus reference
 
-Label comments show validation result:
-- `VALIDATION_PASSED`: Difference within threshold
-- `VALIDATION_FAILED`: Difference exceeds threshold
+The label comment states the verdict ("OK" or "Deviation ... > tolerance ..."), and labels are grouped under `Swisstopo Validation/OK` or `Swisstopo Validation/FAILED`.
 
-## Technical Details
+## Requirements
 
-### API Information
-- **Endpoint**: https://api3.geo.admin.ch/rest/services/height
-- **Coordinate System**: LV95 (EPSG:2056)
-- **Data Source**: swisstopo DTM-AV
-- **Coverage**: Switzerland and Liechtenstein
+- **Leica Cyclone 3DR 2025.1** or newer
+- **curl** command-line tool (built into Windows 10/11, must be on PATH)
+- Internet connection to `api3.geo.admin.ch`
+- Project georeferenced in **LV95 (EPSG:2056)**, coverage area Switzerland and Liechtenstein
 
-### Label Format
-Due to Cyclone 3DR 2025.1.4 API requirements:
-- All label cells contain **numeric values only**
-- Text information is stored in label comments
-- Numeric codes: 1=Local, 2=Swisstopo, 3=Difference, 4=Easting, 5=Northing
+## Technical details
+
+- **API**: `https://api3.geo.admin.ch/rest/services/height?easting={E}&northing={N}&sr=2056&format=json`
+- **Coordinate system**: LV95 (EPSG:2056)
+- **Data source**: swisstopo DTM-AV, via `api3.geo.admin.ch`
 
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
-| "curl command not found" | Install curl or add to system PATH |
-| "API request failed" | Check internet connection |
-| "No points generated" | Verify LV95 coordinates within Switzerland |
-| Label creation fails | Ensure using Cyclone 3DR 2025.1.4+ |
+| "swisstopo API unreachable" | Check internet connection / firewall / proxy for curl |
+| Point silently skipped | Point is outside the LV95 extent of Switzerland |
+| No labels created | Check that "Create labels automatically" is enabled |
 
-## Data Limitations
+## Data limitations
 
-- **Temporal Accuracy**: Time difference between swisstopo data acquisition and surveyed object
-- **Spatial Resolution**: swisstopo DTM resolution limitations
-- **Reference Purpose**: Data should be used for reference comparison only
-- **Professional Verification**: Critical measurements require professional survey validation
+- **Temporal accuracy**: there can be a significant time gap between swisstopo data acquisition and the surveyed object.
+- **Reference purpose only**: use for QA / plausibility checks, not as a substitute for a professional survey validation where that is required.
 
-## Version History
+## Files
 
-- **v2.1**: Fixed for Cyclone 3DR 2025.1.4 - numeric labels only
-- **v2.0**: Enhanced bilingual interface and error handling
-- **v1.0**: Initial release
+- Main script: [Swisstopo validation.js](./Swisstopo%20validation.js)
+
+## Version history
+
+- **2026-09-01**: Continuous workflow, session summary, LV95 guardrail, bilingual dialogs, curl-based transport, readable error handling
+- **v2.1** (Cyclone 3DR 2025.1.4): numeric-only label cells
+- **v2.0**: enhanced bilingual interface and error handling
+- **v1.0** (2025-08-25): initial release
 
 ---
 
-## Disclaimer / Haftungsausschluss
+## Disclaimer
 
-**English:**
-This tool provides reference comparisons for quality control purposes only. Swisstopo data should be used as a reference aid, as there may be an undetermined time span between swisstopo data acquisition and the object being controlled. Users must verify data accuracy for their specific applications and comply with professional surveying standards. Use at your own risk.
+This tool provides reference comparisons for quality control purposes only. swisstopo data should be used as a reference aid; there may be an undetermined time span between swisstopo data acquisition and the object being controlled. Verify data accuracy for your specific application and comply with professional surveying standards where required. Use at your own risk.
 
-**Deutsch:**
-Dieses Tool bietet Referenzvergleiche nur für Qualitätskontrollzwecke. Swisstopo-Daten sind als Hilfsmittel zu betrachten, da zwischen der Erfassung der swisstopo-Daten und dem zu kontrollierenden Objekt eine unbestimmte Zeitspanne liegen kann. Benutzer müssen die Datengenauigkeit für ihre spezifischen Anwendungen überprüfen und professionelle Vermessungsstandards einhalten. Nutzung auf eigene Gefahr.
-
-**Data Attribution:**
-© swisstopo - Swiss Federal Office of Topography  
-Height data from api3.geo.admin.ch
+**Data attribution:** (c) swisstopo - Swiss Federal Office of Topography. Height data from `api3.geo.admin.ch`.

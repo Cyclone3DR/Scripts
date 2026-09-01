@@ -1,99 +1,69 @@
 # Swisstopo Systematic Point Cloud Validation
 
-**Professional point cloud validation tool for Cyclone 3DR** - Validates measured heights against official Swiss topographic reference data.
-Created by Bimatic, Jan Sigrist - for any Questions and Feedback contact me at jan.sigrist@bimatic.ch
+**Grid-based point cloud validation for Cyclone 3DR** - checks a whole point cloud against official swisstopo reference heights instead of sampling single points.
 
-## 🎯 Overview
+| Script info |  |
+| -------- | ------- |
+| Contact | Jan Sigrist, Bimatic GmbH |
+| Email | jan.sigrist@bimatic.ch |
 
-This script performs systematic grid-based validation of point cloud heights against official Swisstopo reference data. It's designed for professional surveying workflows requiring accuracy verification against national geodetic standards.
+## Description
 
-## ✨ Key Features
+Walks a regular grid across a point cloud's footprint and checks the local height against the official swisstopo height API at every cell. Designed for validating a scan or model systematically rather than spot-checking it, with color-coded labels, a classification summary and an optional CSV report.
 
-- **Systematic Grid Validation**: Automated grid-based sampling across entire point cloud bounding box
-- **Official Swisstopo Integration**: Direct API connection to `api3.geo.admin.ch` for reference heights
-- **Intelligent Ground Detection**: Advanced cylinder-based point extraction with median approximation
-- **Professional Labeling**: Comprehensive 5-row labels with tolerance visualization and organized grouping
-- **Detailed CSV Reports**: Statistical analysis with configurable export options including fallback mechanisms
-- **Robust Error Handling**: Multiple fallback strategies ensure reliable operation
+**Deutsch:** Systematische Rastervalidierung einer Punktwolke gegen offizielle Swisstopo-Referenzhöhen, statt einzelner Stichproben. Farbcodierte Labels, Klassifikationsübersicht und optionaler CSV-Bericht.
 
-## 🛠️ Requirements
+### What's new (2026-09-01)
 
-- **Cyclone 3DR 2025.1.4** or newer
-- **Windows environment** with curl command available
-- **Internet connection** for Swisstopo API access
-- **LV95 coordinate system** (EPSG:2056) point clouds
+- **Correctness fix - the false "no data" result**: the previous version centred its point-cloud search cylinder on the value it got back from the swisstopo API, before it knew the cloud's actual height. A real elevation defect larger than roughly the cylinder's half-height (2.5 m) made the cylinder miss the point-cloud data entirely, so the cell was reported as `NO_DATA` instead of `FAILED`. The cloud's local height is now measured first, with a search cylinder spanning the full vertical extent of the data at that cell, closing that blind spot completely.
+- **Cloud before network**: measuring the point cloud now happens before any API call, so grid cells with no cloud coverage generate zero network traffic.
+- **Batched reference lookups**: reference heights are resolved in batches of up to 40 points through a single curl process (`--parallel`, 8 concurrent transfers, 30 s per-transfer timeout) instead of one process per point. Measured: 99 grid points resolved in about 1.5 seconds with zero failed lookups.
+- **Automatic retry**: after the batched pass, a single-request retry pass mops up anything that is still missing.
+- **Actionable diagnostics**: if `API_FAILED` rows remain, the summary reports how many were transfer errors versus bad responses, plus the last error text, instead of a bare failure count.
+- **Coordinate guardrail**: the point cloud's LV95 position is validated before the run starts.
+- **Bilingual dialogs**: field names, tooltips and the summary dialog are English / German.
+- **Reliable transport**: all requests go through curl instead of the engine's `fetch()` API, which intermittently fails inside the GUI process with an SSL certificate-chain error when calling `api3.geo.admin.ch`.
+- **Readable failures**: every error names the step it happened in, and the message is never blank.
 
-## 📋 Usage Instructions
+## Tested version
 
-### 1. Preparation
-- Import your point cloud(s) into Cyclone 3DR
-- Ensure coordinate system is **LV95 (EPSG:2056)**
-- Select the point cloud(s) you want to validate
+- Cyclone 3DR 2026.1.2.50530 (headless and interactive)
+- Should run on Cyclone 3DR 2025.1 or newer (no dependency on the 2026.1.2 `fetch()` runtime)
 
-### 2. Script Execution
-1. Run the script from Cyclone 3DR Scripts menu
-2. Configure parameters in the dialog:
-   - **Grid Spacing**: Distance between validation points (default: 20m)
-   - **Search Radius**: Cylinder radius for point extraction (default: 1m)
-   - **Error Threshold**: Maximum allowed deviation (default: 1m)
-   - **Create All Labels**: Generate labels for all points or errors only
-   - **Generate Report**: Enable detailed CSV export with multiple save options
+## Licensing
 
-### 3. Results
-The script produces:
-- **Validation Labels**: Color-coded 5-row labels showing complete validation data
-- **Statistical Summary**: Console output with validation counts
-- **CSV Report**: Detailed analysis file with fallback save mechanisms
-- **Organized Groups**: Labels sorted by classification (OK/ERROR/NO_DATA/API_FAILED)
+Free to use and adapt, no warranty. Compatible with any Cyclone 3DR edition (Standard, Survey, Advanced).
 
-## 📊 Output Classifications
+## Usage
 
-| Classification | Description | Color Coding |
-|---------------|-------------|--------------|
-| **OK** | Deviation within threshold | Green/Normal |
-| **ERROR** | Deviation exceeds threshold | Red/Warning |
-| **NO_DATA** | No point cloud data found | Yellow/Info |
-| **API_FAILED** | Swisstopo API unavailable | Gray/Error |
+1. Import and select the point cloud(s) to validate. Coordinate system must be **LV95 (EPSG:2056)**.
+2. Run the script and configure:
+   - **Grid spacing**: distance between validation points (default 20 m)
+   - **Search radius**: point-cloud search cylinder radius (default 1 m)
+   - **Tolerance**: maximum allowed deviation (default 1 m)
+   - **Create labels for every point**: off = only points over tolerance get a label
+   - **Create a CSV report**: exports a detailed CSV alongside the labels
+3. Review the classification labels and the CSV report.
 
-## 🔧 Technical Details
+## Output classification
 
-### Algorithm Components
+| Classification | Meaning |
+|---|---|
+| `OK` | Deviation within tolerance |
+| `FAILED` | Deviation exceeds tolerance |
+| `NO_DATA` | No point-cloud data found at this grid cell |
+| `API_FAILED` | swisstopo reference height could not be retrieved |
 
-1. **Grid Generation**: Creates systematic validation points across bounding box
-2. **Reference Height Query**: Retrieves official heights via Swisstopo REST API
-3. **Point Cloud Sampling**: Uses centered cylinders for robust ground detection
-4. **Height Calculation**: Weighted average with median approximation of lower 25% points for accuracy
-5. **Comparison & Classification**: Configurable tolerance-based validation
-6. **Documentation**: Professional 5-row labels and comprehensive reporting
+## Algorithm
 
-### API Integration
-```javascript
-// Swisstopo Height API
-https://api3.geo.admin.ch/rest/services/height?easting={E}&northing={N}&sr=2056&format=json
-```
+1. **Grid generation**: systematic points across the point cloud's bounding box.
+2. **Point cloud sampling**: a search cylinder spanning the full local vertical extent of the data (see "What's new" above) extracts the nearby points.
+3. **Ground height**: bounding-box midpoint for near-flat patches, lowest 15% slice for the rest.
+4. **Reference height query**: batched curl requests against the swisstopo height API (see "What's new").
+5. **Comparison and classification**: configurable tolerance-based validation.
+6. **Documentation**: 3-column labels (Measure / Reference / Deviation), classification groups, red marker spheres on `FAILED` points, CSV export.
 
-### Ground Detection Method
-- **Primary Method**: Median approximation using iterative cylinder approach for lower 25% of points
-- **Fallback Method**: Simple average for small height variations
-- **Search Strategy**: Fixed 5m vertical search height centered around reference elevation
-- **Weighting**: Results weighted by point count when multiple clouds contribute
-
-## 📄 Label Information
-
-Each validation label contains 5 rows with comprehensive data:
-- **Row 0**: Measured height from point cloud (Code 1)
-- **Row 1**: Swisstopo reference height (Code 2)
-- **Row 2**: Height difference/deviation (Code 3) - **Primary measurement**
-- **Row 3**: Point ID for traceability (Code 4)
-- **Row 4**: Grid coordinates - Easting, Northing (Codes 5)
-
-### Label Features
-- **Enhanced Comments**: Include classification and deviation in label name
-- **Dynamic Tolerances**: ERROR points use stricter tolerance, OK points use warning threshold
-- **Group Organization**: Automatic sorting into classification-based groups
-- **Fallback System**: Robust 3-row basic labels if enhanced labels fail
-
-## 📈 CSV Report Format
+## CSV report format
 
 | Column | Description | Unit |
 |--------|-------------|------|
@@ -106,78 +76,44 @@ Each validation label contains 5 rows with comprehensive data:
 | Classification | Validation result | - |
 | Grid_Spacing_m | Grid parameter | m |
 | Search_Radius_m | Search parameter | m |
-| Error_Threshold_m | Tolerance parameter | m |
+| Tolerance_m | Tolerance parameter | m |
 
-### CSV Export Options
-1. **User Dialog**: Standard save dialog for user-selected location
-2. **Temp Directory**: Automatic fallback with timestamp
-3. **Console Output**: Last resort for manual copy-paste
+## Requirements
 
-## ⚙️ Configuration Parameters
+- **Leica Cyclone 3DR 2025.1** or newer
+- **curl** command-line tool (built into Windows 10/11, must be on PATH)
+- Internet connection to `api3.geo.admin.ch`
+- Point cloud(s) georeferenced in **LV95 (EPSG:2056)**
 
-### Grid Spacing (2-100m)
-- **Small values (2-10m)**: Detailed analysis, more processing time
-- **Medium values (15-25m)**: Balanced approach (recommended)
-- **Large values (50-100m)**: Overview analysis, faster processing
+## Configuration guidance
 
-### Search Radius (0.05-5m)
-- **Small radius (0.1-0.5m)**: Precise point sampling (recommended for high-quality data)
-- **Medium radius (1-2m)**: Standard terrain analysis
-- **Large radius (3-5m)**: Rough terrain or sparse data
+**Grid spacing**: small (2-10 m) for detailed analysis; medium (15-25 m) for a balanced default; large (50-100 m) for a fast overview.
 
-### Error Threshold (0.02-10m)
-- **Strict (0.02-0.5m)**: High precision surveys (recommended for quality control)
-- **Standard (0.5-2m)**: General validation
-- **Lenient (5-10m)**: Rough terrain assessment
+**Search radius**: small (0.1-0.5 m) for precise, high-density data; medium (1-2 m) for standard terrain; large (3-5 m) for rough or sparse data.
 
-## 🚨 Troubleshooting
+**Tolerance**: strict (0.02-0.5 m) for quality control on high-precision surveys; standard (0.5-2 m) for general validation; lenient (5-10 m) for rough terrain assessment.
 
-### Common Issues
+## Troubleshooting
 
-**"No point cloud selected"**
-- Ensure at least one SCloud object is selected before running
+| Problem | Solution |
+|---------|----------|
+| "Please select at least one point cloud" | Select at least one SCloud before running |
+| Many `API_FAILED` rows | Check the summary dialog's API diagnosis (transfer vs. response errors); check internet connection / firewall / proxy |
+| Many `NO_DATA` rows | Increase the search radius, or confirm the cloud actually covers the grid area |
+| Slow run | Increase grid spacing, or reduce the validated area |
 
-**"API request failed"**
-- Check internet connection
-- Verify coordinates are within Switzerland
-- Try again later (API may be temporarily unavailable)
+## Files
 
-**"No cloud data found"**
-- Increase search radius
-- Check if point cloud covers the validation area
-- Verify coordinate system alignment
+- Main script: [Swisstopo Systematic Validation.js](./Swisstopo%20Systematic%20Validation.js)
 
-**"Label creation failed"**
-- Script automatically falls back to basic 3-row labels
-- Check console for specific error messages
+## Version history
 
-**Performance issues**
-- Reduce grid density (increase spacing)
-- Limit validation area
-- Close other resource-intensive applications
+- **2026-09-01**: Search-cylinder correctness fix, cloud-before-network ordering, batched curl transport, automatic retry, API diagnostics, LV95 guardrail, bilingual dialogs, readable error handling
+- **1.0** (2025-08-25): initial release
 
-### Best Practices
+## License and attribution
 
-1. **Start with larger grid spacing** for overview analysis
-2. **Use appropriate search radius** based on point cloud density
-3. **Validate coordinate system** before processing
-4. **Check sample results** before full validation
-5. **Save reports** for documentation and analysis
-6. **Monitor console output** for detailed processing information
-
-## 📋 Version & Compatibility
-
-- **Script Version**: 1.0 (2025-08-25)
-- **Cyclone 3DR**: 2025.1.4 or newer required
-- **Author**: Jan Sigrist (Bimatic GmbH) - www.bimatic.ch
-- **Platform**: Windows with curl support
-
-## 📋 License & Attribution
-
-- **Script**: Developed for professional surveying workflows
-- **Data Source**: © swisstopo - Swiss Federal Office of Topography
-- **API**: Height data from `api3.geo.admin.ch`
-- **Coordinate System**: LV95 (EPSG:2056)
-- **Platform**: Leica Cyclone 3DR
-
----
+- Data source: (c) swisstopo - Swiss Federal Office of Topography
+- API: height data from `api3.geo.admin.ch`
+- Coordinate system: LV95 (EPSG:2056)
+- Platform: Leica Cyclone 3DR
