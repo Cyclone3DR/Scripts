@@ -22,12 +22,12 @@ Walks a regular grid across a point cloud's footprint and checks the local heigh
 - **Actionable diagnostics**: if `API_FAILED` rows remain, the summary reports how many were transfer errors versus bad responses, plus the last error text, instead of a bare failure count.
 - **Coordinate guardrail**: the point cloud's LV95 position is validated before the run starts.
 - **Bilingual dialogs**: field names, tooltips and the summary dialog are English / German.
-- **Reliable transport**: all requests go through curl instead of the engine's `fetch()` API, which intermittently fails inside the GUI process with an SSL certificate-chain error when calling `api3.geo.admin.ch`.
+- **curl transport with a real timeout**: all requests go through curl (see the batching above) rather than the engine's `fetch()`. This is a deliberate choice, not a workaround: `fetch()` cannot be given a timeout and the engine applies none of its own (a silent server keeps it pending indefinitely, measured on 2026.1.4), while curl keeps the script running on Cyclone 3DR 2025.1 and newer. The fetch SSL error that hit GUI runs on 2026.1.2 and 2026.1.3 (from the second script run within a session) is fixed in Cyclone 3DR 2026.1.4.
 - **Readable failures**: every error names the step it happened in, and the message is never blank.
 
 ## Tested version
 
-- Cyclone 3DR 2026.1.2.50530 (headless and interactive)
+- Cyclone 3DR 2026.1.3.50536 (headless and interactive)
 - Should run on Cyclone 3DR 2025.1 or newer (no dependency on the 2026.1.2 `fetch()` runtime)
 
 ## Licensing

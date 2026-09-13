@@ -19,7 +19,7 @@ swisstopo data should be used as a reference aid only: there can be an undetermi
 - **Session summary**: on exit, one dialog reports how many points were checked, how many passed, how many exceeded tolerance, how many lookups failed, the mean deviation and the largest absolute deviation.
 - **Coordinate guardrail**: a point clicked outside Switzerland's LV95 extent is caught immediately with a clear message instead of surfacing as an unexplained API failure.
 - **Bilingual dialogs**: field names, tooltips and messages are English / German throughout.
-- **Reliable transport**: height lookups go through a curl subprocess with a 30 second timeout. The script engine's own `fetch()` API intermittently fails inside the GUI process with an SSL certificate-chain error when calling `api3.geo.admin.ch`; curl as a separate process is not affected.
+- **curl transport with a real timeout**: height lookups go through a curl subprocess with a 30 second per-request timeout. This is a deliberate choice, not a workaround: the engine's `fetch()` cannot be given a timeout and applies none of its own (a server that accepts the connection and then stays silent keeps `fetch()` pending indefinitely, measured on 2026.1.4), and curl keeps the script running on Cyclone 3DR 2025.1 and newer. The fetch SSL error that hit GUI runs on 2026.1.2 and 2026.1.3 (from the second script run within a session) is fixed in Cyclone 3DR 2026.1.4.
 - **Readable failures**: every error names the step it happened in, and the message is never blank, even for exceptions the engine throws as bare strings or objects.
 
 ![UI](UI.png)
@@ -28,7 +28,7 @@ swisstopo data should be used as a reference aid only: there can be an undetermi
 
 ## Tested version
 
-- Cyclone 3DR 2026.1.2.50530 (headless and interactive)
+- Cyclone 3DR 2026.1.3.50536 (headless and interactive)
 - Should run on Cyclone 3DR 2025.1 or newer (no dependency on the 2026.1.2 `fetch()` runtime)
 
 ## Licensing
