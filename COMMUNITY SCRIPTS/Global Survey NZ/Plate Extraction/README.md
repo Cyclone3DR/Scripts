@@ -11,6 +11,8 @@
 
 ![Plate Extraction Example](plate_extraction_example.jpg)
 
+**🎥 [Watch the Video Tutorial on YouTube](https://youtu.be/1XnhKG2E3ck)**
+
 The **Plate & Bolt Extraction Tool v2.0** uses a streamlined workflow inspired by Cyclone 3DR's Building Extractor:
 - **Instant Planar Fitting**: 1-click plane fitting directly from point cloud data.
 - **Real-Time Interactive Digitizer**: Click corners around noisy scan edges with continuous polyline and closed polygon preview.
