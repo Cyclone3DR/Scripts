@@ -16,6 +16,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Tree Trunk Extraction](./Global%20Survey%20NZ/Tree%20Trunk%20Extraction): Automates the extraction of tree trunks from point clouds in Leica Cyclone 3DR using volumetric logic and topographical projections.
 - [Pipe Crown Extraction](./Global%20Survey%20NZ/Pipe%20Crown%20Extraction/): An advanced, highly robust Cyclone 3DR JavaScript script designed to extract the true geometric apex (crown) of a pipe from noisy, raw 3D point cloud data.
 - [Profile Extraction](./Global%20Survey%20NZ/Profile%20Extraction/): Automates the extraction of a cross-section profile and calculates a theoretical intersection point.
+- [Plate Extraction](./Global%20Survey%20NZ/Plate%20Extraction/): Automates the extraction of structural steel plates (flat and bent) and detects nut/bolt head coordinates from point clouds to export 1:1 DXF templates.
 
 ## ⚠️ Disclaimer ⚠️
 
