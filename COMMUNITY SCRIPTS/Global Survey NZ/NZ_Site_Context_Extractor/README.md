@@ -32,7 +32,7 @@ The script then dynamically parses the data, handles fallback column names, repl
 5. The data will be fetched in the background using PowerShell and imported directly into your scene.
 
 ## Tested Version
-Cyclone 3DR 2026.1
+Cyclone 3DR 2026.3
 
 ## Licensing
 Survey Edition (or higher)
