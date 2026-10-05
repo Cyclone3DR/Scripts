@@ -1,7 +1,5 @@
 # NZ Site Context Extractor
 
-<img width="426" height="881" alt="image" src="https://github.com/user-attachments/assets/3068b060-b4ce-4980-8cab-ff643bc11a77" />
-
 <img width="840" height="714" alt="image" src="https://github.com/user-attachments/assets/c76901d2-e8d8-48b4-86e5-81ed63dcea52" />
 
 
