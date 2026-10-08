@@ -9,6 +9,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Large Scale Ortho Image](./Large%20Scale%20Ortho%20Image): Functionality to export large scale top-down orthographic images from LGSx data. (LIDAR and IMAGE)
 - [Swisstopo validation](./Swisstopo%20validation): Interactive quality control tool for comparing elevation data against Swisstopo reference heights.
 - [Swisstopo systematic validation](./Swisstopo%20systematic%20validation): Grid-based validation of point cloud heights against official Swisstopo reference data.
+- [Swisstopo data download](./Swisstopo%20data%20download): Downloads official swisstopo elevation data (swissSURFACE3D LiDAR, swissALTI3D raster) into the document for a bounding box or a polyline corridor/area, for manual comparison with Cyclone 3DR's own tools.
 - [Automated Measurements](./Automated%20Measurements): Functionality to automatically extract linear, angular, and perpendicular measurements in a predefined order and compare them with nominal values.
 - [CRKennedy-Tutorials](./CRKennedy-Tutorials/): Collection of scripts to help beginners getting familiar with script API.
 - [Cyclone 3DR Scripting Webinar - March, 2026](./Cyclone%203DR%20Scripting%20Webinar%20Series%20-%20Tips'n%20Trick%20-%20March,%202026): Script serving as a support for the scripting webinar series.
@@ -17,6 +18,7 @@ This folder is dedicated to scripts contributed by developers external to Leica 
 - [Pipe Crown Extraction](./Global%20Survey%20NZ/Pipe%20Crown%20Extraction/): An advanced, highly robust Cyclone 3DR JavaScript script designed to extract the true geometric apex (crown) of a pipe from noisy, raw 3D point cloud data.
 - [Profile Extraction](./Global%20Survey%20NZ/Profile%20Extraction/): Automates the extraction of a cross-section profile and calculates a theoretical intersection point.
 - [Plate Extraction](./Global%20Survey%20NZ/Plate%20Extraction/): Automates the extraction of structural steel plates (flat and bent) and detects nut/bolt head coordinates from point clouds to export 1:1 DXF templates.
+- [ReCap Exporter](./Global%20Survey%20NZ/ReCap%20Exporter/): Automates the export-to-ReCap workflow by running DeCap.exe in the background to convert 3DR clouds into native Autodesk .rcp/.rcs formats.
 
 ## ⚠️ Disclaimer ⚠️
 

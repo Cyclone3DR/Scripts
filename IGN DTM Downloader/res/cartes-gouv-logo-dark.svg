@@ -1,0 +1,48 @@
+<svg width="55" height="60" viewBox="0 0 55 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_5057_93615)">
+<path d="M55 45H50V50H55V45Z" fill="#E1000F"/>
+<path d="M50 30H45V35H50V30Z" fill="#E1000F"/>
+<path d="M45 10H40V15H45V10Z" fill="#E1000F"/>
+<path d="M25 10H20V15H25V10Z" fill="#E1000F"/>
+<path d="M40 20H35V25H40V20Z" fill="#E1000F"/>
+<path d="M10 15H5V20H10V15Z" fill="#E1000F"/>
+<path d="M15 40H10V45H15V40Z" fill="#E1000F"/>
+<path d="M15 25H10V30H15V25Z" fill="#E1000F"/>
+<path d="M30 55H25V60H30V55Z" fill="#E1000F"/>
+<path d="M5 50H0V55H5V50Z" fill="#E1000F"/>
+<path d="M40 35H35V40H40V35Z" fill="#E1000F"/>
+<path d="M30 0H25V5H30V0Z" fill="#E1000F"/>
+<path d="M30 25H25V30H30V25Z" fill="#E1000F"/>
+<path d="M20 45H15V50H20V45Z" fill="#E1000F"/>
+<path d="M25 35H20V40H25V35Z" fill="#E1000F"/>
+<path d="M35 25V20H30V30H40V25H35Z" fill="white"/>
+<path d="M20 40V45H25V40H20Z" fill="white"/>
+<path d="M35 10H30V15H35V10Z" fill="white"/>
+<path d="M15 15H10V20H15V15Z" fill="white"/>
+<path d="M20 20H15V25H20V20Z" fill="white"/>
+<path d="M40 15H35V20H40V15Z" fill="white"/>
+<path d="M25 25H20V30H25V25Z" fill="white"/>
+<path d="M45 30H40V40H45V30Z" fill="white"/>
+<path d="M25 30V40H30V30H25Z" fill="white"/>
+<path d="M45 45V40H35V45H45Z" fill="#2323ff"/>
+<path d="M45 55H40V60H45V55Z" fill="#2323ff"/>
+<path d="M50 35H45V40H50V35Z" fill="#2323ff"/>
+<path d="M40 10H35V15H40V10Z" fill="#2323ff"/>
+<path d="M30 10H35V5H20V10H25V15H20V10H10V15H15V20H20V25H30V20H35V15H30V10Z" fill="#2323ff"/>
+<path d="M45 10V15H40V30H45V20H50V10H45Z" fill="#2323ff"/>
+<path d="M5 20V25H15V20L5 20Z" fill="#2323ff"/>
+<path d="M5 15H0V20H5V15Z" fill="#2323ff"/>
+<path d="M10 40H5V45H10V40Z" fill="#2323ff"/>
+<path d="M20 55H15V60H20V55Z" fill="#2323ff"/>
+<path d="M35 50H30V55H35V50Z" fill="#2323ff"/>
+<path d="M30 30V40H35V35H40V30H30Z" fill="#2323ff"/>
+<path d="M20 35H25V30H20V25H15V35H10V40H15V45H20V35Z" fill="#2323ff"/>
+<path d="M30 40H25V45H30V40Z" fill="#2323ff"/>
+<path d="M25 45H20V50H25V45Z" fill="#2323ff"/>
+</g>
+<defs>
+<clipPath id="clip0_5057_93615">
+<rect width="55" height="60" fill="white"/>
+</clipPath>
+</defs>
+</svg>

@@ -1,346 +1,392 @@
-/// <reference path="C:/Program Files/Leica Geosystems/Cyclone 3DR/Script/JsDoc/Reshaper.d.ts"/>
-
-// -----------------------------------------------------------------------------
-//  SwisstopoHeightValidation.js – v1.0 (2025-08-25)
-// -----------------------------------------------------------------------------
-//  ENGLISH: Height validation tool - for Cyclone 3DR 2025.1.4
-//  DEUTSCH: Höhenvalidierungstool - für Cyclone 3DR 2025.1.4
-//  Author: Jan Sigrist (Bimatic GmbH) - www.bimatic.ch
-// -----------------------------------------------------------------------------
-
-// -------------------- CONFIGURATION DIALOG / KONFIGURATIONSDIALOG -----------
-var dlg = SDialog.New("Swisstopo Height Validation / Höhenvalidierung");
-dlg.AddText("EN: Click on points to validate height against swisstopo reference data", SDialog.EMessageSeverity.Instruction);
-dlg.AddText("DE: Auf Punkte klicken um Höhe gegen swisstopo-Referenzdaten zu validieren", SDialog.EMessageSeverity.Instruction);
-
-dlg.BeginGroup("Settings / Einstellungen");
-dlg.AddLength({
-    id: "tolerance",
-    name: "Warning threshold / Warngrenze [m]",
-    value: 0.5,
-    min: 0.01,
-    max: 10.0,
-    saveValue: true,
-    tooltip: "EN: Show warning if difference exceeds this value | DE: Warnung anzeigen wenn Differenz diesen Wert überschreitet"
-});
-
-dlg.AddBoolean({
-    id: "autoLabel",
-    name: "Auto-create labels / Automatische Beschriftungen",
-    value: true,
-    saveValue: true,
-    tooltip: "EN: Automatically create labels for each validation point | DE: Automatisch Beschriftungen für jeden Validierungspunkt erstellen"
-});
-
-dlg.AddBoolean({
-    id: "showCoords",
-    name: "Show coordinates / Koordinaten anzeigen",
-    value: false,
-    saveValue: true,
-    tooltip: "EN: Include LV95 coordinates in labels | DE: LV95-Koordinaten in Beschriftungen einbeziehen"
-});
-
-var config = dlg.Run();
-if (config.ErrorCode !== 0) {
-    throw new Error("Operation cancelled by user / Vorgang vom Benutzer abgebrochen");
-}
-
-var WARNING_THRESHOLD = config.tolerance;
-var AUTO_LABEL = config.autoLabel;
-var SHOW_COORDINATES = config.showCoords;
-
-// -------------------- HELPER FUNCTIONS / HILFSFUNKTIONEN --------------------
+/// <reference path="C:/Program Files/Leica Geosystems/Cyclone 3DR/Script/JsDoc/Reshaper.d.ts" />
+// @ts-check
 
 /**
- * Retrieves height from swisstopo API using LV95 coordinates
+ * Script: Swisstopo Height Validation (interactive)
+ * Purpose: Click points to compare local height against the official swisstopo
+ *          height API. Keeps validating point after point until Esc, then
+ *          prints a session summary with deviation statistics.
+ * Note:    Web requests go through curl instead of the engine's fetch(). fetch()
+ *          intermittently fails inside the GUI process with an SSL
+ *          certificate-chain error ("Zertifikat des Ausstellers ... konnte
+ *          nicht gefunden werden"); curl as a separate process does not hit it.
+ * Author: Jan Sigrist (Bimatic GmbH)
+ * Contact: jan.sigrist@bimatic.ch
+ * Date: 2026-09-01
+ * Tested with: Cyclone 3DR 2026.1.2
+ * Requires: Cyclone 3DR 2025.1+, internet access, curl (built into Windows 10/11)
+ * Licensing: free to use and adapt, no warranty. Compatible with any Cyclone 3DR edition.
+ * Data source: api3.geo.admin.ch (LV95 / EPSG:2056), (c) swisstopo
+ */
+
+// ==================== Constants ====================
+
+var SCRIPT_TITLE = "Swisstopo Height Validation / Höhenvalidierung";
+var LOGO_PATH = CurrentScriptPath() + "/../Bimatic_white_just_Name.svg";
+var LABEL_GROUP = "Swisstopo Validation";
+var HEIGHT_DECIMALS = 3;
+var FAIL_COLOR = [0.9, 0.1, 0.1]; // red marker for out-of-tolerance points
+var MARKER_RADIUS = 0.25;         // marker sphere radius [m]
+
+// LV95 plausibility bounds (Switzerland)
+var LV95_MIN_E = 2450000, LV95_MAX_E = 2850000;
+var LV95_MIN_N = 1050000, LV95_MAX_N = 1310000;
+
+// ==================== Main Function ====================
+
+function main() {
+    try {
+        var params = getUserParameters();
+        configureLabelStyle();
+        var session = runValidationLoop(params);
+        showSessionSummary(session, params.tolerance);
+    } catch (error) {
+        handleError(error);
+    }
+}
+
+// ==================== User Input ====================
+
+function getUserParameters() {
+    var dialog = SDialog.New(SCRIPT_TITLE);
+    dialog.SetHeader(SCRIPT_TITLE, LOGO_PATH, 60);
+    dialog.AddText(
+        "EN: Click points to check their height against the swisstopo reference. Press ESC to stop.",
+        SDialog.EMessageSeverity.Instruction
+    );
+    dialog.AddText(
+        "DE: Punkte anklicken, um die Höhe gegen die Swisstopo-Referenz zu prüfen (ESC zum Beenden).",
+        SDialog.EMessageSeverity.Instruction
+    );
+
+    dialog.BeginGroup("Settings / Einstellungen");
+    dialog.AddLength({
+        id: "tolerance",
+        name: "Tolerance / Toleranz [m]",
+        value: 0.5,
+        min: 0.01,
+        max: 10.0,
+        saveValue: true,
+        tooltip: "EN: Deviations above this value are marked FAILED | DE: Abweichungen über diesem Wert gelten als FEHLER"
+    });
+    dialog.AddBoolean({
+        id: "autoLabel",
+        name: "Create labels automatically / Beschriftung automatisch erstellen",
+        value: true,
+        saveValue: true
+    });
+    dialog.AddBoolean({
+        id: "showPopups",
+        name: "Show a popup per point / Ergebnis-Popup pro Punkt anzeigen",
+        value: false,
+        saveValue: true,
+        tooltip: "EN: Off = results only as labels and in the log (faster workflow) | DE: Aus = Ergebnisse nur als Label und im Log (schnellerer Arbeitsfluss)"
+    });
+
+    // Run() is typed as {ErrorCode} only; the field ids are dynamic
+    var result = /** @type {any} */ (dialog.Run());
+    if (result.ErrorCode !== 0) {
+        throw new Error("EN: Cancelled by user. | DE: Vom Benutzer abgebrochen.");
+    }
+
+    return {
+        tolerance: result.tolerance,
+        autoLabel: result.autoLabel,
+        showPopups: result.showPopups
+    };
+}
+
+// ==================== Label Styling ====================
+
+/**
+ * Configure the global SLabel appearance once. SLabel color setters are static
+ * (global), so per-label coloring is impossible. The label uses a dark background
+ * with light text for readability; status is conveyed by the comment verdict and
+ * the OK / FAILED group.
+ */
+function configureLabelStyle() {
+    SLabel.SetDecimalNumber(HEIGHT_DECIMALS);
+    SLabel.SetSizeType(SLabel.LONG);
+    SLabel.SetBackgroundType(SLabel.SPECIAL_COLOR);
+    SLabel.SetBackgroundColor(0.13, 0.13, 0.13, 0.0);
+    SLabel.SetLineColor(0.95, 0.95, 0.95);
+}
+
+/**
+ * Create a self-explaining height label (columns Measure | Reference | Deviation).
+ * The verdict text and the OK / FAILED group flag the tolerance status.
+ */
+function createDeviationLabel(point, measuredHeight, referenceHeight, tolerance) {
+    var deviation = measuredHeight - referenceHeight;
+    var exceeded = Math.abs(deviation) > tolerance;
+    var statusGroup = LABEL_GROUP + "/" + (exceeded ? "FAILED" : "OK");
+
+    var label = SLabel.New(1, 3);
+    label.SetColType([SLabel.Measure, SLabel.Reference, SLabel.Deviation]);
+    label.SetLineType([SLabel.Level]);
+
+    label.SetCell(0, 0, parseFloat(measuredHeight.toFixed(HEIGHT_DECIMALS)));
+    label.SetCell(0, 1, parseFloat(referenceHeight.toFixed(HEIGHT_DECIMALS)));
+    label.SetCell(0, 2, parseFloat(deviation.toFixed(HEIGHT_DECIMALS)));
+
+    label.SetComment(buildVerdict(deviation, tolerance));
+    label.ShowComment(true);
+
+    label.AttachToPoint(point);
+    label.AddToDoc();
+    label.MoveToGroup(statusGroup, true);
+
+    if (exceeded) {
+        createFailMarker(point, statusGroup);
+    }
+}
+
+/**
+ * Red sphere marking an out-of-tolerance point. SComp.SetColors is per-instance
+ * and reliably rendered on geometry (unlike on labels), so this is the only way
+ * to get a real red flag per point.
+ */
+function createFailMarker(point, group) {
+    var sphere = SSphere.New(point, MARKER_RADIUS);
+    sphere.SetColors(FAIL_COLOR[0], FAIL_COLOR[1], FAIL_COLOR[2]);
+    sphere.SetName("FAILED");
+    sphere.AddToDoc();
+    sphere.MoveToGroup(group, false);
+}
+
+function buildVerdict(deviation, tolerance) {
+    var signed = (deviation >= 0 ? "+" : "") + deviation.toFixed(HEIGHT_DECIMALS) + " m";
+    if (Math.abs(deviation) > tolerance) {
+        return "Deviation " + signed + " > tolerance " + tolerance.toFixed(2) + " m";
+    }
+    return "OK  Deviation " + signed;
+}
+
+// ==================== Swisstopo API ====================
+
+var requestCounter = 0;
+
+/**
+ * Query the official swisstopo height for LV95 coordinates via curl (separate
+ * process, avoids the GUI fetch() SSL certificate problem). Returns null on
+ * any failure (network, HTTP error, invalid payload) with a log line.
  */
 function getSwisstopoHeight(easting, northing) {
     var apiUrl = "https://api3.geo.admin.ch/rest/services/height" +
         "?easting=" + easting +
         "&northing=" + northing +
-        "&sr=2056" +
-        "&format=json";
+        "&sr=2056&format=json";
 
-    var tempFileName = TempPath() + "swisstopo_validation_" +
-        Math.round(easting) + "_" + Math.round(northing) + ".json";
+    requestCounter++;
+    var responseFile = TempPath() + "swisstopo_click_" + requestCounter + ".json";
 
-    var curlResult = Execute("curl", ["-s", "-o", tempFileName, apiUrl]);
-    if (curlResult !== 0) {
+    var exitCode = Execute("curl", ["-sS", "-L", "-m", "30", "-o", responseFile, apiUrl]);
+    if (exitCode !== 0) {
+        print("swisstopo API unreachable (curl exit code " + exitCode + ").");
         return null;
     }
 
-    var responseFile = SFile.New(tempFileName);
-    var responseText = null;
-
-    if (responseFile.Open(SFile.ReadOnly)) {
-        responseText = responseFile.ReadAll();
-        responseFile.Close();
-        responseFile.Remove();
-    }
-
-    if (!responseText) {
+    var file = SFile.New(responseFile);
+    if (!file.Exists() || !file.Open(SFile.ReadOnly)) {
+        print("swisstopo response file could not be read.");
         return null;
     }
+    var text = file.ReadAll();
+    file.Close();
+    file.Remove();
 
+    if (!text) {
+        print("Empty response from the swisstopo API.");
+        return null;
+    }
     try {
-        var apiResponse = JSON.parse(responseText);
-        if (apiResponse.height !== undefined) {
-            var height = parseFloat(apiResponse.height);
-            return isNaN(height) ? null : height;
+        var height = parseFloat(JSON.parse(text).height);
+        if (isNaN(height)) {
+            print("swisstopo response without a height value: " + text.slice(0, 80));
+            return null;
         }
+        return height;
     } catch (parseError) {
-        return null;
-    }
-
-    return null;
-}
-
-/**
- * Creates a validation label with NUMBERS ONLY (Cyclone 3DR 2025.1.4 requirement)
- */
-function createValidationLabel(point, localHeight, swisstopoHeight, pointIndex) {
-    try {
-        var heightDiff = localHeight - swisstopoHeight;
-        var absDiff = Math.abs(heightDiff);
-        var isWarning = absDiff > WARNING_THRESHOLD;
-
-        // Determine label size based on options
-        var numRows = SHOW_COORDINATES ? 5 : 3;
-        var label = SLabel.New(numRows, 2);
-
-        // Set column and line types
-        label.SetColType([SLabel.Measure, SLabel.Reference]);
-
-        // Build line types array
-        var lineTypes = [SLabel.Distance, SLabel.Distance, SLabel.Deviation];
-        if (SHOW_COORDINATES) {
-            lineTypes.push(SLabel.EmptyLine);
-            lineTypes.push(SLabel.EmptyLine);
-        }
-        label.SetLineType(lineTypes);
-
-        // Fill label data - ONLY NUMBERS!
-        var rowIndex = 0;
-
-        // Row 0: Local height
-        label.SetCell(rowIndex, 0, parseFloat(localHeight.toFixed(3)));
-        label.SetCell(rowIndex, 1, 1); // Code for "Local" (1 = Local, 2 = Swisstopo, 3 = Diff)
-        rowIndex++;
-
-        // Row 1: Swisstopo height
-        label.SetCell(rowIndex, 0, parseFloat(swisstopoHeight.toFixed(3)));
-        label.SetCell(rowIndex, 1, 2); // Code for "Swisstopo"
-        rowIndex++;
-
-        // Row 2: Height difference
-        label.SetCell(rowIndex, 0, parseFloat(heightDiff.toFixed(3)));
-        label.SetCell(rowIndex, 1, 3); // Code for "Difference"
-        rowIndex++;
-
-        // Optional coordinate rows
-        if (SHOW_COORDINATES) {
-            // Row 3: Easting
-            label.SetCell(rowIndex, 0, parseFloat(point.GetX().toFixed(2)));
-            label.SetCell(rowIndex, 1, 4); // Code for "Easting"
-            rowIndex++;
-
-            // Row 4: Northing
-            label.SetCell(rowIndex, 0, parseFloat(point.GetY().toFixed(2)));
-            label.SetCell(rowIndex, 1, 5); // Code for "Northing"
-        }
-
-        // Set label properties with simple pass/fail comment
-        var labelComment;
-        if (isWarning) {
-            labelComment = "VALIDATION_FAILED";
-        } else {
-            labelComment = "VALIDATION_PASSED";
-        }
-
-        label.SetComment(labelComment);
-        label.AttachToPoint(point);
-        label.AddToDoc();
-
-        // Move to group
-        var groupName = "Height_Validation_Labels";
-        label.MoveToGroup(groupName, true);
-
-        return label;
-
-    } catch (labelError) {
-        print("Label creation error: " + labelError.message);
+        print("Invalid swisstopo response: " + text.slice(0, 80));
         return null;
     }
 }
 
-/**
- * Validates a single point and provides user feedback
- */
-function validatePoint(clickedPoint, pointIndex) {
-    var x = clickedPoint.GetX();
-    var y = clickedPoint.GetY();
-    var localHeight = clickedPoint.GetZ();
+// ==================== Validation ====================
 
-    print("=== Validation Point #" + pointIndex + " ===");
-    print("Coordinates: E=" + x.toFixed(3) + ", N=" + y.toFixed(3) + ", H=" + localHeight.toFixed(3));
-
-    // Get swisstopo reference height
-    print("Retrieving swisstopo data...");
-    var swisstopoHeight = getSwisstopoHeight(x, y);
-
-    if (swisstopoHeight === null) {
-        var errorMsg = "Failed to retrieve swisstopo height data!\n\nPossible causes:\n• Network connection issue\n• Point outside Switzerland\n• API temporarily unavailable";
-        SDialog.Message(errorMsg, SDialog.EMessageSeverity.Error, "API Error");
-        print("ERROR: API request failed");
-        return false;
-    }
-
-    // Calculate difference
-    var heightDiff = localHeight - swisstopoHeight;
-    var absDiff = Math.abs(heightDiff);
-
-    print("Swisstopo height: " + swisstopoHeight.toFixed(3) + "m");
-    print("Difference: " + (heightDiff >= 0 ? "+" : "") + heightDiff.toFixed(3) + "m");
-
-    // Create label if enabled
-    if (AUTO_LABEL) {
-        var label = createValidationLabel(clickedPoint, localHeight, swisstopoHeight, pointIndex);
-        if (label) {
-            print("✓ Label created: " + label.GetComment());
-        } else {
-            print("⚠ Label creation failed, but validation data is valid");
-        }
-    }
-
-    // Show result dialog
-    var resultMessage =
-        "Validation Result #" + pointIndex + "\n" +
-        "Validierungsergebnis #" + pointIndex + "\n\n" +
-        "Local height / Lokale Höhe: " + localHeight.toFixed(3) + "m\n" +
-        "Swisstopo ref / Referenz: " + swisstopoHeight.toFixed(3) + "m\n" +
-        "Difference / Differenz: " + (heightDiff >= 0 ? "+" : "") + heightDiff.toFixed(3) + "m\n";
-
-    if (SHOW_COORDINATES) {
-        resultMessage += "Coordinates / Koordinaten: E=" + x.toFixed(2) + ", N=" + y.toFixed(2) + "\n";
-    }
-
-    resultMessage += "\n";
-
-    var severity = SDialog.EMessageSeverity.Info;
-    var title = "Validation Result";
-
-    if (absDiff > WARNING_THRESHOLD) {
-        resultMessage += "⚠️ WARNING: Difference exceeds " + WARNING_THRESHOLD + "m threshold\n";
-        resultMessage += "⚠️ WARNUNG: Differenz überschreitet " + WARNING_THRESHOLD + "m Grenzwert\n";
-        resultMessage += "Please verify data accuracy / Bitte Datengenauigkeit prüfen";
-        severity = SDialog.EMessageSeverity.Warning;
-        title = "Height Difference Warning";
-    } else {
-        resultMessage += "✓ OK: Difference within acceptable range\n";
-        resultMessage += "✓ OK: Differenz im akzeptablen Bereich\n";
-        resultMessage += "Data appears plausible / Daten erscheinen plausibel";
-    }
-
-    SDialog.Message(resultMessage, severity, title);
-    return true;
+function isInsideLv95Bounds(point) {
+    var e = point.GetX();
+    var n = point.GetY();
+    return e >= LV95_MIN_E && e <= LV95_MAX_E && n >= LV95_MIN_N && n <= LV95_MAX_N;
 }
 
-// -------------------- MAIN VALIDATION LOOP / HAUPT-VALIDIERUNGSSCHLEIFE -----
+function validatePoint(point, params, session) {
+    var easting = point.GetX();
+    var northing = point.GetY();
+    var localHeight = point.GetZ();
+    var index = session.total + 1;
 
-print("=== Swisstopo Height Validation Tool Started ===");
-print("Version: Fixed for Cyclone 3DR 2025.1.4.47974");
-print("Click on points to validate (ESC to exit)");
-print("Labels use numeric codes: 1=Local, 2=Swisstopo, 3=Difference, 4=Easting, 5=Northing");
+    if (!isInsideLv95Bounds(point)) {
+        print("Point #" + index + " lies outside the LV95 bounds (E=" +
+            easting.toFixed(1) + ", N=" + northing.toFixed(1) + ") and is skipped.");
+        SDialog.Message(
+            "EN: This point lies outside Switzerland (LV95). The project must be\n" +
+            "georeferenced in LV95 / EPSG:2056.\n\n" +
+            "DE: Der Punkt liegt ausserhalb der Schweiz (LV95). Das Projekt muss\n" +
+            "in LV95 / EPSG:2056 georeferenziert sein.",
+            SDialog.EMessageSeverity.Warning, SCRIPT_TITLE
+        );
+        return;
+    }
 
-var validationCount = 0;
-var continueValidation = true;
+    var referenceHeight = getSwisstopoHeight(easting, northing);
+    if (referenceHeight === null) {
+        session.apiFailed++;
+        session.total++;
+        print("Point #" + index + ": swisstopo reference not available.");
+        return;
+    }
 
-while (continueValidation) {
-    print("\nWaiting for point selection... (ESC to exit)");
+    var deviation = localHeight - referenceHeight;
+    session.total++;
+    session.recordDeviation(deviation, params.tolerance);
 
-    try {
-        var clickResult = SPoint.FromClick();
+    if (params.autoLabel) {
+        createDeviationLabel(point, localHeight, referenceHeight, params.tolerance);
+    }
 
-        switch (clickResult.ErrorCode) {
-            case 0: // Point selected
-                validationCount++;
-                var success = validatePoint(clickResult.Point, validationCount);
+    print("Point #" + index +
+        "  local=" + localHeight.toFixed(HEIGHT_DECIMALS) +
+        "  swisstopo=" + referenceHeight.toFixed(HEIGHT_DECIMALS) +
+        "  dZ=" + (deviation >= 0 ? "+" : "") + deviation.toFixed(HEIGHT_DECIMALS) + " m");
 
-                if (success) {
-                    // Ask to continue
-                    var continueDialog = SDialog.New("Continue Validation?");
-                    continueDialog.AddText("Point #" + validationCount + " validated successfully", SDialog.EMessageSeverity.Success);
-                    continueDialog.AddText("Punkt #" + validationCount + " erfolgreich validiert", SDialog.EMessageSeverity.Success);
-                    continueDialog.SetButtons(["Validate Another / Weiteren validieren", "Finish / Beenden"]);
-
-                    var continueResult = continueDialog.Run();
-                    if (continueResult.ErrorCode !== 0) {
-                        continueValidation = false;
-                    }
-                } else {
-                    // Error occurred
-                    var retryDialog = SDialog.New("Validation Error");
-                    retryDialog.AddText("Error during validation", SDialog.EMessageSeverity.Error);
-                    retryDialog.AddText("Fehler bei der Validierung aufgetreten", SDialog.EMessageSeverity.Error);
-                    retryDialog.SetButtons(["Retry / Wiederholen", "Exit / Beenden"]);
-
-                    var retryResult = retryDialog.Run();
-                    if (retryResult.ErrorCode !== 0) {
-                        continueValidation = false;
-                    }
-                    validationCount--;
-                }
-                break;
-
-            case 1: // Nothing selected
-                break;
-
-            case 2: // ESC pressed
-                continueValidation = false;
-                print("Validation cancelled by user");
-                break;
-
-            default:
-                print("Selection error: " + clickResult.ErrorCode);
-                continueValidation = false;
-                break;
-        }
-
-    } catch (error) {
-        print("Error: " + error.message);
-        continueValidation = false;
+    if (params.showPopups) {
+        showPointResult(index, localHeight, referenceHeight, deviation, params.tolerance);
     }
 }
 
-// -------------------- FINAL REPORT / ABSCHLUSSBERICHT ------------------------
+function showPointResult(index, localHeight, referenceHeight, deviation, tolerance) {
+    var exceeded = Math.abs(deviation) > tolerance;
+    var signed = (deviation >= 0 ? "+" : "") + deviation.toFixed(HEIGHT_DECIMALS) + " m";
+    var message =
+        "EN: Local height: " + localHeight.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "swisstopo reference: " + referenceHeight.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "Deviation: " + signed + "\n" +
+        (exceeded
+            ? "Exceeds the tolerance of " + tolerance.toFixed(2) + " m."
+            : "Within the tolerance of " + tolerance.toFixed(2) + " m.") +
+        "\n\nDE: Lokale Höhe: " + localHeight.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "Swisstopo-Referenz: " + referenceHeight.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "Abweichung: " + signed + "\n" +
+        (exceeded
+            ? "Toleranz " + tolerance.toFixed(2) + " m überschritten."
+            : "Innerhalb der Toleranz von " + tolerance.toFixed(2) + " m.");
 
-print("\n=== Validation Complete ===");
-print("Total validations: " + validationCount);
-
-if (validationCount > 0) {
-    var finalLabels = SLabel.All();
-    var summaryMessage =
-        "Validation Session Complete\n" +
-        "Validierungssitzung abgeschlossen\n\n" +
-        "Points validated / Punkte validiert: " + validationCount + "\n" +
-        "Labels created / Labels erstellt: " + finalLabels.length + "\n" +
-        "Warning threshold / Warngrenze: " + WARNING_THRESHOLD + "m\n\n" +
-        "Label Codes / Label-Codes:\n" +
-        "1 = Local height / Lokale Höhe\n" +
-        "2 = Swisstopo reference / Referenz\n" +
-        "3 = Difference / Differenz\n" +
-        (SHOW_COORDINATES ? "4 = Easting / Ostwert\n5 = Northing / Nordwert\n" : "") +
-        "\nData source: © swisstopo\n" +
-        "Coordinate system: LV95 (EPSG:2056)";
-
-    SDialog.Message(summaryMessage, SDialog.EMessageSeverity.Info, "Session Complete");
-} else {
     SDialog.Message(
-        "No validations performed\nKeine Validierungen durchgeführt",
-        SDialog.EMessageSeverity.Warning,
-        "Session Empty"
+        message,
+        exceeded ? SDialog.EMessageSeverity.Warning : SDialog.EMessageSeverity.Success,
+        "Validation point / Validierung Punkt #" + index
     );
 }
 
-print("\n© swisstopo - Height data from api3.geo.admin.ch");
-print("=== Session End ===");
+function createSession() {
+    return {
+        total: 0,
+        ok: 0,
+        exceeded: 0,
+        apiFailed: 0,
+        sumDeviation: 0,
+        maxAbsDeviation: 0,
+        recordDeviation: function (deviation, tolerance) {
+            if (Math.abs(deviation) > tolerance) {
+                this.exceeded++;
+            } else {
+                this.ok++;
+            }
+            this.sumDeviation += deviation;
+            this.maxAbsDeviation = Math.max(this.maxAbsDeviation, Math.abs(deviation));
+        }
+    };
+}
+
+function runValidationLoop(params) {
+    print("=== " + SCRIPT_TITLE + " started (ESC stops) ===");
+    var session = createSession();
+
+    while (true) {
+        var click = SPoint.FromClick();
+        if (click.ErrorCode === 2) {
+            break; // ESC pressed
+        }
+        if (click.ErrorCode !== 0) {
+            continue; // nothing hit, keep waiting
+        }
+        validatePoint(click.Point, params, session);
+    }
+    return session;
+}
+
+function showSessionSummary(session, tolerance) {
+    var validCount = session.ok + session.exceeded;
+    var meanText = validCount > 0
+        ? (session.sumDeviation / validCount).toFixed(HEIGHT_DECIMALS) + " m"
+        : "n/a";
+
+    print("=== Validation finished: " + session.total + " point(s) ===");
+    SDialog.Message(
+        "EN: Validation complete.\n\n" +
+        "Points checked: " + session.total + "\n" +
+        "OK: " + session.ok + "\n" +
+        "Over tolerance: " + session.exceeded + "\n" +
+        "API failures: " + session.apiFailed + "\n\n" +
+        "Mean deviation: " + meanText + "\n" +
+        "Max |deviation|: " + session.maxAbsDeviation.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "Tolerance: " + tolerance.toFixed(2) + " m\n\n" +
+        "DE: Validierung abgeschlossen.\n\n" +
+        "Geprüfte Punkte: " + session.total + "\n" +
+        "OK: " + session.ok + "\n" +
+        "Über Toleranz: " + session.exceeded + "\n" +
+        "API-Fehler: " + session.apiFailed + "\n\n" +
+        "Mittlere Abweichung: " + meanText + "\n" +
+        "Max. |Abweichung|: " + session.maxAbsDeviation.toFixed(HEIGHT_DECIMALS) + " m\n" +
+        "Toleranz: " + tolerance.toFixed(2) + " m\n\n" +
+        "Data source / Datenquelle: (c) swisstopo (LV95 / EPSG:2056)",
+        session.exceeded > 0 ? SDialog.EMessageSeverity.Warning : SDialog.EMessageSeverity.Info,
+        SCRIPT_TITLE
+    );
+}
+
+/**
+ * The engine sometimes throws strings or objects without a message property;
+ * a plain error.message then reads "undefined". Always produce readable text.
+ */
+function formatError(error) {
+    if (error === null || error === undefined) {
+        return "EN: Unknown exception without an error message (engine error).\n" +
+            "DE: Unbekannte Ausnahme ohne Fehlermeldung (Engine-Fehler).";
+    }
+    if (typeof error === "string") {
+        return error;
+    }
+    if (typeof error.message === "string" && error.message.length > 0) {
+        return error.message;
+    }
+    try {
+        return "Unexpected error object / Unerwartetes Fehlerobjekt: " + JSON.stringify(error);
+    } catch (stringifyError) {
+        return "Unexpected error object / Unerwartetes Fehlerobjekt: " + String(error);
+    }
+}
+
+function handleError(error) {
+    var text = formatError(error);
+    print("ERROR: " + text);
+    if (error && typeof error.stack === "string") {
+        print("Stack:\n" + error.stack);
+    }
+    SDialog.Message(text, SDialog.EMessageSeverity.Error, SCRIPT_TITLE);
+}
+
+// ==================== Entry Point ====================
+
+main();
