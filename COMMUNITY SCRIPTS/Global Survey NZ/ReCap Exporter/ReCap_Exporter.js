@@ -33,7 +33,10 @@ gui.AddChoices({
     style: SDialog.ChoiceRepresentationMode.RadioButtons
 });
 
-gui.SetButtons(["Select Output Folder & Run", "Cancel"]);
+gui.AddTextField({id: "projectName", name: "Project Name (leave empty to use folder name)", value: ""});
+gui.AddTextField({id: "outDir", name: "Output Folder (Paste path or leave empty to Browse)", value: ""});
+
+gui.SetButtons(["Run Export", "Cancel"]);
 var res = gui.Run();
 
 if (res.ErrorCode !== 0) {
@@ -44,7 +47,11 @@ if (res.ErrorCode !== 0) {
     var isCombined = res.grouping === 1;
 
     // Get output directory
-    var outputFolder = GetOpenFolder("Select output folder for ReCap project", "C:/");
+    var outputFolder = res.outDir;
+    if (!outputFolder || outputFolder.trim() === "") {
+        outputFolder = GetOpenFolder("Select output folder for ReCap project", "C:/");
+    }
+
     if (!outputFolder || outputFolder.length === 0) {
         print("Export cancelled.");
     } else {
@@ -53,9 +60,11 @@ if (res.ErrorCode !== 0) {
             outputFolder += "/";
         }
         
-        // Derive project name from output folder name
-        var pathParts = outputFolder.split("/");
-        var projectName = pathParts[pathParts.length - 2] || "Exported_Project"; 
+        var projectName = res.projectName;
+        if (!projectName || projectName.trim() === "") {
+            var pathParts = outputFolder.split("/");
+            projectName = pathParts[pathParts.length - 2] || "Exported_Project"; 
+        }
 
         print("Target Folder: " + outputFolder);
         print("Project Name: " + projectName);
@@ -64,10 +73,11 @@ if (res.ErrorCode !== 0) {
         var e57Files = [];
 
         if (isCombined) {
-            var mergedCloud = SCloud.New();
-            for (var i = 0; i < clouds.length; i++) {
-                mergedCloud.Add(clouds[i]);
+            var mergeRes = SCloud.Merge(clouds);
+            if (mergeRes.ErrorCode !== 0) {
+                throw new Error("Failed to merge clouds. Error code: " + mergeRes.ErrorCode);
             }
+            var mergedCloud = mergeRes.Cloud;
             var tempE57 = outputFolder + projectName + "_temp.e57";
             print("Exporting merged temporary E57 to: " + tempE57);
             SSurveyingFormat.ExportE57([mergedCloud], [], tempE57);
@@ -100,11 +110,15 @@ if (res.ErrorCode !== 0) {
         psCode += ")\n\n";
 
         var args = "";
+        var outDirNoSlash = outputFolder.replace(/\//g, "\\");
+        if (outDirNoSlash.charAt(outDirNoSlash.length - 1) === "\\") {
+            outDirNoSlash = outDirNoSlash.slice(0, -1);
+        }
         if (isRcp) {
-            psCode += "$args = '--importWithLicense', '" + outputFolder.replace(/\//g, "\\") + "', '" + projectName + "'\n";
+            psCode += "$args = '--importWithLicense', '" + outDirNoSlash + "', '" + projectName + "'\n";
             psCode += "$args += $e57Files\n";
         } else {
-            psCode += "$args = '--importWithLicense', '" + outputFolder.replace(/\//g, "\\") + "', '" + projectName + "'\n";
+            psCode += "$args = '--importWithLicense', '" + outDirNoSlash + "', '" + projectName + "'\n";
             psCode += "$args += $e57Files\n";
         }
 
