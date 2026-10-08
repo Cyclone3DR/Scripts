@@ -4,8 +4,6 @@ A seamless, 1-click script for Leica Cyclone 3DR that completely automates the t
 
 Instead of exporting `.e57` files, opening Autodesk ReCap, importing them manually, waiting for the indexing to finish, and saving the project—this script handles the entire pipeline in the background while you continue working in 3DR.
 
-![ReCap Exporter UI in Cyclone 3DR](recap_exporter_ui.png)
-
 ## 🚀 How it Works
 1. Select one or more point clouds in Cyclone 3DR.
 2. Run the script and choose your export options (RCP vs RCS, Combined vs Separate).
@@ -23,10 +21,24 @@ Default installation path expected by the script:
 
 ## ⚙️ Options
 * **Output Mode:** Choose whether you want a full `.rcp` project with a support folder (best for dropping straight into Revit/Navisworks), or just raw standalone `.rcs` files.
-* **Intelligent Naming:** You only need to pick the output folder! The script automatically derives the project name from the folder you select (e.g., picking `C:/Projects/Site_A/` will automatically generate `Site_A.rcp`).
 * **Cloud Grouping:** 
   * **Separate:** Converts each selected 3DR point cloud into its own individual scan within ReCap.
   * **Combined:** Merges all selected 3DR point clouds into a single, unified scan during export.
+* **Project Name:** Specify a custom project name, or leave it blank to automatically use the output folder's name.
+* **Output Folder:** Paste your target path directly, or leave it blank to browse for a folder manually.
+
+![GUI Screenshot](recap_exporter_ui.png)
 
 ## 💻 Background Processing
 Because the heavy lifting (indexing) is handed off to PowerShell and `DeCap.exe`, Cyclone 3DR remains completely free and unfrozen. A black command console will remain open on your screen showing real-time indexing progress. Once the window closes, your files are ready!
+
+## ☑️ Tested Version
+Tested on Leica Cyclone 3DR 2026.1 (and compatible with newer versions).
+
+## 📄 Licensing
+Compatible with all editions of Cyclone 3DR (Standard, Survey, AEC, Tank).
+Distributed under the MIT License.
+
+## ✉️ Support & Contact
+Created by Thomas Mathey
+**Email:** thomas@globalsurvey.co.nz
