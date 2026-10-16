@@ -5,6 +5,7 @@ Welcome to the **COMMUNITY SCRIPTS** folder of the Leica Cyclone 3DR GitHub repo
 This folder is dedicated to scripts contributed by developers external to Leica Geosystems, aiming to extend the functionality of Cyclone 3DR and provide creative solutions for all users.
 
 ## Available scripts
+- [Cloud Separation by Height](https://github.com/Cyclone3DR/Scripts/blob/master/COMMUNITY%20SCRIPTS/Cloud%20Separation%20by%20Height): Separates point cloud by height position.  Usefull when removing data above or below a known elevation.  This script will create a new limit box, to see your data delete the box after the script has run.
 - [_TEMPLATE](./_TEMPLATE/): Folder acting as an example to help understand the expected structure of custom scripts. It is not a valid script.
 - [Large Scale Ortho Image](./Large%20Scale%20Ortho%20Image): Functionality to export large scale top-down orthographic images from LGSx data. (LIDAR and IMAGE)
 - [Swisstopo validation](./Swisstopo%20validation): Interactive quality control tool for comparing elevation data against Swisstopo reference heights.
