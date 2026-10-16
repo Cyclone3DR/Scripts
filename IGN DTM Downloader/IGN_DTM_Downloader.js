@@ -16,14 +16,17 @@
  * 1) Run the script and enter the Northeast and Southwest corners of the area to
  *    import (longitude/latitude, WGS 84).
  * 2) Optionally adjust the max number of parallel downloads in the "Performance" group.
- * 3) The script queries the Geoplateforme WFS layer "IGNF_MNT-LIDAR-HD:dalle" to list
- *    the matching 1 km x 1 km GeoTIFF tiles (50 cm resolution), downloads each one
- *    (WMS GetMap request, image/geotiff format), decodes it directly from the
+ * 3) The script queries the Geoplateforme WFS layer "IGNF_LIDAR-HD_METADONNEE:metadata"
+ *    to list the matching 1 km x 1 km GeoTIFF tiles (50 cm resolution), downloads each
+ *    one (WMS GetMap request, image/geotiff format), decodes it directly from the
  *    in-memory ArrayBuffer using the "./modules/geotiff_reader.js" module (loaded
  *    dynamically with await import(...)), and builds one point cloud per tile.
  */
 
-var WFS_TYPENAME = "IGNF_MNT-LIDAR-HD:dalle";
+// LiDAR HD tile index: one feature per 1 km tile, with the download URLs of its
+// derived products (url_mnt, url_mns, url_mnh) and acquisition metadata. It replaces
+// the "IGNF_MNT-LIDAR-HD:dalle" layer, no longer published by the WFS service.
+var WFS_TYPENAME = "IGNF_LIDAR-HD_METADONNEE:metadata";
 var TEMP_DIR_NAME = "Cyclone3DR_CartesGouv";
 
 // ---------------------------------------------------------------------------
@@ -98,6 +101,9 @@ async function listTiles(bbox, tempDir)
     var response = await fetch(url);
     if (!response.ok)
     {
+        // The WFS explains the error (e.g. unknown layer) in an XML exception report.
+        print("WFS request: " + url);
+        print("WFS response: " + await response.text());
         throw new Error("Failed to query the WFS tile listing (HTTP " + response.status + ").");
     }
     var featureCollection = await response.json();
@@ -128,7 +134,14 @@ async function listTiles(bbox, tempDir)
 
     return features.map(function(feature)
     {
-        return { name: feature.properties.name, url: feature.properties.url };
+        var url = feature.properties.url_mnt;
+        // The IGN tile name (e.g. "LHD_FXX_0647_6863_MNT_O_0M50_LAMB93_IGN69") is only
+        // given as the FILENAME parameter of the download URL.
+        var fileNameMatch = /[?&]FILENAME=([^&]+?)(\.tif)?(&|$)/i.exec(url);
+        var name = fileNameMatch
+            ? decodeURIComponent(fileNameMatch[1])
+            : "LHD_FXX_" + feature.properties.coordonnees_nw.replace("-", "_") + "_MNT";
+        return { name: name, url: url };
     });
 }
 
