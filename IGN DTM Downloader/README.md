@@ -24,7 +24,7 @@ Launch the script and fill in the dialog:
 
 > [!NOTE]
 >* An internet connection is required (the script queries `data.geopf.fr`).
->* The source layer is the IGN **MNT LiDAR HD** (`IGNF_MNT-LIDAR-HD:dalle`): 1 km x 1 km GeoTIFF tiles at 50 cm resolution. Every pixel becomes a point, so a single tile yields about 4 million points — keep the bounding box small to begin with.
+>* The source data is the IGN **MNT LiDAR HD**: 1 km x 1 km GeoTIFF tiles at 50 cm resolution, listed with the WFS tile index `IGNF_LIDAR-HD_METADONNEE:metadata`. Every pixel becomes a point, so a single tile yields about 4 million points — keep the bounding box small to begin with.
 >* Coverage is limited to the areas already published by IGN. If no tile is found for the requested bounding box, the script reports it and stops.
 >* A failing tile (network error, unsupported TIFF) is skipped and does not interrupt the other tiles.
 >* Tiles are only available over France, in the Lambert-93 projection (EPSG:2154) used by the source data.
