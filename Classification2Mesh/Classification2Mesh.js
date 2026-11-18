@@ -304,8 +304,8 @@ function DoMesh(iCloud, iOutputDir)
 
     PrintStep(`Generating a mesh (selected scanner: ${scannerKeys[scannerId]})`);
     
-    let meshing = SPoly.ScanToMesh(iCloud, scannerId, doTexturing, ignoreScanDir);
-    if(meshing.ErrorCode != 0)
+    let meshing = SPoly.ScanToMesh(iCloud, [], scannerId, doTexturing, ignoreScanDir);
+    if(meshing.ErrorCode != 0 || meshing.PolyTbl.length == 0)
     {
         ShowError("Meshing failed");
         return;
@@ -313,7 +313,7 @@ function DoMesh(iCloud, iOutputDir)
 
     ShowSuccess(`Meshing succeeds.`);
 
-    let theMesh = meshing.Poly;
+    let theMesh = meshing.PolyTbl[0];
     theMesh.SetName(`Mesh (${iCloud.GetName()})`);
     ShowResult(theMesh);
     theMesh.SetPolyRepresentation(SPoly.POLY_TEXTURE);
